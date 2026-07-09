@@ -1,0 +1,11 @@
+# Codex/workspace metadata
+.agents/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Julia local environment/runtime files
+*.ji
+*.ji.pidfile
+
+
