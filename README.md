@@ -1,6 +1,6 @@
 ﻿# Deep Learning Macro
 
-This repository contains a Julia notebook for learning the Euler-equation deep learning method of Maliar, Maliar, and Winant (2021). The current notebook solves a stochastic RBC/Brock-Mirman benchmark with a neural-network policy rule trained by minimizing simulated Euler-equation residuals.
+This repository contains Julia notebooks for learning deep learning methods used in macroeconomics. `Intro_DL.ipynb` introduces the basic neural-network building blocks from scratch in Julia, while `RBC.ipynb` applies the Euler-equation deep learning method of Maliar, Maliar, and Winant (2021) to a stochastic RBC/Brock-Mirman benchmark.
 
 ## Requirements
 
@@ -26,6 +26,12 @@ The project uses:
 
 ## Project Structure
 
+- `Intro_DL.ipynb`
+  - introduces deep learning as function approximation for economic problems
+  - builds neural-network components from scratch in Julia
+  - explains parameters, layers, activation functions, loss functions, and backpropagation
+  - trains a small network to learn a nonlinear function
+
 - `RBC.ipynb`
   - solves the log-utility, full-depreciation RBC/Brock-Mirman benchmark
   - approximates the consumption policy with a neural network
@@ -40,7 +46,9 @@ The project uses:
 
 - `reference/`
   - `JME2021.pdf`: Maliar, Maliar, and Winant (2021)
+  - `Slides_JHU_*.pdf`: lecture slides on deep learning methods for dynamic economic models
   - local copy of the reference TensorFlow implementation
+  - external teaching notes from Jesus Fernandez-Villaverde: <https://www.sas.upenn.edu/~jesusfv/teaching.html>
 
 ## Method
 
@@ -70,3 +78,4 @@ Gradients are computed with `Flux.gradient`, and the parameter vector is updated
 
 - Maliar, L., Maliar, S., and Winant, P. (2021). Deep learning for solving dynamic economic models. *Journal of Monetary Economics*, 122, 76-101.
 - Reference TensorFlow implementation: [marcmaliar/deep-learning-euler-method-krusell-smith](https://github.com/marcmaliar/deep-learning-euler-method-krusell-smith).
+- Jesus Fernandez-Villaverde teaching notes: <https://www.sas.upenn.edu/~jesusfv/teaching.html>.
