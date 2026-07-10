@@ -21,22 +21,18 @@ The project uses:
 
 - `Flux`
 - `IJulia`
-- `Plots`
-- Julia standard libraries: `Random`, `LinearAlgebra`, `Statistics`, `Printf`
+- Julia standard libraries: `Random`, `LinearAlgebra`, `Statistics`, `Printf`, `Plots`
 
 ## Project Structure
 
 - `Intro_DL.ipynb`
   - introduces deep learning as function approximation for economic problems
-  - builds neural-network components from scratch in Julia
-  - explains parameters, layers, activation functions, loss functions, and backpropagation
-  - trains a small network to learn a nonlinear function
+  - builds neural-network components in Julia to learn a toy function
 
 - `RBC.ipynb`
-  - solves the log-utility, full-depreciation RBC/Brock-Mirman benchmark
-  - approximates the consumption policy with a neural network
+  - approximates the consumption policy with a neural network, then solves the RBC benchmark
   - trains the policy by minimizing squared Euler-equation residuals on simulated states
-  - compares the learned policy with the analytical policy function
+
 
 - `Project.toml`
   - Julia project dependencies
