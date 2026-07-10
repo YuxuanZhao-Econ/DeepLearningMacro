@@ -1,6 +1,6 @@
 ﻿# Deep Learning Macro
 
-This repository contains Julia notebooks for learning deep learning methods used in macroeconomics. `Intro_DL.ipynb` introduces the basic neural-network building blocks from scratch in Julia, while `RBC.ipynb` applies the Euler-equation deep learning method of Maliar, Maliar, and Winant (2021) to a stochastic RBC/Brock-Mirman benchmark.
+This repository contains Julia notebooks for learning deep learning methods used in macroeconomics. `notebooks/Intro_DL.ipynb` introduces the basic neural-network building blocks from scratch in Julia, while `notebooks/RBC.ipynb` applies the Euler-equation deep learning method of Maliar, Maliar, and Winant (2021) to a stochastic RBC/Brock-Mirman benchmark.
 
 ## Requirements
 
@@ -25,11 +25,11 @@ The project uses:
 
 ## Project Structure
 
-- `Intro_DL.ipynb`
+- `notebooks/Intro_DL.ipynb`
   - introduces deep learning as function approximation for economic problems
   - builds neural-network components in Julia to learn a toy function
 
-- `RBC.ipynb`
+- `notebooks/RBC.ipynb`
   - approximates the consumption policy with a neural network, then solves the RBC benchmark
   - trains the policy by minimizing squared Euler-equation residuals on simulated states
 
