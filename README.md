@@ -34,11 +34,8 @@ The project uses:
   - trains the policy by minimizing squared Euler-equation residuals on simulated states
 
 - `notebooks/KS1998.ipynb`
-  - keeps the model, hand-written neural network, state transition, AiO loss, Adam, and training loop visible for teaching
-  - uses the full simulated wealth-productivity cross section as the neural-network state
+  - approximates the consumption-share and borrowing-multiplier policies with a neural network, then solves the Krusell--Smith heterogeneous-agent economy
   - trains consumption-share and borrowing-multiplier policies with the two-shock AiO Euler objective
-  - reports conditional Euler errors, complementarity errors, inequality, policy slices, and approximate aggregation
-  - displays diagnostic figures directly in the notebook; running it does not create separate PNG files
 
 - `src/NetworkDiagram.jl`
   - contains the reusable neural-network architecture and training-flow diagrams
@@ -84,14 +81,6 @@ The training loss is the average squared Euler residual over simulated state-sho
 ```
 
 Gradients are computed with `Flux.gradient`, and the parameter vector is updated with Adam.
-
-### Krusell--Smith economy
-
-The KS notebook keeps the continuous idiosyncratic productivity process $y$ and aggregate productivity process $z$. Its neural network observes the full empirical distribution through the simulated wealth-productivity cross section, rather than replacing that distribution with aggregate capital alone. The network returns household consumption shares and borrowing multipliers.
-
-Training combines the borrowing-constraint complementarity condition with a two-branch all-in-one Euler estimator. Each update advances the simulated cross section, so the training loss is a stochastic simulation objective rather than a deterministic curve that must fall every iteration. Accuracy is assessed separately using out-of-sample conditional Euler errors, Fisher--Burmeister residuals, simulation moments, and policy slices.
-
-All plots are retained as inline notebook outputs. The repository intentionally has no generated `figures/` directory; rerunning the notebook updates the displayed outputs without writing PNG copies to disk.
 
 ## References and Resources
 
