@@ -11,8 +11,8 @@ function conditional_residuals(theta, state, p::KSParams, ss=steady_state(p);
         euler_sum .+= branch.euler
     end
 
-    a = current.mu .- 1
-    b = state.w ./ current.c .- 1
+    a = 1 .- current.xi
+    b = 1 .- current.mu
     fisher_burmeister = a .+ b .- sqrt.(a .^ 2 .+ b .^ 2)
     return (; euler=euler_sum ./ n_shocks, fisher_burmeister, current)
 end

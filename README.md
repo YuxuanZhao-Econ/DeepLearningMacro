@@ -38,6 +38,7 @@ The project uses:
   - uses the full simulated wealth-productivity cross section as the neural-network state
   - trains consumption-share and borrowing-multiplier policies with the two-shock AiO Euler objective
   - reports conditional Euler errors, complementarity errors, inequality, policy slices, and approximate aggregation
+  - displays diagnostic figures directly in the notebook; running it does not create separate PNG files
 
 - `src/NetworkDiagram.jl`
   - contains the reusable neural-network architecture and training-flow diagrams
@@ -58,9 +59,11 @@ The project uses:
   - local copy of the reference TensorFlow implementation
   - external teaching notes from Jesus Fernandez-Villaverde: <https://www.sas.upenn.edu/~jesusfv/teaching.html>
 
-## Method
+## Methods
 
-The notebook parameterizes the consumption share as a neural-network policy:
+### RBC benchmark
+
+The RBC notebook parameterizes the consumption share as a neural-network policy:
 
 ```math
 \xi_t=\xi(k_t,z_t;\theta).
@@ -81,6 +84,14 @@ The training loss is the average squared Euler residual over simulated state-sho
 ```
 
 Gradients are computed with `Flux.gradient`, and the parameter vector is updated with Adam.
+
+### Krusell--Smith economy
+
+The KS notebook keeps the continuous idiosyncratic productivity process $y$ and aggregate productivity process $z$. Its neural network observes the full empirical distribution through the simulated wealth-productivity cross section, rather than replacing that distribution with aggregate capital alone. The network returns household consumption shares and borrowing multipliers.
+
+Training combines the borrowing-constraint complementarity condition with a two-branch all-in-one Euler estimator. Each update advances the simulated cross section, so the training loss is a stochastic simulation objective rather than a deterministic curve that must fall every iteration. Accuracy is assessed separately using out-of-sample conditional Euler errors, Fisher--Burmeister residuals, simulation moments, and policy slices.
+
+All plots are retained as inline notebook outputs. The repository intentionally has no generated `figures/` directory; rerunning the notebook updates the displayed outputs without writing PNG copies to disk.
 
 ## References and Resources
 
