@@ -389,3 +389,174 @@ function plot_ha_nn_architecture_diagram(; shown_inputs::Integer=7, shown_hidden
 
     return plt
 end
+
+"""
+    plot_ks_policy_network_diagram(; agents=10, hidden=16, xi_min=1e-4, xi_max=1-1e-4)
+
+Draw the fully connected policy network used by `KS1998.ipynb` as neuron layers.
+Large layers are shown schematically while annotations report their true sizes.
+"""
+function plot_ks_policy_network_diagram(;
+        agents::Integer=10,
+        hidden::Integer=16,
+        xi_min::Real=1e-4,
+        xi_max::Real=1 - 1e-4)
+    input_dim = 2 * agents + 3
+    shown_inputs = min(input_dim, 9)
+    shown_hidden = min(hidden, 10)
+
+    input_x = 0.0
+    hidden1_x = 2.65
+    hidden2_x = 5.30
+    output_x = 7.95
+
+    input_y = _diagram_layer_y(shown_inputs; spacing=0.35)
+    hidden1_y = _diagram_layer_y(shown_hidden; spacing=0.32)
+    hidden2_y = _diagram_layer_y(shown_hidden; spacing=0.32)
+    output_y = [0.48, -0.48]
+
+    plt = plot(
+        xlim=(-1.55, 10.55),
+        ylim=(-2.75, 2.75),
+        size=(1450, 610),
+        axis=false,
+        grid=false,
+        legend=false,
+        background_color=:white,
+        foreground_color=:black,
+        margin=8Plots.mm,
+    )
+
+    _diagram_edges!(plt, input_x, input_y, hidden1_x, hidden1_y;
+        color=:gray78, alpha=0.65, lw=0.65)
+    _diagram_edges!(plt, hidden1_x, hidden1_y, hidden2_x, hidden2_y;
+        color=:gray78, alpha=0.65, lw=0.65)
+    _diagram_edges!(plt, hidden2_x, hidden2_y, output_x, output_y;
+        color=:gray72, alpha=0.75, lw=0.8)
+
+    _diagram_nodes!(plt, input_x, input_y;
+        color=RGB(0.43, 0.68, 0.36), markersize=13)
+    _diagram_nodes!(plt, hidden1_x, hidden1_y;
+        color=RGB(0.24, 0.62, 0.72), markersize=12)
+    _diagram_nodes!(plt, hidden2_x, hidden2_y;
+        color=RGB(0.31, 0.55, 0.78), markersize=12)
+    _diagram_nodes!(plt, output_x, output_y;
+        color=RGB(0.95, 0.67, 0.25), markersize=16)
+
+    _diagram_label!(plt, input_x, 2.35, "Input layer", size=13)
+    _diagram_label!(plt, hidden1_x, 2.35, "Hidden layer 1", size=13)
+    _diagram_label!(plt, hidden2_x, 2.35, "Hidden layer 2", size=13)
+    _diagram_label!(plt, output_x, 2.35, "Output layer", size=13)
+
+    _diagram_label!(plt, 1.32, 1.95,
+        "W₁: $(hidden) × $(input_dim),   b₁: $(hidden)", size=8, color=:gray35)
+    _diagram_label!(plt, 3.98, 1.95,
+        "W₂: $(hidden) × $(hidden),   b₂: $(hidden)", size=8, color=:gray35)
+    _diagram_label!(plt, 6.62, 1.95,
+        "W₃: 2 × $(hidden),   b₃: 2", size=8, color=:gray35)
+
+    _diagram_label!(plt, -0.90, 0.18, "full state + own state", size=9)
+    _diagram_label!(plt, -0.90, -0.18,
+        latexstring("x_t^i\\in\\mathbb{R}^{", input_dim, "}"), size=10)
+    _diagram_label!(plt, input_x, -2.12,
+        "$(input_dim) inputs shown schematically", size=8, color=:gray35)
+    _diagram_label!(plt, hidden1_x + 0.30, hidden1_y[1] + 0.15,
+        "$(hidden) neurons", size=9, color=:gray30)
+    _diagram_label!(plt, hidden2_x + 0.30, hidden2_y[1] + 0.15,
+        "$(hidden) neurons", size=9, color=:gray30)
+
+    _diagram_label!(plt, hidden1_x, -2.03,
+        L"h_1=\sigma(W_1x_t^i+b_1)", size=10)
+    _diagram_label!(plt, hidden1_x, -2.38, "sigmoid activation", size=8, color=:gray35)
+    _diagram_label!(plt, hidden2_x, -2.03,
+        L"h_2=\sigma(W_2h_1+b_2)", size=10)
+    _diagram_label!(plt, hidden2_x, -2.38, "sigmoid activation", size=8, color=:gray35)
+    _diagram_label!(plt, output_x, -1.78,
+        L"a=W_3h_2+b_3=(a_\xi,a_\mu)'", size=9)
+
+    _diagram_label!(plt, 9.20, 0.72,
+        "ξ = scaled sigmoid(aξ)", size=9)
+    _diagram_label!(plt, 9.20, 0.38,
+        "c = ξwᵢ", size=9)
+    _diagram_label!(plt, 9.20, -0.30,
+        "μ = exp(aμ)", size=9)
+    _diagram_label!(plt, 9.20, -0.64,
+        "k′ = (1-ξ)wᵢ", size=9)
+    _diagram_label!(plt, 9.20, -1.15,
+        "ξ ∈ ($(xi_min), $(xi_max)),   μ > 0", size=8, color=:gray35)
+
+    return plt
+end
+
+"""
+    plot_ks_training_flow_diagram()
+
+Draw one stochastic-training iteration for the KS AiO Euler method.
+"""
+function plot_ks_training_flow_diagram()
+    plt = plot(
+        xlim=(-0.25, 12.8),
+        ylim=(-2.65, 2.65),
+        size=(1450, 600),
+        axis=false,
+        grid=false,
+        legend=false,
+        background_color=:white,
+        foreground_color=:black,
+        margin=8Plots.mm,
+    )
+
+    state_fill = RGB(0.93, 0.98, 0.92)
+    network_fill = RGB(0.92, 0.97, 1.0)
+    branch_fill = RGB(1.0, 0.96, 0.88)
+    loss_fill = RGB(0.97, 0.94, 1.0)
+
+    _diagram_box!(plt, 0.9, 0.2, 1.65, 0.95; fillcolor=state_fill)
+    _diagram_label!(plt, 0.9, 0.36, "current state", size=10)
+    _diagram_label!(plt, 0.9, 0.04, "sₜ=(Wₜ,Yₜ,zₜ)", size=9)
+
+    _diagram_arrow!(plt, 1.73, 0.2, 2.25, 0.2)
+    _diagram_box!(plt, 3.05, 0.2, 1.6, 0.95; fillcolor=network_fill)
+    _diagram_label!(plt, 3.05, 0.36, "same NN θ⁽ⁿ⁾", size=10)
+    _diagram_label!(plt, 3.05, 0.04, "ξₜ, μₜ", size=9)
+
+    _diagram_arrow!(plt, 3.85, 0.2, 4.35, 0.2)
+    _diagram_box!(plt, 5.10, 0.2, 1.5, 0.95; fillcolor=state_fill)
+    _diagram_label!(plt, 5.10, 0.36, "current choices", size=10)
+    _diagram_label!(plt, 5.10, 0.04, "cₜ, kₜ₊₁", size=9)
+
+    _diagram_arrow!(plt, 5.85, 0.42, 6.45, 1.35)
+    _diagram_arrow!(plt, 5.85, -0.02, 6.45, -1.35)
+    _diagram_box!(plt, 7.25, 1.42, 1.6, 1.0; fillcolor=branch_fill)
+    _diagram_box!(plt, 7.25, -1.42, 1.6, 1.0; fillcolor=branch_fill)
+    _diagram_label!(plt, 7.25, 1.62, "shock branch A", size=10)
+    _diagram_label!(plt, 7.25, 1.25, "εʸ_A, εᶻ_A", size=9)
+    _diagram_label!(plt, 7.25, -1.22, "shock branch B", size=10)
+    _diagram_label!(plt, 7.25, -1.59, "εʸ_B, εᶻ_B", size=9)
+
+    _diagram_arrow!(plt, 8.05, 1.42, 8.60, 1.42)
+    _diagram_arrow!(plt, 8.05, -1.42, 8.60, -1.42)
+    _diagram_box!(plt, 9.45, 1.42, 1.7, 1.0; fillcolor=network_fill)
+    _diagram_box!(plt, 9.45, -1.42, 1.7, 1.0; fillcolor=network_fill)
+    _diagram_label!(plt, 9.45, 1.62, "next state + same NN", size=9)
+    _diagram_label!(plt, 9.45, 1.25, "cₜ₊₁,A → R_A", size=9)
+    _diagram_label!(plt, 9.45, -1.22, "next state + same NN", size=9)
+    _diagram_label!(plt, 9.45, -1.59, "cₜ₊₁,B → R_B", size=9)
+
+    _diagram_arrow!(plt, 10.30, 1.42, 10.90, 0.35)
+    _diagram_arrow!(plt, 10.30, -1.42, 10.90, -0.35)
+    _diagram_box!(plt, 11.75, 0.0, 1.7, 1.25; fillcolor=loss_fill)
+    _diagram_label!(plt, 11.75, 0.30, "AiO loss", size=11)
+    _diagram_label!(plt, 11.75, -0.05, "mean(Φ² + R_A R_B)", size=9)
+    _diagram_label!(plt, 11.75, -0.38, "∇θ → Adam update", size=9)
+
+    _diagram_arrow!(plt, 11.75, -0.64, 3.05, -0.64; color=:gray45)
+    _diagram_label!(plt, 7.25, -0.80, "θ⁽ⁿ⁺¹⁾ is used in the next iteration", size=9, color=:gray30)
+    _diagram_arrow!(plt, 7.25, 0.90, 0.90, 0.72; color=:gray55)
+    _diagram_label!(plt, 3.85, 1.00, "branch A advances the simulated state", size=9, color=:gray30)
+
+    _diagram_label!(plt, 6.35, 2.35,
+        "one training observation = one current cross section + two independent future shock branches",
+        size=11)
+    return plt
+end
