@@ -42,6 +42,20 @@ function _diagram_arrow!(plt, x1, y1, x2, y2; color=:gray45, lw=1.2)
     return plt
 end
 
+"""Draw a multi-segment connector with an arrowhead only on its final segment."""
+function _diagram_polyline_arrow!(plt, points; color=:gray45, lw=1.2)
+    length(points) >= 2 || throw(ArgumentError("an arrow needs at least two points"))
+    xs = first.(points)
+    ys = last.(points)
+    if length(points) > 2
+        plot!(plt, xs[1:(end - 1)], ys[1:(end - 1)];
+            color=color, lw=lw, label=false)
+    end
+    _diagram_arrow!(plt, xs[end - 1], ys[end - 1], xs[end], ys[end];
+        color=color, lw=lw)
+    return plt
+end
+
 """
     plot_policy_network_diagram(; hidden=8, xi_min=0.02, xi_max=0.98)
 
@@ -394,7 +408,8 @@ end
     plot_ks_policy_network_diagram(; agents=10, hidden=16, xi_min=1e-4, xi_max=1-1e-4)
 
 Draw the fully connected policy network used by `KS1998.ipynb` as neuron layers.
-Large layers are shown schematically while annotations report their true sizes.
+Large layers are shown schematically, with the input dimension kept symbolic as
+`2N+3` so the diagram remains valid when the number of agents changes.
 """
 function plot_ks_policy_network_diagram(;
         agents::Integer=10,
@@ -449,7 +464,7 @@ function plot_ks_policy_network_diagram(;
     _diagram_label!(plt, output_x, 2.35, "Output layer", size=13)
 
     _diagram_label!(plt, 1.32, 1.95,
-        "W₁: $(hidden) × $(input_dim),   b₁: $(hidden)", size=8, color=:gray35)
+        "W₁: $(hidden) × (2N + 3),   b₁: $(hidden)", size=8, color=:gray35)
     _diagram_label!(plt, 3.98, 1.95,
         "W₂: $(hidden) × $(hidden),   b₂: $(hidden)", size=8, color=:gray35)
     _diagram_label!(plt, 6.62, 1.95,
@@ -457,9 +472,9 @@ function plot_ks_policy_network_diagram(;
 
     _diagram_label!(plt, -0.90, 0.18, "full state + own state", size=9)
     _diagram_label!(plt, -0.90, -0.18,
-        latexstring("x_t^i\\in\\mathbb{R}^{", input_dim, "}"), size=10)
+        L"x_t^i\in\mathbb{R}^{2N+3}", size=10)
     _diagram_label!(plt, input_x, -2.12,
-        "$(input_dim) inputs shown schematically", size=8, color=:gray35)
+        "2N + 3 inputs shown schematically", size=8, color=:gray35)
     _diagram_label!(plt, hidden1_x + 0.30, hidden1_y[1] + 0.15,
         "$(hidden) neurons", size=9, color=:gray30)
     _diagram_label!(plt, hidden2_x + 0.30, hidden2_y[1] + 0.15,
@@ -496,8 +511,8 @@ Draw one stochastic-training iteration for the KS AiO Euler method.
 function plot_ks_training_flow_diagram()
     plt = plot(
         xlim=(-0.25, 12.8),
-        ylim=(-2.65, 2.65),
-        size=(1450, 600),
+        ylim=(-2.85, 2.85),
+        size=(1450, 650),
         axis=false,
         grid=false,
         legend=false,
@@ -550,12 +565,20 @@ function plot_ks_training_flow_diagram()
     _diagram_label!(plt, 11.75, -0.05, "mean(Φ² + R_A R_B)", size=9)
     _diagram_label!(plt, 11.75, -0.38, "∇θ → Adam update", size=9)
 
-    _diagram_arrow!(plt, 11.75, -0.64, 3.05, -0.64; color=:gray45)
-    _diagram_label!(plt, 7.25, -0.80, "θ⁽ⁿ⁺¹⁾ is used in the next iteration", size=9, color=:gray30)
-    _diagram_arrow!(plt, 7.25, 0.90, 0.90, 0.72; color=:gray55)
-    _diagram_label!(plt, 3.85, 1.00, "branch A advances the simulated state", size=9, color=:gray30)
+    # Route both feedback arrows around the forward computation graph.
+    _diagram_polyline_arrow!(plt,
+        [(11.75, -0.64), (11.75, -2.20), (3.05, -2.20), (3.05, -0.30)];
+        color=:gray45)
+    _diagram_label!(plt, 7.40, -2.38,
+        "θ⁽ⁿ⁺¹⁾ is used in the next iteration", size=9, color=:gray30)
 
-    _diagram_label!(plt, 6.35, 2.35,
+    _diagram_polyline_arrow!(plt,
+        [(7.25, 1.94), (7.25, 2.08), (0.90, 2.08), (0.90, 0.70)];
+        color=:gray55)
+    _diagram_label!(plt, 3.90, 2.20,
+        "branch A advances the simulated state", size=9, color=:gray30)
+
+    _diagram_label!(plt, 6.35, 2.55,
         "one training observation = one current cross section + two independent future shock branches",
         size=11)
     return plt
