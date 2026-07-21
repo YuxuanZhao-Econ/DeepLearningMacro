@@ -8,4 +8,6 @@
 *.ji
 *.ji.pidfile
 
+# Generated reports and report assets
+/reports/
 
