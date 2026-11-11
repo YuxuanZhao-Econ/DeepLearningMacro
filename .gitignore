@@ -11,3 +11,25 @@
 # Generated reports and report assets
 /reports/
 
+
+# Scratch work
+/tmp/
+__pycache__/
+
+# Large raw datasets (re-create with experiments/prepare_*.py / download_*.py)
+/reference/datasets/**/*.txt
+/reference/datasets/**/*.tsv
+/reference/datasets/**/*.csv
+/reference/datasets/**/*.bin
+/reference/datasets/**/*.parquet
+/reference/datasets/**/*.jsonl
+!/reference/datasets/**/README.md
+!/reference/datasets/**/merges.tsv
+!/reference/datasets/**/tokenizer_probes.tsv
+
+# Trained neural-network weights (re-create by training)
+/output/english_basics/*.jls
+/output/english_basics_tokenizer_pilot/*.jls
+/output/jokes_gpt/*.jls
+/output/nlp_course/*.jls
+/output/sentiment_imdb/*.jls

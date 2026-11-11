@@ -11,9 +11,7 @@ function conditional_residuals(theta, state, p::KSParams, ss=steady_state(p);
         euler_sum .+= branch.euler
     end
 
-    a = 1 .- current.xi
-    b = 1 .- current.mu
-    fisher_burmeister = a .+ b .- sqrt.(a .^ 2 .+ b .^ 2)
+    fisher_burmeister = complementarity_residual(current, state, p)
     return (; euler=euler_sum ./ n_shocks, fisher_burmeister, current)
 end
 
@@ -28,9 +26,14 @@ end
 
 """Simulate one economy under a fixed trained policy."""
 function simulate_economy(theta, p::KSParams, ss=steady_state(p);
-                          periods=600, burn=100, seed=404)
+                          periods=600, burn=100, seed=404, start_state=nothing)
     rng = MersenneTwister(seed)
-    state = initial_state(1, p, ss)
+    state = if isnothing(start_state)
+        initial_state(1, p, ss)
+    else
+        (; w=copy(start_state.w[1:1, :]), y=copy(start_state.y[1:1, :]),
+           z=copy(start_state.z[1:1]))
+    end
     total_periods = periods + burn
     aggregate_k = zeros(periods)
     aggregate_c = zeros(periods)
@@ -72,10 +75,12 @@ end
 
 """Consumption and savings slices holding the rest of one cross section fixed."""
 function policy_slice(theta, base_state, p::KSParams, ss=steady_state(p);
-                      agent=1, points=100, productivity_points=7)
+                      agent=1, points=100, productivity_points=7,
+                      wealth_min_multiple=0.05)
     1 <= agent <= p.agents || throw(ArgumentError("agent index out of range"))
     bounds = _state_bounds(p, ss)
-    wealth_grid = collect(range(0.05 * ss.W, p.wealth_cap_multiple * ss.W, length=points))
+    wealth_grid = collect(range(wealth_min_multiple * ss.W,
+                                p.wealth_cap_multiple * ss.W, length=points))
     log_y_grid = collect(range(-p.productivity_sd_bound * bounds.y_log_sd,
                                p.productivity_sd_bound * bounds.y_log_sd,
                                length=productivity_points))
