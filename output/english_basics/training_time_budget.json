@@ -1,0 +1,13 @@
+{
+  "units": "seconds",
+  "pilot_last_logged_elapsed": 505.562,
+  "pilot_conservative_budget_charge": 600,
+  "final_process_budget": 2400,
+  "final_reserve_inside_process_budget": 120,
+  "conservative_combined_training_budget": 3000,
+  "user_training_limit": 3600,
+  "notes": "Pilot stopped after the 14000-step evaluation; final run was newly initialized. Data preparation and notebook authoring are separate from GPU model training. Actual final elapsed time is recorded in run_summary.txt.",
+  "pilot_last_logged_step": 14000,
+  "actual_final_process_elapsed": 2287.970999956131,
+  "conservative_pilot_plus_measured_final": 2887.970999956131
+}

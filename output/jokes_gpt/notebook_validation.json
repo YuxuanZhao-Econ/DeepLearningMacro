@@ -1,0 +1,26 @@
+{
+  "code_cells": 15,
+  "embedded_figures": 7,
+  "method": "Exact saved Julia code cells executed sequentially in a fresh Julia process; not an IJulia-kernel run",
+  "validated_at_utc": "2026-10-28T05:13:55.457927+00:00",
+  "notebook_sha256": "f6a98ed9b3b396318232ab161334c45026246004bc8caca0e14384a570008cc0",
+  "code_cell_sha256": [
+    "071c951d517c06bc2f93240a6cb5803cf9518e59a51d502864c9d195b6825a16",
+    "157382f8a8782afbd200729b12232083badbb190d046e586531d5f30d1a7b346",
+    "526cded8a9d0095a3bf5f3b278c1cea31820d840e045caf45b797110ebee7e14",
+    "db068fcc5c65ae0fd2f36e25c004d121065e90f845b8e9ac6475fac53642f45d",
+    "7684372134dec098c7afeed4b53d1992359f3554335e7e8d6bcad37431631ac9",
+    "4a6d08548a243541bc37d4da56c3e40edd8e9bd5eb2f6c4db8a50b67a7193fe1",
+    "5702a57c9f6f72bac6ed9cdae672eeaf4f0b73867a43cd0cff1ee5c872ffbe37",
+    "de9834abe2aa2c1831246ef49a44224ea0ae2f09438c47a9221abab60ecebf1a",
+    "9561db2a8b7b63762ed1a6aa1df21cc0a71752acf42f5a8b86b759af14d1027f",
+    "09a1027ff8540830b55e4a09c2f2c7c3c07818b299de502a481c562b2b760075",
+    "6e8be6dc1674dcc6ab682a0b0ee9d5f7577dc91f383e391c6e9c0b36efca184c",
+    "8a32dce3e5f47b56125397efb02a6f211cb8d6d96e946fb1a28c44c8669ca611",
+    "0c5edf46231f5cfde482057f1ef49d9ecb5ccde6b3e47c3f0fc91abf2b5eee12",
+    "e0614b10c91de8279e7cac189042811d9d5266bec2bcc680474d4ee0c9274f93",
+    "5cda0f89ffae4e591d4263152c4eb6a775fd660407d90175586b882bcada4d82"
+  ],
+  "training_run": "output/jokes_gpt/run_summary.txt",
+  "checkpoint_checks": "output/jokes_gpt/verification.txt"
+}

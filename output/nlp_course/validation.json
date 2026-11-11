@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-05",
+  "revision": "full-model-step-by-step",
+  "notebook": "notebooks/Intro_English_GPT.ipynb",
+  "notebook_sha256": "e3d55ba7be21a17b1507b0b600bf3bd1d199ebbb4b902dbe7dd22ef0bae66567",
+  "validation_method": "Exact saved Julia code cells executed sequentially in a fresh Julia process; not an IJulia-kernel run",
+  "cells": 74,
+  "code_cells": 32,
+  "embedded_figures": 15,
+  "no_separate_toy_models": true,
+  "no_runtime_project_source_imports": true,
+  "external_assets": [
+    "IMDb TSV data",
+    "TinyStories tokens and BPE rules",
+    "recorded GPT parameter arrays"
+  ],
+  "imdb": {
+    "parameters": 1284225,
+    "vocabulary": 20000,
+    "embedding_width": 64,
+    "hidden_width": 64,
+    "trace_source_train_row": 3,
+    "trace_tokens": 115,
+    "train": 22411,
+    "validation": 2490,
+    "test": 24675,
+    "test_accuracy": 0.8777710233029382,
+    "selected_epoch": 1,
+    "confusion_actual_rows_predicted_columns": [
+      [
+        11297,
+        967
+      ],
+      [
+        2049,
+        10362
+      ]
+    ]
+  },
+  "classifier_gradient_max_error": 0.0,
+  "attention": {
+    "full_gpt_parameters": 5820416,
+    "layer": 1,
+    "head": 1,
+    "head_width": 32,
+    "input_width": 256,
+    "prefix_tokens": 12,
+    "manual_ad_max_error": 1.19e-07,
+    "head_query_gradient_matches_full_model_backprop": true,
+    "next_token_loss_before_diagnostic_step": 7.008921,
+    "next_token_loss_after_diagnostic_step": 6.997778
+  },
+  "language_evaluation": {
+    "sampled_targets": 4096,
+    "window_length": 64,
+    "random_full_model_loss_rounded": 7.714,
+    "trained_full_model_loss_rounded": 1.8635,
+    "loaded_weight_probe_max_error": 0.0,
+    "future_token_isolation": "passed"
+  },
+  "full_gpu_retraining_this_revision": false,
+  "gpu_path_history": "Two-update check on 2026-11-04; see gpu_check.txt. This revision changes defaults, not the training-loop body.",
+  "visual_review": {
+    "figures": "all 15 checked; preserved network style and added mathematical labels",
+    "formula_sections": "embedding definition, mean pooling, and Transformer residuals rendered in headless Chrome"
+  },
+  "protected_files_unchanged": {
+    "notebooks/Intro_DL.ipynb": true,
+    "notebooks/Intro_NLP.ipynb": true,
+    "notebooks/RBC.ipynb": true,
+    "notebooks/KS1998.ipynb": true,
+    "src/JokesGPT.jl": true,
+    "src/EnglishBasics.jl": true,
+    "src/SentimentLab.jl": true,
+    "experiments/train_english_basics.jl": true,
+    "output/english_basics/best.jls": true,
+    "output/english_basics/initial.jls": true,
+    "output/english_basics/run_summary.jls": true,
+    "output/sentiment_imdb/run.jls": true,
+    "Project.toml": true,
+    "Manifest.toml": true
+  },
+  "figure_sha256": {
+    "9": "9044a7a3a5452735532ac2c949425825103799c4a446a539af0be30d2ea8d0c3",
+    "15": "9f712d718a99114ca8aa00dd4c098631e939b76200d305e256921d09fc9965aa",
+    "19": "cdc6dc3f47d80a537066c5585dcbd41788d773ce653c045f15c0257ce7a697ab",
+    "24": "862ba516741f537866f2723254fd7a7b70b1f2b9c527ca4eec6a754a61ebac2e",
+    "27": "d1d3dd9577d5a73d453e81a5b7949c4f8b74c9f00e210b94746bf85a56d3ff68",
+    "31": "74488ee6494105562a1b1dd36a7e2fd9e01bc427c63030f2e542cc2269c46b47",
+    "34": "421a08dc53bc57e7bb6e6b7359c42fe26cbd841bfd2780b4406b464cbb815341",
+    "36": "08955ee6d4a1564f77662269b2446e4b8429920c112ce64d3cf2789415672104",
+    "48": "5f5af44f4c49230e2ded4c80020f844f3bf384bfbf8388cc2c1dbf761bf88167",
+    "51": "283194a3418373740140ebabff2aea9bb1fbffb8a201a02ee3fc42f403151b50",
+    "53": "8fb095fb0fd91c55d139da8762c1825a1f3c9592b5847c2d51ee56fe9075d658",
+    "56": "16a426408a35438ccfa7b1c18f0339363aea44f38a249e2ead04eaf1b20b6228",
+    "63": "c32d9d33f878e8b3e05dfaccc6d336c8dab88dfd001382bb1042322905b8bc90",
+    "69": "1d58bef450ca5c4aa26286d6c23cb6c8a68b28717d30850baa2b2688177f4d20",
+    "71": "9be4d61f1a1255600ae477202261eab2fcab5742bb668001788cac997f7a5057"
+  }
+}

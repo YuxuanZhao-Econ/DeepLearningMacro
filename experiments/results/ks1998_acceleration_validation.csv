@@ -1,0 +1,2 @@
+timestamp,agents,hidden,batch_size,branches,parameters,loss_abs_difference,gradient_max_abs_difference,gradient_relative_l2_difference,branch1_wealth_max_abs_difference,stacked_valid,threaded_gradient_valid,threaded_loss_difference,threaded_gradient_relative_difference,threaded_note
+2026-08-29T22:59:34.711,200,64,10,4,30146,2.168404344971009e-19,5.898059818321144e-17,4.1827711563340935e-16,0.0,true,false,0.0,0.6074054887038975,|dloss|=0.000e+00 relL2grad=6.074e-01

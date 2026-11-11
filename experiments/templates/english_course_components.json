@@ -1,0 +1,2381 @@
+{
+ "description": "Source-only reusable GPT lab and hand-calculation components; indices refer to the pre-reorganization course. No stored execution outputs.",
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"background:#142c43;color:white;padding:30px;border-radius:12px\">\n",
+    "<div style=\"color:#8adecf;letter-spacing:2px;font-size:12px\">A JULIA SELF-STUDY COURSE · PRINCIPLES BEFORE TRAINING</div>\n",
+    "<h1 style=\"color:white;margin-top:10px\">NLP from First Principles to Your Own English GPT</h1>\n",
+    "<p style=\"font-size:18px\">Understand the numbers. Build the network. Train it. Judge its language.</p>\n",
+    "<p>Tokens → embeddings → attention → a small CPU training lab → a 5.82-million-parameter English model</p>\n",
+    "</div>\n",
+    "\n",
+    "You know the basic idea of a neural network, but you do not need previous NLP experience.\n",
+    "This notebook integrates the explanations and small experiments from `Intro_NLP` with the real\n",
+    "English-training experiment. You can study the full path here without reading a second notebook.\n",
+    "All executable cells use **Julia**.\n",
+    "\n",
+    "Our first goal is understanding. Only after walking through the mechanisms do we train a tiny model\n",
+    "on a transparent artificial language. We then scale the same ideas to public English stories.\n",
+    "These are **two independent models initialized randomly**; the English model is not a fine-tune of the teaching model."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## Your self-study route\n",
+    "\n",
+    "| Session | Read and run | You should be able to explain |\n",
+    "|---|---|---|\n",
+    "| [I · Principles](#principles) | Sections 1–6: hand-sized examples | How a complete classifier learns its embeddings, why recurrence and attention use context, and how masking works |\n",
+    "| [II · Build and train](#cpu-lab) | Sections 7–12: a small Julia CPU experiment | How logits become a loss, how parameters change, and how generation repeats prediction |\n",
+    "| [III · Real English](#english-lab) | Sections 13–19: BPE, corpus, GPU recipe, saved results | How the real experiment differs from the toy, and what its results do and do not establish |\n",
+    "| [Field guide](#field-guide) | Glossary, shape table, experiments, and troubleshooting | How to return later and work independently |\n",
+    "\n",
+    "Run cells in order with the Julia kernel. Pause at the green questions before opening their answers.\n",
+    "For the first pass, follow the flow of the model; revisit the multi-head reshape details on a second pass.\n",
+    "You can stop after any session and continue later.\n",
+    "Sections 3a–3c walk through one full neural prediction and parameter update.\n",
+    "The short RNN/LSTM bridge in Sections 4a–4b is optional on a first pass; it explains\n",
+    "why attention is useful without making it a prerequisite for running the GPT lab.\n",
+    "\n",
+    "**Default execution:** all principle examples and the small CPU model run locally. The recorded\n",
+    "5.82-million-parameter model is loaded for inspection; `RUN_TRAINING=false` prevents restarting its\n",
+    "40-minute GPU experiment. To change type definitions or the teaching-model configuration, restart\n",
+    "the kernel and run from the top."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 0 · Setup and the role of Julia\n",
+    "\n",
+    "Select the **Julia 1.12** kernel and start in the repository root or `notebooks/`.\n",
+    "The supplied project already records Flux, Plots, CUDA.jl, and their versions.\n",
+    "If setting up a fresh Julia environment, instantiate the repository's `Project.toml` once.\n",
+    "\n",
+    "| Stage | What this course uses |\n",
+    "|---|---|\n",
+    "| Toy tokenization, embedding calculations, attention, loss, and training | Julia + Flux, on CPU |\n",
+    "| Learning a small illustrative BPE tokenizer | Julia frequency counts and merge rules |\n",
+    "| The large model's GPU training and automatic differentiation | Julia + Flux + CUDA.jl |\n",
+    "| Encoding prompts, loading weights, and generating English | Julia |\n",
+    "| Existing full-corpus preparation | An offline Python helper used a Rust tokenizer library; its prepared files are supplied |\n",
+    "| Notebook file authoring | A development helper writes the notebook container; it is not part of model training |\n",
+    "\n",
+    "You do **not** need to learn or write Python to work through the executable tutorial.\n",
+    "The existing large-corpus preparation helper is optional when using the supplied data and BPE rules."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "using Pkg\n",
+    "ROOT = isfile(joinpath(pwd(),\"Project.toml\")) ? pwd() : normpath(joinpath(pwd(),\"..\"))\n",
+    "@assert isfile(joinpath(ROOT,\"src\",\"EnglishBasics.jl\")) \"Start in the repository root or notebooks/.\"\n",
+    "active_project=Base.active_project()\n",
+    "if active_project===nothing || normpath(active_project)!=normpath(joinpath(ROOT,\"Project.toml\"))\n",
+    "    Pkg.activate(ROOT)\n",
+    "end\n",
+    "ENV[\"GKSwstype\"] = \"100\"\n",
+    "using Flux, Random, LinearAlgebra, Statistics, Printf, Serialization, SHA, Plots\n",
+    "BLAS.set_num_threads(1)\n",
+    "if !isdefined(Main,:JokesGPT)\n",
+    "    include(joinpath(ROOT,\"src\",\"JokesGPT.jl\"))\n",
+    "end\n",
+    "if !isdefined(Main,:EnglishBasics)\n",
+    "    include(joinpath(ROOT,\"src\",\"EnglishBasics.jl\"))\n",
+    "end\n",
+    "using .JokesGPT, .EnglishBasics\n",
+    "DATA = joinpath(ROOT,\"reference\",\"datasets\",\"english_basics\")\n",
+    "OUT = joinpath(ROOT,\"output\",\"english_basics\")\n",
+    "default(fontfamily=\"Helvetica\",titlefontsize=12,guidefontsize=10,tickfontsize=9,\n",
+    "    legendfontsize=9,linewidth=2,framestyle=:box,gridalpha=0.15,size=(950,380),\n",
+    "    left_margin=10Plots.mm,right_margin=6Plots.mm,bottom_margin=11Plots.mm,top_margin=5Plots.mm)\n",
+    "println(\"Julia \",VERSION,\" | Flux project activated\")\n",
+    "\n",
+    "Random.seed!(20261027)\n",
+    "blue, green, gold, purple = \"#275DAD\", \"#21A179\", \"#DE9B35\", \"#8854C0\"\n",
+    "@printf(\"Flux %s | Plots %s | teaching calculations on CPU\\n\",pkgversion(Flux),pkgversion(Plots))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<a id=\"principles\"></a>\n",
+    "# Part I · Understand the mechanism"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 1. NLP starts with a prediction problem\n",
+    "\n",
+    "**Natural Language Processing (NLP)** studies computational tasks involving human language: classification, search, translation, and generation, among others. We focus on a **language model**: a function that assigns probabilities to tokens given earlier tokens.\n",
+    "\n",
+    "In `Intro_DL.ipynb`, a network approximates a function such as $x\\mapsto f(x)$. Here the output is a probability distribution:\n",
+    "\n",
+    "$$\n",
+    "(t_1,\\ldots,t_i)\\longmapsto P_\\theta(t_{i+1}\\mid t_1,\\ldots,t_i).\n",
+    "$$\n",
+    "\n",
+    "For the prefix `the bank raises`, the model might assign a high probability to `rates`. The training text supplies the answer. This is **self-supervised learning**: targets are obtained from the text itself.\n",
+    "\n",
+    "The chain rule of probability connects these small predictions to a sequence probability:\n",
+    "\n",
+    "$$\n",
+    "P_\\theta(t_1,\\ldots,t_n)=\\prod_{i=1}^nP_\\theta(t_i\\mid t_1,\\ldots,t_{i-1}).\n",
+    "$$\n",
+    "\n",
+    "An economic policy network may minimize Euler-equation residuals. Our language model minimizes prediction loss on text. Economics-themed text does not impose an economic equilibrium condition."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "# A small plotting helper; its only job is to draw the explanatory flow diagrams.\n",
+    "function flow_diagram(labels; title=\"\", colors=fill(\"#EFF4FC\", length(labels)))\n",
+    "    n = length(labels)\n",
+    "    p = plot(xlims=(0, 1.8n), ylims=(0, 1.25), axis=false, grid=false,\n",
+    "             legend=false, title=title, size=(900, 190),\n",
+    "             left_margin=3Plots.mm, right_margin=3Plots.mm,\n",
+    "             bottom_margin=2Plots.mm, top_margin=5Plots.mm)\n",
+    "    for i in 1:n\n",
+    "        x = 0.9 + 1.8(i - 1)\n",
+    "        box = Shape([x-.74, x+.74, x+.74, x-.74], [.28, .28, .96, .96])\n",
+    "        plot!(p, box; fillcolor=colors[i], linecolor=blue, linewidth=1.3)\n",
+    "        annotate!(p, x, .62, text(labels[i], 10, :center, \"#183153\"))\n",
+    "        i < n && plot!(p, [x+.77, x+1.02], [.62, .62]; color=blue, arrow=true)\n",
+    "    end\n",
+    "    p\n",
+    "end\n",
+    "function grouped_bars(labels, values; names, colors, title=\"\", ylabel=\"\", limits=(0,1))\n",
+    "    n, groups = size(values)\n",
+    "    width = 0.75 / groups\n",
+    "    p = plot(xticks=(1:n, labels), xlims=(0.4,n+0.6), ylims=limits,\n",
+    "             ylabel=ylabel, title=title, legend=:topright)\n",
+    "    for group in 1:groups\n",
+    "        x = collect(1:n) .+ (group - (groups+1)/2) * width\n",
+    "        bar!(p, x, values[:, group]; bar_width=0.92width,\n",
+    "             color=colors[group], linecolor=:white, label=names[group])\n",
+    "    end\n",
+    "    p\n",
+    "end\n",
+    "function english_flow(labels,subtitles;title=\"\")\n",
+    "    n=length(labels)\n",
+    "    p=plot(xlims=(0,n),ylims=(0,1),axis=false,grid=false,legend=false,title=title,\n",
+    "        size=(1100,260),margin=5Plots.mm)\n",
+    "    colors=[\"#d6efeb\",\"#dce8fa\",\"#ece0f6\",\"#ffe9cf\",\"#d6efeb\"]\n",
+    "    for i in 1:n\n",
+    "        x=i-1\n",
+    "        plot!(p,Shape([x+.04,x+.88,x+.88,x+.04],[.33,.33,.76,.76]);\n",
+    "            fillcolor=colors[mod1(i,length(colors))],linecolor=\"#477086\")\n",
+    "        annotate!(p,x+.46,.56,text(labels[i],10,\"#142c43\"))\n",
+    "        annotate!(p,x+.46,.17,text(subtitles[i],9,\"#425d6f\"))\n",
+    "        i<n && plot!(p,[x+.9,x+1.02],[.54,.54];arrow=true,color=\"#477086\")\n",
+    "    end\n",
+    "    p\n",
+    "end\n",
+    "flow_diagram([\"Text\\n\\\"bank raises\\\"\", \"Token IDs\\n[2, 3]\",\n",
+    "              \"Learned vectors\\ne(bank), e(raises)\", \"Neural network\\nuses context\",\n",
+    "              \"Probabilities\\nfor next token\"];\n",
+    "             title=\"The same function-approximation idea, with a new input representation\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 2. Tokens, vocabulary, and token IDs\n",
+    "\n",
+    "A **tokenizer** splits text into units. A **vocabulary** is the set of allowed tokens. A **token ID** is an integer label used to look up a token. The numerical distance between IDs has no linguistic meaning.\n",
+    "\n",
+    "Real systems often use subword or byte-based tokenization. To keep every step visible, our tokenizer uses lowercase English words and selected punctuation. This rule is deliberately limited: it is not a general tokenizer for Chinese, numbers, contractions, or arbitrary Unicode text.\n",
+    "\n",
+    "Two special tokens will mark sentence boundaries: `<bos>` means **beginning of sequence** and `<eos>` means **end of sequence**. `<unk>` represents an **unknown** token."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "tokenize(text::AbstractString) =\n",
+    "    [m.match for m in eachmatch(r\"[a-z]+|[.,!?]\", lowercase(text))]\n",
+    "\n",
+    "demo_tokens = [\"bank\", \"raises\", \"rates\", \".\"]\n",
+    "demo_vocab = vcat([\"<unk>\"], demo_tokens)\n",
+    "demo_to_id = Dict(word => i for (i, word) in enumerate(demo_vocab))\n",
+    "demo_text = \"Bank raises rates.\"\n",
+    "demo_ids = [get(demo_to_id, word, 1) for word in tokenize(demo_text)]\n",
+    "println(\"Text:    \", demo_text)\n",
+    "println(\"Tokens:  \", tokenize(demo_text))\n",
+    "println(\"IDs:     \", demo_ids)\n",
+    "println(\"Lookup:  \", demo_vocab[demo_ids])\n",
+    "println(\"Unseen token 'river' -> ID \", get(demo_to_id, \"river\", 1), \" = <unk>\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Keep the tokenizer, the table, and the network separate\n",
+    "\n",
+    "| Object | What it does | What learns in our standard pipeline? |\n",
+    "|---|---|---|\n",
+    "| Tokenizer | Text → pieces → integer IDs | BPE rules are fitted before neural training |\n",
+    "| Embedding table | ID → a column of numbers | Its numerical entries receive gradients |\n",
+    "| Context network | Sequence of vectors → contextual states | Its weights receive gradients |\n",
+    "| Output head | Hidden state → candidate scores | Its weights receive gradients |\n",
+    "| Tokenizer decode | Selected IDs → text pieces | Fixed reconstruction procedure |\n",
+    "\n",
+    "An ID is an **address**, not a numerical feature. If $o_i$ is a $V$-dimensional\n",
+    "one-hot vector, $Eo_i=E[:,i]$. Lookup avoids constructing that mostly zero vector.\n",
+    "We differentiate selected entries of $E$, not spellings, integer addresses, or BPE merge decisions."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Token IDs are addresses</strong><p>If we relabel bank from ID 2 to ID 400, does 400 itself give the model a different linguistic meaning?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>No. With a consistently relabeled vocabulary and embedding lookup, the representation is unchanged. Numerical distance between IDs has no semantic meaning.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Keep each small example local\n",
+    "\n",
+    "The first lookup uses five tokens and four coordinates. The next hand calculation deliberately\n",
+    "uses a new three-token vocabulary and just one coordinate so its gradient fits on a page.\n",
+    "Part II will create its own 36-token table; Part III uses a separate 2,048-token BPE table.\n",
+    "These are illustrative scales, not successive expansions of one trained embedding."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 3. Embeddings are parameters, not supplied definitions\n",
+    "\n",
+    "An **embedding** assigns a learned vector $e_j\\in\\mathbb R^d$ to token ID $j$. In this notebook, Julia stores tokens as **columns** of a matrix:\n",
+    "\n",
+    "$$\n",
+    "E\\in\\mathbb R^{d\\times V},\\qquad e_j=E[:,j].\n",
+    "$$\n",
+    "\n",
+    "The dimension $d$ is a design choice, like the width of a hidden layer. Training changes the entries of $E$, while its shape stays fixed. Our final choice will be $d=32$.\n",
+    "\n",
+    "Information can be distributed across many coordinates; a coordinate is not automatically labeled “finance,” “emotion,” or “noun.” Embeddings are useful to the extent that they help the training task. Their coordinates are not uniquely identified semantic variables."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "embedding_demo = Flux.Embedding(0.2f0 .* randn(MersenneTwister(11), Float32, 4, length(demo_vocab)))\n",
+    "println(\"Embedding table size (d, V): \", size(embedding_demo.weight))\n",
+    "println(\"Embedding of bank: \", embedding_demo(demo_to_id[\"bank\"]))\n",
+    "println(\"Lookup of the sentence has size: \", size(embedding_demo(demo_ids)))\n",
+    "heatmap(1:length(demo_vocab), 1:4, embedding_demo.weight;\n",
+    "        xticks=(1:length(demo_vocab), demo_vocab), yticks=1:4,\n",
+    "        xlabel=\"Token\", ylabel=\"Embedding coordinate\", color=:RdBu,\n",
+    "        clims=(-0.5, 0.5), colorbar_title=\"Value\",\n",
+    "        title=\"A random initial embedding table: columns are trainable vectors\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 3a · A whole neural NLP model, small enough to audit\n",
+    "\n",
+    "Before language generation, try a familiar **binary prediction** task: does a review\n",
+    "have a positive label? The tiny dataset is `really good → 1`, `very good → 1`,\n",
+    "`really bad → 0`, `very bad → 0`. These labels are supplied by the dataset.\n",
+    "In language modeling, the next token will supply the label instead.\n",
+    "\n",
+    "This separate demonstration uses vocabulary `[really, very, good, bad]`.\n",
+    "For `really good`, IDs are `[1,3]`. Choose **two embedding coordinates and three hidden neurons**:\n",
+    "\n",
+    "$$\n",
+    "a=\\frac{E[:,1]+E[:,3]}2,\\quad u=Wa+b,\\quad\n",
+    "h=\\operatorname{ReLU}(u),\\quad z=v^\\top h+c,\\quad \\hat p=\\sigma(z).\n",
+    "$$\n",
+    "\n",
+    "| Object | Shape | Role |\n",
+    "|---|---|---|\n",
+    "| $E$ | $2\\times4$ | Trainable token table |\n",
+    "| $a$ | $2$ | Average of two selected vectors |\n",
+    "| $W,b$ | $3\\times2,\\ 3$ | Trainable hidden-layer weights and biases |\n",
+    "| $u,h$ | $3$ | Computed pre-activation and hidden state |\n",
+    "| $v,c$ | $3,\\ 1$ | Trainable output weights and bias |\n",
+    "| $z,\\hat p,y$ | Scalars | Logit, predicted probability, observed label |\n",
+    "\n",
+    "Parameters $\\theta=(E,W,b,v,c)$ contain **21 adjustable numbers**.\n",
+    "Intermediate quantities $a,u,h,z,\\hat p$ are recomputed, not optimized independently.\n",
+    "One neuron combines both coordinates; it does not represent one word.\n",
+    "\n",
+    "Why this architecture? Averaging supplies a fixed-size classifier input.\n",
+    "The nonlinearity adds flexibility: without ReLU, $v^\\top(Wa+b)+c$ collapses to\n",
+    "one affine function of $a$. The last layer is a logistic classifier on jointly learned\n",
+    "features, much like a binary choice model whose regressors are learned too.\n",
+    "Averaging is our simple choice; GPT keeps a representation at every position."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "foundation_words = [\"really\", \"very\", \"good\", \"bad\"]\n",
+    "foundation_parameters = (\n",
+    "    E=[0.2 -0.1 0.6 -0.3; 0.4 0.1 0.8 -0.2],\n",
+    "    W=[1.0 1.0; 1.0 -1.0; -1.0 2.0],\n",
+    "    b=zeros(3), v=[1.0, -1.0, 0.5], c=[0.0],\n",
+    ")\n",
+    "foundation_ids, foundation_y = [1, 3], 1.0\n",
+    "function foundation_forward(parameters, ids)\n",
+    "    a = vec(mean(parameters.E[:, ids]; dims=2))\n",
+    "    u = parameters.W * a + parameters.b\n",
+    "    h = max.(u, 0.0)\n",
+    "    z = dot(parameters.v, h) + only(parameters.c)\n",
+    "    probability = 1 / (1 + exp(-z))\n",
+    "    (; a, u, h, z, probability)\n",
+    "end\n",
+    "function foundation_loss(parameters, ids, y)\n",
+    "    p = foundation_forward(parameters, ids).probability\n",
+    "    # This hand-sized example stays away from 0/1. The GPT lab uses stable log-softmax.\n",
+    "    -y * log(p) - (1-y) * log1p(-p)\n",
+    "end\n",
+    "foundation_forward_before = foundation_forward(foundation_parameters, foundation_ids)\n",
+    "@assert foundation_parameters.E * [1.0, 0, 0, 0] == foundation_parameters.E[:, 1]\n",
+    "@assert sum(length, values(foundation_parameters)) == 21\n",
+    "for name in (:a, :u, :h, :z, :probability)\n",
+    "    println(name, \" = \", getproperty(foundation_forward_before, name))\n",
+    "end\n",
+    "@printf(\"Loss for y=1: %.6f\\n\", foundation_loss(foundation_parameters, foundation_ids, foundation_y))\n",
+    "\n",
+    "# Show the numerical values and actual neuron connectivity.\n",
+    "foundation_graph = plot(xlims=(0, 8), ylims=(0, 4.4), axis=false,\n",
+    "    grid=false, legend=false, size=(940, 370),\n",
+    "    title=\"Each hidden neuron combines coordinates of the mean vector\")\n",
+    "foundation_input_y, foundation_hidden_y = [2.7, 1.3], [3.25, 2.0, 0.75]\n",
+    "for iy in foundation_input_y, hy in foundation_hidden_y\n",
+    "    plot!(foundation_graph, [1, 4], [iy, hy]; color=\"#b6c5d4\", lw=2)\n",
+    "end\n",
+    "for hy in foundation_hidden_y\n",
+    "    plot!(foundation_graph, [4, 7], [hy, 2]; color=\"#b6c5d4\", lw=2)\n",
+    "end\n",
+    "scatter!(foundation_graph, fill(1, 2), foundation_input_y;\n",
+    "    color=\"#e6effb\", markersize=27, markerstrokecolor=blue)\n",
+    "scatter!(foundation_graph, fill(4, 3), foundation_hidden_y;\n",
+    "    color=[\"#e4f5ed\", \"#eeeeee\", \"#e4f5ed\"], markersize=27, markerstrokecolor=green)\n",
+    "scatter!(foundation_graph, [7], [2]; color=\"#fff1dc\", markersize=32, markerstrokecolor=gold)\n",
+    "for (y, label) in zip(foundation_input_y, [\"0.4\", \"0.6\"])\n",
+    "    annotate!(foundation_graph, 1, y, text(label, 11))\n",
+    "end\n",
+    "for (y, label) in zip(foundation_hidden_y, [\"1.0\", \"0.0\", \"0.8\"])\n",
+    "    annotate!(foundation_graph, 4, y, text(label, 11))\n",
+    "end\n",
+    "annotate!(foundation_graph, 7, 2, text(\"0.802\", 11))\n",
+    "annotate!(foundation_graph, 1, 3.95, text(\"Mean embedding a\\n2 coordinates\", 10))\n",
+    "annotate!(foundation_graph, 4, 4.0, text(\"ReLU state h\\n3 neurons\", 10))\n",
+    "annotate!(foundation_graph, 7, 3.95, text(\"Sigmoid output\\nP(positive)\", 10))\n",
+    "annotate!(foundation_graph, 4, 0.22, text(\"The middle neuron is inactive for this input.\", 9, \"#666666\"))\n",
+    "foundation_graph"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 3b · Follow the loss back to every embedding coordinate\n",
+    "\n",
+    "The forward pass gave $a=(0.4,0.6)^\\top$, $u=(1,-0.2,0.8)^\\top$,\n",
+    "$h=(1,0,0.8)^\\top$, $z=1.4$, $\\hat p\\approx0.8022$.\n",
+    "Binary cross-entropy is $L=-[y\\log\\hat p+(1-y)\\log(1-\\hat p)]$.\n",
+    "For $y=1$, the first chain-rule step is\n",
+    "\n",
+    "$$\n",
+    "\\frac{\\partial L}{\\partial z}\n",
+    "=\\left(-\\frac1{\\hat p}\\right)\\hat p(1-\\hat p)=\\hat p-1\\approx-0.1978.\n",
+    "$$\n",
+    "\n",
+    "Increasing $z$ a little lowers this positive example's loss. Continue in reverse:\n",
+    "\n",
+    "| Step | Chain rule | Approximate result |\n",
+    "|---|---|---|\n",
+    "| Output parameters | $\\nabla_v L=(\\hat p-y)h,\\quad \\partial_c L=\\hat p-y$ | $(-0.1978,0,-0.1583)^\\top,\\ -0.1978$ |\n",
+    "| Hidden state | $\\nabla_h L=(\\hat p-y)v$ | $(-0.1978,0.1978,-0.0989)^\\top$ |\n",
+    "| ReLU | $\\nabla_u L=\\nabla_h L\\odot\\mathbf1_{\\{u>0\\}}$ | $(-0.1978,0,-0.0989)^\\top$ |\n",
+    "| Hidden parameters | $\\nabla_W L=(\\nabla_u L)a^\\top,\\quad\\nabla_b L=\\nabla_u L$ | A $3\\times2$ matrix and a length-3 vector |\n",
+    "| Pooled input | $\\nabla_a L=W^\\top\\nabla_u L$ | $(-0.0989,-0.3956)^\\top$ |\n",
+    "| Each selected column | $\\nabla_{E[:,1]}L=\\nabla_{E[:,3]}L=\\tfrac12\\nabla_a L$ | $(-0.04945,-0.19782)^\\top$ |\n",
+    "\n",
+    "**Multiply along a path; add contributions from multiple paths.**\n",
+    "For example, $a_k$ influences every hidden neuron, so\n",
+    "$\\partial L/\\partial a_k=\\sum_j W_{jk}\\,\\partial L/\\partial u_j$.\n",
+    "The inactive ReLU transmits zero local gradient.\n",
+    "Equal word gradients come from our equal-weight average, not a general rule about embeddings.\n",
+    "\n",
+    "Calculate **all** gradients at the old parameters, then simultaneously apply\n",
+    "$\\theta_{\\rm new}=\\theta_{\\rm old}-\\eta\\nabla_\\theta L$.\n",
+    "One sample does not identify which word carries sentiment; other examples supply other gradients."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "foundation_dz = foundation_forward_before.probability - foundation_y\n",
+    "foundation_dh = foundation_dz .* foundation_parameters.v\n",
+    "foundation_du = foundation_dh .* (foundation_forward_before.u .> 0)\n",
+    "foundation_da = foundation_parameters.W' * foundation_du\n",
+    "foundation_dE = zeros(size(foundation_parameters.E))\n",
+    "for id in foundation_ids\n",
+    "    foundation_dE[:, id] .+= foundation_da ./ length(foundation_ids)\n",
+    "end\n",
+    "foundation_manual = (\n",
+    "    E=foundation_dE, W=foundation_du * foundation_forward_before.a',\n",
+    "    b=foundation_du, v=foundation_dz .* foundation_forward_before.h, c=[foundation_dz],\n",
+    ")\n",
+    "foundation_auto = Flux.gradient(\n",
+    "    p -> foundation_loss(p, foundation_ids, foundation_y), foundation_parameters)[1]\n",
+    "foundation_gradient_error = maximum(\n",
+    "    maximum(abs.(getproperty(foundation_manual, key) .- getproperty(foundation_auto, key)))\n",
+    "    for key in keys(foundation_parameters))\n",
+    "@assert foundation_gradient_error < 1e-10\n",
+    "@assert all(iszero, foundation_auto.E[:, [2, 4]])  # words not looked up\n",
+    "@assert all(iszero, foundation_auto.W[2, :])       # inactive ReLU\n",
+    "foundation_eta = 0.1\n",
+    "foundation_updated = (\n",
+    "    E=foundation_parameters.E - foundation_eta * foundation_auto.E,\n",
+    "    W=foundation_parameters.W - foundation_eta * foundation_auto.W,\n",
+    "    b=foundation_parameters.b - foundation_eta * foundation_auto.b,\n",
+    "    v=foundation_parameters.v - foundation_eta * foundation_auto.v,\n",
+    "    c=foundation_parameters.c - foundation_eta * foundation_auto.c,\n",
+    ")\n",
+    "foundation_forward_after = foundation_forward(foundation_updated, foundation_ids)\n",
+    "foundation_losses = [\n",
+    "    foundation_loss(p, foundation_ids, foundation_y)\n",
+    "    for p in (foundation_parameters, foundation_updated)]\n",
+    "@assert foundation_losses[2] < foundation_losses[1]\n",
+    "@assert foundation_updated.E[:, [2, 4]] == foundation_parameters.E[:, [2, 4]]\n",
+    "@printf(\"Largest manual-versus-AD gradient error: %.3e\\n\", foundation_gradient_error)\n",
+    "println(\"Gradient of the good embedding: \", foundation_auto.E[:, 3])\n",
+    "println(\"good before / after: \", foundation_parameters.E[:, 3], \" / \", foundation_updated.E[:, 3])\n",
+    "@printf(\"P(positive): %.6f -> %.6f | loss: %.6f -> %.6f\\n\",\n",
+    "    foundation_forward_before.probability, foundation_forward_after.probability,\n",
+    "    foundation_losses...)\n",
+    "foundation_grad_plot = heatmap(1:4, 1:2, foundation_auto.E;\n",
+    "    xticks=(1:4, foundation_words), yticks=(1:2, [\"coordinate 1\", \"coordinate 2\"]),\n",
+    "    color=:RdBu, clims=(-0.22, 0.22), colorbar_title=\"Derivative\",\n",
+    "    title=\"Gradients reach the selected columns\", xrotation=15)\n",
+    "foundation_loss_plot = bar([\"Before update\", \"After update\"], foundation_losses;\n",
+    "    color=[blue, green], label=false, ylabel=\"Binary cross-entropy\",\n",
+    "    ylims=(0, 1.15maximum(foundation_losses)), title=\"One simultaneous update\")\n",
+    "plot(foundation_grad_plot, foundation_loss_plot; layout=(1, 2), size=(1020, 330))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Parameters versus computed states</strong><p>Did the optimizer update integer IDs or the hidden vector h? Why did very and bad stay fixed?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>It updated E, W, b, v, and c. IDs are fixed addresses; h is recomputed. Unused embedding columns have no path to this example's loss. This assumes separate input/output weights and no extra regularization.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 3c · Change the task, keep the learning logic\n",
+    "\n",
+    "`I love cats .` supplies `I → love`, `I love → cats`, and `I love cats → .`.\n",
+    "The text supplies its own labels: **self-supervised learning**.\n",
+    "No \"correct embedding\" is supplied.\n",
+    "\n",
+    "Replace the binary output by $V$ scores:\n",
+    "\n",
+    "$$z=Uh+b_{\\rm out}\\in\\mathbb R^V,\\quad\n",
+    "p=\\operatorname{softmax}(z),\\quad L=-\\log p_y,\\quad \\nabla_z L=p-o_y.$$\n",
+    "\n",
+    "Each row of $U$ scores one candidate. Gradients return through $U$, the network\n",
+    "producing $h$, and selected embedding columns.\n",
+    "A shared prefix can have several valid next tokens: learn a conditional distribution,\n",
+    "rather than making every observed continuation certain.\n",
+    "The next scalar `bank → raises` example isolates this mechanism with fewer numbers.\n",
+    "It uses a new vocabulary and task, rather than continuing the review classifier."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### One embedding update that we can check by hand\n",
+    "\n",
+    "Use a vocabulary `[bank, raises, rates]` and the training pair `bank → raises`. Give the input `bank` a one-dimensional embedding $e=0$. Temporarily hold the output weights at $w=(0,1,-1)$, so the three logits (unnormalized scores) are\n",
+    "\n",
+    "$$z=(0,e,-e).$$\n",
+    "\n",
+    "Softmax converts logits into probabilities. The negative log probability of the correct answer is the **cross-entropy loss**:\n",
+    "\n",
+    "$$\n",
+    "p_j=\\frac{\\exp(z_j)}{\\sum_k\\exp(z_k)},\\qquad\n",
+    "\\mathcal L(e)=-\\log p_{\\text{raises}}\n",
+    "=\\log(1+\\exp(e)+\\exp(-e))-e.\n",
+    "$$\n",
+    "\n",
+    "At $e=0$, all three probabilities equal $1/3$, and $\\mathcal L'(0)=-1$. With learning rate $\\eta=0.1$,\n",
+    "\n",
+    "$$e_{\\text{new}}=e-\\eta\\mathcal L'(e)=0.1.$$\n",
+    "\n",
+    "The next cell checks the derivative with automatic differentiation and a finite difference. This is the actual route by which prediction error teaches an embedding."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "output_weights = Float32[0, 1, -1]\n",
+    "toy_probs(e) = Flux.softmax(output_weights .* e)\n",
+    "toy_loss(e) = -Flux.logsoftmax(output_weights .* e)[2]  # raises is target ID 2\n",
+    "e_before = 0f0\n",
+    "g = Flux.gradient(toy_loss, e_before)[1]\n",
+    "epsilon = 1f-3\n",
+    "g_fd = (toy_loss(e_before + epsilon) - toy_loss(e_before - epsilon)) / (2epsilon)\n",
+    "e_after = e_before - 0.1f0 * g\n",
+    "@printf(\"AD gradient: %.4f | finite difference: %.4f\\n\", g, g_fd)\n",
+    "@printf(\"bank embedding: %.2f -> %.2f\\n\", e_before, e_after)\n",
+    "@printf(\"P(raises): %.4f -> %.4f | loss: %.4f -> %.4f\\n\",\n",
+    "        toy_probs(e_before)[2], toy_probs(e_after)[2], toy_loss(e_before), toy_loss(e_after))\n",
+    "@assert isapprox(g, -1f0; atol=1f-6)\n",
+    "@assert isapprox(g, g_fd; atol=1f-3)\n",
+    "grouped_bars([\"bank\", \"raises\", \"rates\"], hcat(toy_probs(e_before), toy_probs(e_after));\n",
+    "    names=[\"Before\", \"After one update\"], colors=[blue, green],\n",
+    "    ylabel=\"Next-token probability\", limits=(0, .5),\n",
+    "    title=\"Updating the input embedding raises the probability of the correct answer\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "Only the input embedding of `bank` was involved in that toy lookup. With a separate output matrix, using `raises` as a target does not itself look up its input embedding. Later, all model parameters will be trained jointly. Each occurrence of a token shares the same input embedding parameters.\n",
+    "\n",
+    "**Pause and predict:** if the correct answer were `rates` instead, which direction should the update move $e$? Check by changing the target index from `2` to `3` in a copy of the toy loss."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · A gradient reaches the input embedding</strong><p>Why did the bank vector change? If rates were the target instead, which way would the scalar embedding move?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The bank vector changed because it produced logits used in the next-token loss. A separate target ID does not look up its input embedding. With rates as the target, the derivative at zero is +1, so a step of size 0.1 moves e to -0.1.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Three different sizes: vocabulary $V$, width $d$, and sequence length $T$\n",
+    "\n",
+    "| Choice | Meaning | Real English model |\n",
+    "|---|---|---|\n",
+    "| $V$ | Number of distinct token IDs | 2,048 |\n",
+    "| $d$ | Numbers in each token vector | 256 |\n",
+    "| $T$ | Positions being processed in a window | At most 128 |\n",
+    "\n",
+    "The table is $E\\in\\mathbb R^{d\\times V}$; one embedded sequence is\n",
+    "$X\\in\\mathbb R^{d\\times T}$. Token count is not embedding dimension.\n",
+    "The table has $Vd$ parameters: doubling $d$ doubles that table, while a $d\\times d$\n",
+    "projection has four times as many weights.\n",
+    "Choose width using the task, data, runtime, and validation performance.\n",
+    "Gradient descent adjusts entries, not the number of coordinates."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 4. From a token's identity to its position and context\n",
+    "\n",
+    "The initial lookup for `bank` is the same in `the river bank` and `the bank raises rates`. The later network builds a **contextual representation** that can differ between those occurrences.\n",
+    "\n",
+    "Order also matters: `the bank raises rates` and `rates raises bank the` contain the same tokens. Our Transformer begins with\n",
+    "\n",
+    "$$x_i=e_{t_i}+p_i,$$\n",
+    "\n",
+    "where $p_i\\in\\mathbb R^d$ is a learned **position embedding** for slot $i$. Token embeddings tell the model what is present; position embeddings provide its slot. These position vectors are learned parameters, too.\n",
+    "\n",
+    "The matrix of token representations then passes through attention and feed-forward layers. The word “embedding” is sometimes also used for their outputs; here we will distinguish **input token embeddings** $e$ from **contextual hidden states** $h$."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "p_position = plot(xlims=(0, 9), ylims=(0, 3), axis=false, grid=false, legend=false,\n",
+    "    title=\"Two separate lookups provide identity and position\", size=(900, 270),\n",
+    "    left_margin=3Plots.mm, right_margin=3Plots.mm,\n",
+    "    bottom_margin=2Plots.mm, top_margin=5Plots.mm)\n",
+    "for (x, y, label, fill) in [(1.5, 2.2, \"Token ID → lookup\\ne(token)\", \"#EFF4FC\"),\n",
+    "                            (1.5, 0.7, \"Slot ID → lookup\\np(slot)\", \"#FFF5E5\"),\n",
+    "                            (4.5, 1.45, \"Add vectors\\nx = e + p\", \"#F1EBF8\"),\n",
+    "                            (7.5, 1.45, \"Context processing\\nh depends on prefix\", \"#EAF7F1\")]\n",
+    "    plot!(p_position, Shape([x-1.1,x+1.1,x+1.1,x-1.1], [y-.45,y-.45,y+.45,y+.45]);\n",
+    "          fillcolor=fill, linecolor=blue, linewidth=1.2)\n",
+    "    annotate!(p_position, x, y, text(label, 10, :center, \"#183153\"))\n",
+    "end\n",
+    "plot!(p_position, [2.65,3.35], [2.2,1.65]; color=blue, arrow=true)\n",
+    "plot!(p_position, [2.65,3.35], [.7,1.25]; color=gold, arrow=true)\n",
+    "plot!(p_position, [5.65,6.35], [1.45,1.45]; color=blue, arrow=true)\n",
+    "p_position"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Identity versus context</strong><p>Must bank have the same hidden state in river bank and bank raises rates?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The input token lookup is shared, but position information and the available surrounding tokens differ. Later contextual hidden states can therefore differ.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 4a · A short bridge: averaging → recurrence → attention\n",
+    "\n",
+    "Lookup preserves order as an ordered collection of columns.\n",
+    "**Averaging** discards it: `really good` and `good really` have the same mean.\n",
+    "No later classifier can recover information already discarded.\n",
+    "\n",
+    "A recurrent neural network (**RNN**) replaces averaging by a state update:\n",
+    "\n",
+    "$$h_t=\\tanh(W_xe_{x_t}+W_hh_{t-1}+b),\\qquad h_0=0.$$\n",
+    "\n",
+    "Every position uses the **same** parameters; its input and state differ.\n",
+    "Equivalently, concatenate $e_{x_t}$ and $h_{t-1}$, then apply $[W_x\\ W_h]$.\n",
+    "This is an ordinary neural layer reused along the sequence.\n",
+    "State width need not equal embedding width.\n",
+    "\n",
+    "The example uses the earlier two-dimensional table and a **scalar** RNN state.\n",
+    "Hand-chosen weights expose order dependence; they are not trained language understanding.\n",
+    "After comparing word orders, a separate two-position, scalar-input example isolates\n",
+    "the backward derivative, so every chain-rule factor can be printed."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function foundation_rnn_final(E, ids; wx=[0.8, -0.3], wh=0.5)\n",
+    "    h = 0.0\n",
+    "    for id in ids\n",
+    "        h = tanh(dot(wx, E[:, id]) + wh*h)\n",
+    "    end\n",
+    "    h\n",
+    "end\n",
+    "foundation_order_a, foundation_order_b = [1, 3], [3, 1]\n",
+    "@assert mean(foundation_parameters.E[:, foundation_order_a]; dims=2) ≈\n",
+    "        mean(foundation_parameters.E[:, foundation_order_b]; dims=2)\n",
+    "foundation_order_states = [\n",
+    "    foundation_rnn_final(foundation_parameters.E, ids)\n",
+    "    for ids in (foundation_order_a, foundation_order_b)]\n",
+    "@assert abs(foundation_order_states[1] - foundation_order_states[2]) > 0.01\n",
+    "println(\"Identical means, different recurrent states: \", foundation_order_states)\n",
+    "\n",
+    "# Only the second position has a loss: isolate its path to the first input.\n",
+    "foundation_e1, foundation_e2 = 0.2, 0.6\n",
+    "foundation_wx, foundation_wh = 0.8, 0.5\n",
+    "foundation_h1 = tanh(foundation_wx * foundation_e1)\n",
+    "foundation_h2 = tanh(foundation_wx * foundation_e2 + foundation_wh * foundation_h1)\n",
+    "foundation_late_loss(e1) = log1p(exp(-tanh(foundation_wx * foundation_e2 +\n",
+    "    foundation_wh * tanh(foundation_wx * e1))))  # y=1, logit=h2\n",
+    "foundation_late_dh2 = 1/(1+exp(-foundation_h2)) - 1\n",
+    "foundation_early_gradient = foundation_late_dh2 * (1-foundation_h2^2) *\n",
+    "    foundation_wh * (1-foundation_h1^2) * foundation_wx\n",
+    "foundation_early_auto = Flux.gradient(foundation_late_loss, foundation_e1)[1]\n",
+    "@assert isapprox(foundation_early_gradient, foundation_early_auto; atol=1e-12)\n",
+    "@printf(\"Later loss, earlier input gradient: manual %.6f | AD %.6f\\n\",\n",
+    "    foundation_early_gradient, foundation_early_auto)\n",
+    "bar([\"really → good\", \"good → really\"], foundation_order_states;\n",
+    "    color=[blue, green], label=false, ylabel=\"Final scalar state\",\n",
+    "    ylims=(0, 1.15maximum(foundation_order_states)),\n",
+    "    title=\"Same vectors and weights, different reading order\", size=(850, 300))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 4b · How does a later error train an earlier token?\n",
+    "\n",
+    "For a loss $L_2$ after two scalar states, the recurrent path gives\n",
+    "\n",
+    "$$\n",
+    "\\frac{\\partial L_2}{\\partial e_1}\n",
+    "=\\frac{\\partial L_2}{\\partial h_2}\n",
+    "(1-h_2^2)w_h(1-h_1^2)w_x.\n",
+    "$$\n",
+    "\n",
+    "That is **backpropagation through time**: the chain rule on an unrolled sequence.\n",
+    "If position 1 has its own loss, add its contribution.\n",
+    "Shared weights collect gradients from every occurrence before being updated once.\n",
+    "Long derivative products can shrink or grow, making long-distance credit assignment difficult.\n",
+    "\n",
+    "An **LSTM** adds a gated memory path:\n",
+    "\n",
+    "$$c_t=f_t\\odot c_{t-1}+i_t\\odot\\widetilde c_t.$$\n",
+    "\n",
+    "Forget and input gates are computed sigmoid outputs of trainable functions of the input\n",
+    "and previous hidden state. They are not independently optimized constants.\n",
+    "Holding gates fixed, the direct memory-path derivative is $\\operatorname{diag}(f_t)$;\n",
+    "the full derivative can include other paths through the gates.\n",
+    "\n",
+    "Take $c_{t-1}=0.8$, $\\widetilde c_t=-0.3$, $f_t=0.9$, $i_t=0.2$: then $c_t=0.66$.\n",
+    "If the later network supplies $\\partial L/\\partial c_t=-2$, then\n",
+    "$\\partial L/\\partial f_t=-1.6$ and $\\partial L/\\partial i_t=0.6$.\n",
+    "Through sigmoid, pre-activation gradients are $-0.144$ and $0.096$.\n",
+    "Prediction error teaches the gate-producing weights what to preserve and write;\n",
+    "no explicit \"remember this word\" label is needed.\n",
+    "An improved memory path does not guarantee perfect long-term memory.\n",
+    "\n",
+    "**Attention changes how history is accessed.** It reads a weighted combination of stored\n",
+    "position representations rather than relying only on a final recurrent state.\n",
+    "Transformer self-attention builds contextual states without RNN recurrence.\n",
+    "These are different representations for the same kind of prediction loss;\n",
+    "GPT does not run this RNN or LSTM example internally.\n",
+    "\n",
+    "Optional reading: [D2L on RNNs](https://en.d2l.ai/chapter_recurrent-neural-networks/rnn.html)\n",
+    "and [Stanford CS224n on RNNs and gated models](https://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes05-LM_RNN.pdf)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "foundation_gate_scores = [log(0.9/0.1), log(0.2/0.8)]\n",
+    "foundation_gate_local_loss(a) = -2 * (\n",
+    "    (1/(1+exp(-a[1]))) * 0.8 + (1/(1+exp(-a[2]))) * (-0.3))\n",
+    "foundation_gate_gradient = Flux.gradient(foundation_gate_local_loss, foundation_gate_scores)[1]\n",
+    "@assert isapprox(foundation_gate_gradient, [-0.144, 0.096]; atol=1e-12)\n",
+    "println(\"Forget/input gate pre-activation gradients: \", foundation_gate_gradient)\n",
+    "println(\"This local linear loss represents an upstream gradient of -2, not a trained LSTM.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · One set of weights, several gradient paths</strong><p>Does a longer sentence create more RNN parameters? Can its last prediction update an early embedding?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The same matrices are reused, so no new parameters are created. The last loss depends on early states through recurrence, and its gradient can reach early embedding lookups. An early position's own loss contributes another gradient that must be added.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 5. Attention: choose information using the current context\n",
+    "\n",
+    "**Self-attention** lets each position combine information from positions in the same sequence. A head forms three projections of its input:\n",
+    "\n",
+    "| Object | Intuition | Calculation |\n",
+    "|---|---|---|\n",
+    "| Query $q_i$ | What information am I looking for? | $q_i=W_Qx_i$ |\n",
+    "| Key $k_j$ | How can this position be matched? | $k_j=W_Kx_j$ |\n",
+    "| Value $v_j$ | What information can this position contribute? | $v_j=W_Vx_j$ |\n",
+    "\n",
+    "For a query at position $i$, the model scores each eligible key and forms a weighted average:\n",
+    "\n",
+    "$$\n",
+    "s_{ji}=\\frac{k_j^\\top q_i}{\\sqrt{d_h}},\\qquad\n",
+    "a_{ji}=\\frac{\\exp(s_{ji})}{\\sum_{\\ell\\ \\mathrm{eligible}}\\exp(s_{\\ell i})},\\qquad\n",
+    "o_i=\\sum_j a_{ji}v_j.\n",
+    "$$\n",
+    "\n",
+    "The weights are computed anew from the current input. The projection matrices are shared learned parameters. A larger attention weight means more weight on a value vector; it is not, by itself, proof of a causal or semantic explanation.\n",
+    "\n",
+    "**Our matrix convention:** keys are rows, queries are columns, and softmax operates down each column. Consequently, the matrix formula is $A=\\operatorname{softmax}(K^\\top Q/\\sqrt{d_h})$ and $O=VA$. This is the transpose convention of many textbooks."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "# Hand-chosen Q, K, V: these illustrate the arithmetic, not learned economics.\n",
+    "attention_words = [\"inflation\", \"rises\", \"bank\"]\n",
+    "Q_demo = Float32[1 0 0; 0 1 2]  # shape: 2 coordinates × 3 queries\n",
+    "K_demo = Float32[1 0 1; 0 1 0]\n",
+    "V_demo = Float32[1 0 0; 0 1 1]\n",
+    "scores_demo = K_demo' * Q_demo / sqrt(2f0)\n",
+    "weights_demo = Flux.softmax(scores_demo; dims=1)\n",
+    "mixed_demo = V_demo * weights_demo\n",
+    "println(\"Attention weights for query 'bank': \", round.(weights_demo[:, 3]; digits=3))\n",
+    "println(\"New vector at that query:          \", round.(mixed_demo[:, 3]; digits=3))\n",
+    "println(\"Column sums:                      \", vec(sum(weights_demo; dims=1)))\n",
+    "p_weights = heatmap(1:3, 1:3, weights_demo; clims=(0, 1), color=:Blues,\n",
+    "    xticks=(1:3, attention_words), yticks=(1:3, attention_words), yflip=true,\n",
+    "    xlabel=\"Query position\", ylabel=\"Key position\", title=\"Weights computed from Q and K\")\n",
+    "p_bank = bar(attention_words, weights_demo[:, 3]; color=blue, label=false,\n",
+    "    ylabel=\"Attention weight\", ylims=(0, 1), title=\"Which values does 'bank' combine?\")\n",
+    "plot(p_weights, p_bank; layout=(1, 2), size=(1000, 390),\n",
+    "     margin=7Plots.mm, bottom_margin=11Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Compute one attention output</strong><p>For the bank query, can you reproduce the three weights and the two coordinates of the weighted value vector?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The scores are approximately [0, 1.414, 0]. Softmax gives [0.164, 0.673, 0.164]. Multiplying the supplied value vectors by those weights gives approximately [0.164, 0.836].</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 5a · Who teaches attention where to look?\n",
+    "\n",
+    "No correct attention map was supplied in our hand-sized example.\n",
+    "The next-token loss trains the matrices producing queries, keys, and values.\n",
+    "For one query, let $r=\\sum_j\\alpha_jv_j$, $\\alpha=\\operatorname{softmax}(s)$,\n",
+    "and suppose the later network supplies $g=\\nabla_r L$:\n",
+    "\n",
+    "$$\n",
+    "\\frac{\\partial L}{\\partial\\alpha_j}=g^\\top v_j,\\qquad\n",
+    "\\frac{\\partial L}{\\partial s_j}=\\alpha_j\\,g^\\top(v_j-r).\n",
+    "$$\n",
+    "\n",
+    "The score gradient compares a position's content with the **current mixture**.\n",
+    "Weights cannot change independently because they sum to one.\n",
+    "There is also a direct content-path gradient $\\alpha_jg$ into $v_j$.\n",
+    "Score paths continue through $q^\\top k_j$ into queries and keys; content paths reach values.\n",
+    "Both continue into projection matrices and embedding lookups.\n",
+    "\n",
+    "The independent example below checks the score derivative.\n",
+    "$g^\\top r$ is a local linear proxy for a supplied gradient, not an extra GPT objective.\n",
+    "In the full model, $g$ comes from the actual prediction loss."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "foundation_values = [1.0 0 1; 0 1 1]\n",
+    "foundation_scores = [1.0, 1.0, 2.0]\n",
+    "foundation_attention = Flux.softmax(foundation_scores)\n",
+    "foundation_read = foundation_values * foundation_attention\n",
+    "foundation_upstream = [-0.7, 0.2]\n",
+    "foundation_score_manual = foundation_attention .* (\n",
+    "    foundation_values' * foundation_upstream .- dot(foundation_upstream, foundation_read))\n",
+    "foundation_score_auto = Flux.gradient(\n",
+    "    s -> dot(foundation_upstream, foundation_values * Flux.softmax(s)),\n",
+    "    foundation_scores)[1]\n",
+    "@assert maximum(abs.(foundation_score_manual-foundation_score_auto)) < 1e-12\n",
+    "@assert abs(sum(foundation_score_manual)) < 1e-12\n",
+    "println(\"Attention weights: \", foundation_attention)\n",
+    "println(\"Read vector: \", foundation_read)\n",
+    "println(\"Score gradients: \", foundation_score_manual)\n",
+    "foundation_ap = bar([\"position 1\", \"position 2\", \"position 3\"], foundation_attention;\n",
+    "    color=blue, label=false, ylabel=\"Attention weight\", title=\"Current information mixture\",\n",
+    "    ylims=(0, 0.7))\n",
+    "foundation_gp = bar([\"score 1\", \"score 2\", \"score 3\"], foundation_score_manual;\n",
+    "    color=[green, gold, green], label=false, ylabel=\"Local loss derivative\",\n",
+    "    ylims=(-0.08, 0.15), title=\"A prediction gradient changes the routing\")\n",
+    "hline!(foundation_gp, [0]; color=\"#777777\", lw=1, label=false)\n",
+    "plot(foundation_ap, foundation_gp; layout=(1, 2), size=(1000, 310))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Attention learns through prediction</strong><p>Does a positive score gradient favor increasing that score? Are the attention weights permanent parameters?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>Gradient descent subtracts the gradient, so a positive derivative favors a lower score locally. Scores and weights are recomputed from inputs. Trainable query/key/value matrices receive gradients through those computations.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 6. Causal attention: the model must not peek at the answer\n",
+    "\n",
+    "When a position predicts the next token, it may use itself and earlier positions. It must not use later positions, which would reveal future targets during training.\n",
+    "\n",
+    "We add $-\\infty$ to forbidden attention scores before softmax. Their resulting weights are zero:\n",
+    "\n",
+    "$$\n",
+    "M_{ji}=\\begin{cases}0,&j\\leq i,\\\\-\\infty,&j>i.\\end{cases}\n",
+    "$$\n",
+    "\n",
+    "This is a **causal mask**. Here “causal” refers to the left-to-right information restriction, not identification of an economic causal effect.\n",
+    "\n",
+    "During training, all positions can be computed in parallel with this mask. During generation, we append one sampled token at a time. Training uses the actual earlier tokens from the data, a procedure called **teacher forcing**."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "causal_bias(T) = [key <= query ? 0f0 : -Inf32 for key in 1:T, query in 1:T]\n",
+    "causal_demo = Flux.softmax(scores_demo .+ causal_bias(3); dims=1)\n",
+    "p_mask = heatmap(1:3, 1:3, Float32.(isfinite.(causal_bias(3)));\n",
+    "    clims=(0, 1), color=:Blues, colorbar=false, yflip=true,\n",
+    "    xticks=(1:3, attention_words), yticks=(1:3, attention_words),\n",
+    "    xlabel=\"Query position\", ylabel=\"Key position\", title=\"Allowed = blue; future = white\")\n",
+    "p_causal = heatmap(1:3, 1:3, causal_demo; clims=(0, 1), color=:Blues, yflip=true,\n",
+    "    xticks=(1:3, attention_words), yticks=(1:3, attention_words),\n",
+    "    xlabel=\"Query position\", ylabel=\"Key position\", title=\"Attention after causal masking\")\n",
+    "@assert causal_demo[2, 1] == 0f0 && causal_demo[3, 2] == 0f0\n",
+    "@assert all(isapprox.(vec(sum(causal_demo; dims=1)), 1f0; atol=1f-6))\n",
+    "plot(p_mask, p_causal; layout=(1, 2), size=(1000, 390),\n",
+    "     margin=7Plots.mm, bottom_margin=11Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Why training must not peek</strong><p>Which axis must sum to one? Why must future positions receive exactly zero weight?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>Keys are rows and queries are columns here, so each column sums to one. Future inputs can reveal the target we are trying to predict; masking their scores with minus infinity removes that shortcut.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Where do encoder and decoder fit?\n",
+    "\n",
+    "| Architecture | How context is processed | Example use |\n",
+    "|---|---|---|\n",
+    "| Encoder-only | Each position can use the full input, in both directions | Classification with a task head |\n",
+    "| Decoder-only | Each position uses its prefix under a causal mask | Next-token generation |\n",
+    "| Encoder–decoder | An encoder processes the source; a decoder generates a target using source information and its target prefix | Translation |\n",
+    "\n",
+    "Embeddings are an input component of these architectures. An encoder is more than an embedding lookup, and a neural decoder is more than looking up token strings. A Transformer encoder need not compress the entire sentence into one vector.\n",
+    "\n",
+    "**We now build the decoder-only route.** The tokenizer's `encode`/`decode` operations below are simple ID/string conversions; they are not neural encoder/decoder networks."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Dictionary encoding is different from a neural encoder\n",
+    "\n",
+    "`encode(\"cat\")` in a tokenizer returns token IDs. A **neural encoder** processes a sequence into\n",
+    "contextual vectors. A **neural decoder** produces output-token probabilities, optionally reading an encoder's vectors.\n",
+    "`decode(ids)` in a tokenizer simply turns IDs back into text.\n",
+    "\n",
+    "In an encoder–decoder translator, the source sentence supplies keys/values through the encoder,\n",
+    "while the decoder combines that source information with its target-language prefix.\n",
+    "Our GPT follows the decoder-only path: its available information is its own prefix."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "flow_diagram([\"Source text\\nand source IDs\",\"Encoder\\ncontextual vectors\",\n",
+    "              \"Decoder\\n+ target prefix\",\"Next target-token\\nprobabilities\"];\n",
+    "    title=\"Where an encoder-decoder translation model would fit\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Connect the entire learning loop\n",
+    "\n",
+    "$$\n",
+    "\\text{token IDs}\\;\\longrightarrow\\;E[:,x_t]+P[:,t]\\;\\longrightarrow\\;\n",
+    "\\text{causal Transformer}\\;\\longrightarrow\\;z_t\\;\\longrightarrow\\;p_t.\n",
+    "$$\n",
+    "\n",
+    "For target ID $y_t$, the loss is $-\\log p_t[y_t]$. Backpropagation follows the same graph in reverse\n",
+    "to compute gradients for the output head, attention/MLP parameters, position table, and token table.\n",
+    "The target is a fixed observed ID; an embedding is a trainable parameter. They are different objects.\n",
+    "\n",
+    "Before continuing, explain the loop in your own words: **what was observed, what was predicted,\n",
+    "what error was measured, and which numbers changed?**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<a id=\"cpu-lab\"></a>\n",
+    "# Part II · Build and train a small GPT on CPU\n",
+    "\n",
+    "The full implementation below is ordinary Julia in this notebook. Its names begin with `Teaching` so it can coexist with the separate large English model later. No GPU or external corpus is needed."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 7. A transparent, small training language\n",
+    "\n",
+    "Our synthetic corpus varies the introductory word, subject, direction, and modifier. For example:\n",
+    "\n",
+    "```text\n",
+    "when inflation rises today the bank raises rates .\n",
+    "when inflation falls today the bank cuts rates .\n",
+    "if demand rises locally the firms increase production .\n",
+    "```\n",
+    "\n",
+    "These are **hand-written rules for an artificial language**. They are not empirical estimates or universal economic relationships. They create a useful context dependency: after `the bank`, the next token depends on an earlier `rises` or `falls`.\n",
+    "\n",
+    "We first split **whole unique sentences**, then build the vocabulary and training tensors. Held-out sentences are new combinations from the same grammar. Many fragments are shared across sets, so this is a modest test of grammar recombination, not broad linguistic or economic generalization."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "clauses = [\n",
+    "    (\"inflation\",    \"rises\", \"bank raises rates\"),\n",
+    "    (\"inflation\",    \"falls\", \"bank cuts rates\"),\n",
+    "    (\"demand\",       \"rises\", \"firms increase production\"),\n",
+    "    (\"demand\",       \"falls\", \"firms reduce production\"),\n",
+    "    (\"productivity\", \"rises\", \"workers produce more\"),\n",
+    "    (\"productivity\", \"falls\", \"workers produce less\"),\n",
+    "    (\"income\",       \"rises\", \"households consume more\"),\n",
+    "    (\"income\",       \"falls\", \"households consume less\"),\n",
+    "    (\"employment\",   \"rises\", \"households earn more\"),\n",
+    "    (\"employment\",   \"falls\", \"households earn less\"),\n",
+    "]\n",
+    "openers = [\"when\", \"if\", \"as\"]\n",
+    "modifiers = [\"today\", \"locally\", \"abroad\", \"recently\", \"globally\", \"again\"]\n",
+    "sentences = [\"$opening $subject $direction $modifier the $ending .\"\n",
+    "             for (subject, direction, ending) in clauses\n",
+    "             for opening in openers for modifier in modifiers]\n",
+    "@assert length(unique(sentences)) == length(sentences)\n",
+    "order = randperm(MersenneTwister(27), length(sentences))\n",
+    "n_train = floor(Int, 0.8length(sentences))\n",
+    "train_text = sentences[order[1:n_train]]\n",
+    "heldout_text = sentences[order[n_train+1:end]]\n",
+    "@assert isempty(intersect(Set(train_text), Set(heldout_text)))\n",
+    "\n",
+    "vocab = vcat([\"<bos>\", \"<eos>\", \"<unk>\"],\n",
+    "             sort(unique(vcat(tokenize.(train_text)...))))\n",
+    "to_id = Dict(word => i for (i, word) in enumerate(vocab))\n",
+    "BOS, EOS, UNK = to_id[\"<bos>\"], to_id[\"<eos>\"], to_id[\"<unk>\"]\n",
+    "V = length(vocab)\n",
+    "encode_text(text) = Int[get(to_id, word, UNK) for word in tokenize(text)]\n",
+    "decode_ids(ids) = replace(join(vocab[ids], \" \"), \" .\" => \".\", \" ,\" => \",\")\n",
+    "@assert all(word in keys(to_id) for s in heldout_text for word in tokenize(s))\n",
+    "@printf(\"Unique sentences: %d | training: %d | held-out: %d | vocabulary: %d\\n\",\n",
+    "        length(sentences), length(train_text), length(heldout_text), V)\n",
+    "println(\"Training example: \", first(train_text))\n",
+    "println(\"Held-out example: \", first(heldout_text))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Turn one sentence into many supervised predictions\n",
+    "\n",
+    "For a sentence, append boundary tokens and shift it by one slot:\n",
+    "\n",
+    "```text\n",
+    "Input X:   <bos> when inflation rises today the bank raises rates .\n",
+    "Target Y:  when  inflation rises today the bank raises rates . <eos>\n",
+    "```\n",
+    "\n",
+    "At input position $i$, the model predicts target $Y_i$ using $X_1,\\ldots,X_i$. Every position contributes to the loss. All our sentences have the same length, so no padding or padding-loss mask is needed.\n",
+    "\n",
+    "**Shape convention:** token IDs are an integer array `T × B`, where $T$ is sequence length and $B$ is batch size. Embeddings have shape `d × T × B`; logits have shape `V × T × B`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function language_pairs(texts)\n",
+    "    sequences = [vcat(BOS, encode_text(s), EOS) for s in texts]\n",
+    "    @assert length(unique(length.(sequences))) == 1\n",
+    "    X = hcat([s[1:end-1] for s in sequences]...)\n",
+    "    Y = hcat([s[2:end] for s in sequences]...)\n",
+    "    X, Y\n",
+    "end\n",
+    "X_train, Y_train = language_pairs(train_text)\n",
+    "X_heldout, Y_heldout = language_pairs(heldout_text)\n",
+    "T = size(X_train, 1)\n",
+    "println(\"Training IDs: \", size(X_train), \" = (T, B)\")\n",
+    "println(\"First sentence, shifted prediction pairs:\")\n",
+    "for i in 1:T\n",
+    "    @printf(\"%2d | %-12s -> %s\\n\", i, vocab[X_train[i, 1]], vocab[Y_train[i, 1]])\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### A baseline: use only the immediately previous token\n",
+    "\n",
+    "A **bigram model** estimates $P(t_{i+1}\\mid t_i)$ by counting training transitions. We add a small pseudocount to every possible transition, then normalize. It is a useful baseline: can the neural model benefit from longer context?\n",
+    "\n",
+    "The two prefixes `when inflation rises today the bank` and `when inflation falls today the bank` end in the same token. A bigram model must give them exactly the same next-token distribution."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "bigram_counts = fill(0.1, V, V)  # row: next token; column: current token\n",
+    "for (current, target) in zip(X_train, Y_train)\n",
+    "    bigram_counts[target, current] += 1\n",
+    "end\n",
+    "bigram_probs = bigram_counts ./ sum(bigram_counts; dims=1)\n",
+    "function teaching_bigram_loss(X, Y)\n",
+    "    mean(-log(bigram_probs[target, current]) for (current, target) in zip(X, Y))\n",
+    "end\n",
+    "@printf(\"Bigram train loss: %.4f | held-out loss: %.4f\\n\",\n",
+    "        teaching_bigram_loss(X_train, Y_train), teaching_bigram_loss(X_heldout, Y_heldout))\n",
+    "@printf(\"After bank: P(raises)=%.3f, P(cuts)=%.3f\\n\",\n",
+    "        bigram_probs[to_id[\"raises\"], to_id[\"bank\"]],\n",
+    "        bigram_probs[to_id[\"cuts\"], to_id[\"bank\"]])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 8. Assemble a tiny GPT, one component at a time\n",
+    "\n",
+    "We retain the main ingredients of a GPT-style decoder: learned token and position embeddings, causal multi-head self-attention, residual connections, layer normalization, a feed-forward network, and a vocabulary output layer.\n",
+    "\n",
+    "Each block follows this **pre-normalization** structure:\n",
+    "\n",
+    "$$\n",
+    "U=H+\\operatorname{Attention}(\\operatorname{LayerNorm}(H)),\\qquad\n",
+    "H_{\\text{new}}=U+\\operatorname{MLP}(\\operatorname{LayerNorm}(U)).\n",
+    "$$\n",
+    "\n",
+    "- **Multi-head attention:** different learned projections combine context in parallel, then their outputs are concatenated and projected. We use two heads.\n",
+    "- **Residual connection:** add a block's input back to its output, keeping a direct path for information and gradients.\n",
+    "- **Layer normalization:** normalize features separately at each position, with a learned scale and shift.\n",
+    "- **MLP / feed-forward network:** transform each position's features, using the same weights at every position. Our hidden width is $4d$, with a GELU activation.\n",
+    "\n",
+    "This is an educational GPT-style implementation, not a reproduction of a released GPT-2 checkpoint. We use a tiny word vocabulary, omit dropout, and keep the input embedding and output weights separate. We train all weights from scratch."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function architecture_diagram()\n",
+    "    labels = [\"Token embedding + position embedding\", \"Causal multi-head self-attention\",\n",
+    "              \"Position-wise MLP\", \"Final layer normalization\", \"Vocabulary scores + softmax\"]\n",
+    "    notes = [\"d × T × B\", \"2 heads; pre-LN + residual\",\n",
+    "             \"d → 4d → d; pre-LN + residual\", \"d × T × B\", \"V × T × B\"]\n",
+    "    p = plot(xlims=(0, 10), ylims=(0, 7), axis=false, grid=false,\n",
+    "             legend=false, size=(850, 480), title=\"Inside our tiny decoder-only Transformer\")\n",
+    "    ys = [6.1, 4.8, 3.5, 2.2, .9]\n",
+    "    for i in eachindex(labels)\n",
+    "        y = ys[i]\n",
+    "        plot!(p, Shape([.6, 6.2, 6.2, .6], [y-.38, y-.38, y+.38, y+.38]);\n",
+    "              fillcolor=i in (2,3) ? \"#EAF7F1\" : \"#EFF4FC\", linecolor=blue, linewidth=1.2)\n",
+    "        annotate!(p, 3.4, y, text(labels[i], 10, :center, \"#183153\"))\n",
+    "        annotate!(p, 6.55, y, text(notes[i], 9, :left, \"#536579\"))\n",
+    "        i < length(labels) && plot!(p, [3.4, 3.4], [y-.43, ys[i+1]+.43]; color=blue, arrow=true)\n",
+    "    end\n",
+    "    # The bracket identifies the repeated block, not another operation.\n",
+    "    plot!(p, [.35, .15, .15, .35], [5.25, 5.25, 3.05, 3.05]; color=green, linewidth=2)\n",
+    "    annotate!(p, .05, 4.15, text(\"× 2\", 9, :right, green))\n",
+    "    p\n",
+    "end\n",
+    "architecture_diagram()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 8a. Multi-head attention\n",
+    "\n",
+    "**First pass:** follow `Q, K, V → scores → causal mask → weights → weighted values`. The reshaping only applies the same attention arithmetic to each head and each sentence.\n",
+    "\n",
+    "**Second pass — dimensions:** with $H$ heads, each head has $d_h=d/H$ coordinates. We fold the head and batch indices together to call `batched_mul`. The score array is `T_key × T_query × (H*B)`. Softmax over dimension 1 normalizes over eligible keys."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "struct TeachingAttention{Q,K,VV,O}\n",
+    "    query::Q\n",
+    "    key::K\n",
+    "    value::VV\n",
+    "    output::O\n",
+    "    heads::Int\n",
+    "end\n",
+    "Flux.@layer TeachingAttention trainable=(query, key, value, output)\n",
+    "\n",
+    "function TeachingAttention(d::Int, heads::Int)\n",
+    "    @assert d % heads == 0\n",
+    "    TeachingAttention(Dense(d => d), Dense(d => d), Dense(d => d), Dense(d => d), heads)\n",
+    "end\n",
+    "\n",
+    "function split_heads(Z, heads)\n",
+    "    d, T, B = size(Z)\n",
+    "    dh = d ÷ heads\n",
+    "    reshape(permutedims(reshape(Z, dh, heads, T, B), (1,3,2,4)), dh, T, heads*B)\n",
+    "end\n",
+    "\n",
+    "function attention_forward(a::TeachingAttention, X)\n",
+    "    d, T, B = size(X)\n",
+    "    dh = d ÷ a.heads\n",
+    "    Q = split_heads(a.query(X), a.heads)\n",
+    "    K = split_heads(a.key(X), a.heads)\n",
+    "    VV = split_heads(a.value(X), a.heads)\n",
+    "    scores = Flux.NNlib.batched_mul(permutedims(K, (2,1,3)), Q) / sqrt(Float32(dh))\n",
+    "    weights = Flux.softmax(scores .+ reshape(causal_bias(T), T, T, 1); dims=1)\n",
+    "    mixed = Flux.NNlib.batched_mul(VV, weights)\n",
+    "    joined = reshape(permutedims(reshape(mixed, dh, T, a.heads, B), (1,3,2,4)), d, T, B)\n",
+    "    a.output(joined), weights\n",
+    "end\n",
+    "(a::TeachingAttention)(X) = first(attention_forward(a, X))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 8b. A block, then the complete model\n",
+    "\n",
+    "Read the two additions in `TeachingBlock` alongside the block equations above. The model adds learned positions, applies two blocks, and returns **logits**. We keep logits separate from probabilities because the loss can use a numerically stable `logsoftmax` internally."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "struct TeachingBlock{N1,A,N2,F}\n",
+    "    norm1::N1\n",
+    "    attention::A\n",
+    "    norm2::N2\n",
+    "    feedforward::F\n",
+    "end\n",
+    "Flux.@layer TeachingBlock\n",
+    "TeachingBlock(d, heads) = TeachingBlock(LayerNorm(d), TeachingAttention(d, heads),\n",
+    "    LayerNorm(d), Chain(Dense(d => 4d, Flux.gelu), Dense(4d => d)))\n",
+    "function (block::TeachingBlock)(H)\n",
+    "    U = H + block.attention(block.norm1(H))\n",
+    "    U + block.feedforward(block.norm2(U))\n",
+    "end\n",
+    "\n",
+    "struct TeachingGPT{TE,PE,BL,N,O}\n",
+    "    tokens::TE\n",
+    "    positions::PE\n",
+    "    blocks::BL\n",
+    "    finalnorm::N\n",
+    "    head::O\n",
+    "end\n",
+    "Flux.@layer TeachingGPT\n",
+    "function TeachingGPT(vocab_size; d=32, heads=2, layers=2, context=16)\n",
+    "    TeachingGPT(Embedding(0.02f0 .* randn(Float32, d, vocab_size)),\n",
+    "            Embedding(0.02f0 .* randn(Float32, d, context)),\n",
+    "            [TeachingBlock(d, heads) for _ in 1:layers], LayerNorm(d),\n",
+    "            Dense(d => vocab_size; bias=false))\n",
+    "end\n",
+    "\n",
+    "function initial_states(m::TeachingGPT, ids)\n",
+    "    T, B = size(ids)\n",
+    "    d, max_context = size(m.positions.weight)\n",
+    "    @assert 1 <= T <= max_context \"Prefix exceeds the teaching_model's context length.\"\n",
+    "    m.tokens(ids) .+ reshape(m.positions(1:T), d, T, 1)\n",
+    "end\n",
+    "function hidden_states(m::TeachingGPT, ids)\n",
+    "    H = initial_states(m, ids)\n",
+    "    for block in m.blocks\n",
+    "        H = block(H)\n",
+    "    end\n",
+    "    m.finalnorm(H)\n",
+    "end\n",
+    "(m::TeachingGPT)(ids) = m.head(hidden_states(m, ids))\n",
+    "\n",
+    "TEACHING_CONFIG = (d=32, heads=2, layers=2, context=16)\n",
+    "Random.seed!(42)\n",
+    "teaching_model = TeachingGPT(V; TEACHING_CONFIG...)\n",
+    "untrained_teaching_model = deepcopy(teaching_model)\n",
+    "embedding_before = copy(teaching_model.tokens.weight)\n",
+    "n_parameters = sum(length, Flux.trainables(teaching_model))\n",
+    "println(\"Trainable parameters: \", n_parameters)\n",
+    "println(\"Input IDs:    \", size(X_train[:, 1:4]))\n",
+    "println(\"Embeddings:   \", size(initial_states(teaching_model, X_train[:, 1:4])))\n",
+    "println(\"Output logits:\", size(teaching_model(X_train[:, 1:4])))\n",
+    "@assert size(teaching_model(X_train[:, 1:4])) == (V, T, 4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Read the tensor shapes</strong><p>With width 32, two heads, 10 input positions, and batch size 4: what are the per-head width, attention-score shape, and output-logit shape?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>Per-head width is 16. The folded attention scores have shape 10 × 10 × 8, because 2 heads × 4 sentences are folded together. Logits have shape 36 × 10 × 4. Each position gets a distribution over the 36-word toy vocabulary.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 9. Train by next-token prediction\n",
+    "\n",
+    "The objective averages negative log probabilities over every target position and every sentence in a batch:\n",
+    "\n",
+    "$$\n",
+    "\\mathcal L(\\theta)=-\\frac{1}{BT}\\sum_{b=1}^B\\sum_{i=1}^T\n",
+    "\\log P_\\theta(Y_{ib}\\mid X_{1b},\\ldots,X_{ib}).\n",
+    "$$\n",
+    "\n",
+    "`Flux.logitcrossentropy` computes this loss directly from logits and one-hot targets. A one-hot target marks the observed class; it is separate from the learned input embedding.\n",
+    "\n",
+    "**Perplexity** is $\\exp(\\mathcal L)$ when loss uses natural logarithms. Lower is better on the same tokenization and evaluation sample. It does not measure truthfulness or economic validity.\n",
+    "\n",
+    "Below we use Adam, random mini-batches of whole sentences, and a fixed number of updates. Held-out data are evaluated for reporting, not used for gradient updates or checkpoint selection. Re-running this cell creates a fresh model, so it does not silently continue a previous training run."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function teaching_loss(m, X, Y)\n",
+    "    logits = reshape(m(X), V, :)\n",
+    "    targets = Flux.onehotbatch(vec(Y), 1:V)\n",
+    "    Flux.logitcrossentropy(logits, targets)\n",
+    "end\n",
+    "\n",
+    "function train_teaching_gpt(; steps=800, batch_size=32, learning_rate=0.003f0, seed=42,\n",
+    "                        config=TEACHING_CONFIG)\n",
+    "    Random.seed!(seed)\n",
+    "    m = TeachingGPT(V; config...)\n",
+    "    initial = deepcopy(m)\n",
+    "    opt = Flux.setup(Flux.Adam(learning_rate), m)\n",
+    "    rng = MersenneTwister(seed + 1)\n",
+    "    teaching_history = (step=Int[], train=Float64[], heldout=Float64[])\n",
+    "    function record!(step)\n",
+    "        train = Float64(teaching_loss(m, X_train, Y_train))\n",
+    "        heldout = Float64(teaching_loss(m, X_heldout, Y_heldout))\n",
+    "        push!(teaching_history.step, step); push!(teaching_history.train, train); push!(teaching_history.heldout, heldout)\n",
+    "        @printf(\"step %4d | train %.4f | held-out %.4f | held-out perplexity %.2f\\n\",\n",
+    "                step, train, heldout, exp(heldout))\n",
+    "        flush(stdout)\n",
+    "    end\n",
+    "    record!(0)\n",
+    "    started = time()\n",
+    "    for step in 1:steps\n",
+    "        chosen = rand(rng, 1:size(X_train, 2), batch_size)\n",
+    "        X, Y = X_train[:, chosen], Y_train[:, chosen]\n",
+    "        loss, grads = Flux.withgradient(m) do candidate\n",
+    "            teaching_loss(candidate, X, Y)\n",
+    "        end\n",
+    "        isfinite(loss) || error(\"Non-finite training loss at step $step\")\n",
+    "        Flux.update!(opt, m, grads[1])\n",
+    "        (step % 100 == 0 || step == steps) && record!(step)\n",
+    "    end\n",
+    "    elapsed = time() - started\n",
+    "    @printf(\"Elapsed after initial evaluation (includes gradient compilation): %.1f seconds\\n\", elapsed)\n",
+    "    m, initial, teaching_history, elapsed\n",
+    "end\n",
+    "\n",
+    "teaching_model, untrained_teaching_model, teaching_history, training_seconds = train_teaching_gpt()\n",
+    "embedding_before = copy(untrained_teaching_model.tokens.weight)\n",
+    "nothing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "p_loss = plot(teaching_history.step, teaching_history.train; label=\"Training sentences\", color=blue,\n",
+    "    xlabel=\"Parameter updates\", ylabel=\"Mean next-token cross-entropy\",\n",
+    "    title=\"Learning to predict tokens\")\n",
+    "plot!(p_loss, teaching_history.step, teaching_history.heldout; label=\"Held-out sentences\", color=green)\n",
+    "hline!(p_loss, [teaching_bigram_loss(X_heldout, Y_heldout)]; color=gold, linestyle=:dash,\n",
+    "       label=\"Bigram held-out baseline\")\n",
+    "detail_low = min(minimum(teaching_history.train[2:end]), minimum(teaching_history.heldout[2:end]))\n",
+    "detail_high = max(maximum(teaching_history.train[2:end]), maximum(teaching_history.heldout[2:end]),\n",
+    "                  teaching_bigram_loss(X_heldout, Y_heldout))\n",
+    "p_detail = plot(teaching_history.step[2:end], teaching_history.train[2:end]; color=blue, legend=false,\n",
+    "    xlabel=\"Parameter updates\", ylabel=\"Mean next-token cross-entropy\",\n",
+    "    ylims=(0.9detail_low, 1.1detail_high), title=\"Detail after the first logged update\")\n",
+    "plot!(p_detail, teaching_history.step[2:end], teaching_history.heldout[2:end]; color=green)\n",
+    "hline!(p_detail, [teaching_bigram_loss(X_heldout, Y_heldout)]; color=gold, linestyle=:dash)\n",
+    "plot(p_loss, p_detail; layout=(1,2), size=(1100, 410),\n",
+    "     margin=7Plots.mm, bottom_margin=12Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 10. Evaluate what was actually learned\n",
+    "\n",
+    "We compare an untrained network, a bigram baseline, and the trained GPT on exactly the same targets. Accuracy is the fraction of positions whose highest-probability token equals the observed target. Some positions have multiple valid continuations, so perfect accuracy is not expected.\n",
+    "\n",
+    "The held-out split shares the corpus grammar and many prefixes with training. Better performance supports learning within this small constructed task; it does not establish knowledge of natural language in general. A larger network can also memorize a small corpus. Keep training and held-out curves visible together.\n",
+    "\n",
+    "Loss need not reach zero even for this grammar: a shared prefix may have several valid continuations. At `<bos>`, for example, the opening word can be `when`, `if`, or `as`. The model must learn a distribution over such choices."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function teaching_accuracy(m, X, Y)\n",
+    "    guesses = Flux.onecold(reshape(m(X), V, :), 1:V)\n",
+    "    mean(guesses .== vec(Y))\n",
+    "end\n",
+    "println(\"Model                     train loss  held-out loss  held-out PPL  held-out accuracy\")\n",
+    "println(\"--------------------------------------------------------------------------------\")\n",
+    "for (label, m) in [(\"Untrained tiny GPT\", untrained_teaching_model), (\"Trained tiny GPT\", teaching_model)]\n",
+    "    train_loss = teaching_loss(m, X_train, Y_train)\n",
+    "    heldout_loss = teaching_loss(m, X_heldout, Y_heldout)\n",
+    "    @printf(\"%-25s %9.4f %13.4f %13.2f %17.1f%%\\n\", label,\n",
+    "            train_loss, heldout_loss, exp(heldout_loss), 100teaching_accuracy(m, X_heldout, Y_heldout))\n",
+    "end\n",
+    "bigram_accuracy = mean(argmax(bigram_probs[:, current]) == target\n",
+    "                       for (current, target) in zip(X_heldout, Y_heldout))\n",
+    "@printf(\"%-25s %9.4f %13.4f %13.2f %17.1f%%\\n\", \"Bigram baseline\",\n",
+    "    teaching_bigram_loss(X_train, Y_train), teaching_bigram_loss(X_heldout, Y_heldout),\n",
+    "    exp(teaching_bigram_loss(X_heldout, Y_heldout)), 100bigram_accuracy)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · A distribution need not have one certain answer</strong><p>Why can a learned language still have nonzero loss and less than 100% next-token accuracy?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>A shared prefix can have several valid continuations. At the sentence boundary, when, if, and as are all possible. Learning the correct distribution does not make every observed next token predictable with certainty.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Does earlier context change the next-token distribution?\n",
+    "\n",
+    "These two prompts differ only in `rises` versus `falls`. Both end with `bank`, so the bigram prediction is identical. Our grammar assigns `raises` to one and `cuts` to the other. This is a controlled sensitivity probe of the learned mapping, not an economic causal experiment.\n",
+    "\n",
+    "The prompts are **illustrative probes**, not guaranteed to be entirely absent from training. The sentence-level held-out evaluation above is reported separately."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function teaching_prefix_ids(prompt)\n",
+    "    ids = encode_text(prompt)\n",
+    "    any(==(UNK), ids) && error(\"Prompt contains an unknown token; use words from vocab.\")\n",
+    "    vcat(BOS, ids)\n",
+    "end\n",
+    "function teaching_next_probs(m, prompt; temperature=1f0)\n",
+    "    temperature > 0 || error(\"Use a positive temperature for probabilities.\")\n",
+    "    ids = teaching_prefix_ids(prompt)\n",
+    "    scores = vec(m(reshape(ids, :, 1))[:, end, 1])\n",
+    "    Flux.softmax(scores ./ Float32(temperature))\n",
+    "end\n",
+    "function show_teaching_predictions(m, prompt; k=5)\n",
+    "    p = teaching_next_probs(m, prompt)\n",
+    "    println(\"Prompt: \", prompt)\n",
+    "    for j in sortperm(p; rev=true)[1:k]\n",
+    "        @printf(\"  %-12s %.4f\\n\", vocab[j], p[j])\n",
+    "    end\n",
+    "end\n",
+    "up_prompt = \"when inflation rises today the bank\"\n",
+    "down_prompt = \"when inflation falls today the bank\"\n",
+    "show_teaching_predictions(teaching_model, up_prompt)\n",
+    "show_teaching_predictions(teaching_model, down_prompt)\n",
+    "actions = [to_id[word] for word in [\"raises\", \"cuts\"]]\n",
+    "probe = hcat(teaching_next_probs(teaching_model, up_prompt)[actions], teaching_next_probs(teaching_model, down_prompt)[actions],\n",
+    "             bigram_probs[actions, to_id[\"bank\"]])\n",
+    "grouped_bars([\"raises\", \"cuts\"], probe;\n",
+    "    names=[\"GPT: rises prefix\", \"GPT: falls prefix\", \"Bigram: either prefix\"],\n",
+    "    colors=[blue, green, gold], limits=(0, 1.25), ylabel=\"Next-token probability\",\n",
+    "    title=\"Same final token, different earlier context\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Context versus a bigram</strong><p>Why can the GPT distinguish rises and falls prompts while the bigram gives the same answer after bank?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The bigram conditions only on bank. Causal attention can use the earlier direction word. The result reflects this artificial grammar, not an estimated causal relationship in economics.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Inspect the learned attention, without overinterpreting it\n",
+    "\n",
+    "We plot the last block's two heads for the rising-inflation prompt. Keys are rows, queries are columns. Forbidden future positions remain white. The heads need not specialize into named linguistic roles, and a single heatmap is not a complete explanation of the model's prediction."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function teaching_attention_maps(m, ids; layer=length(m.blocks))\n",
+    "    H = initial_states(m, ids)\n",
+    "    for index in 1:layer-1\n",
+    "        H = m.blocks[index](H)\n",
+    "    end\n",
+    "    block = m.blocks[layer]\n",
+    "    _, weights = attention_forward(block.attention, block.norm1(H))\n",
+    "    T, B = size(ids)\n",
+    "    reshape(weights, T, T, block.attention.heads, B)\n",
+    "end\n",
+    "inspect_ids = teaching_prefix_ids(up_prompt)\n",
+    "attention_maps = teaching_attention_maps(teaching_model, reshape(inspect_ids, :, 1))\n",
+    "labels = vocab[inspect_ids]\n",
+    "attention_plots = [heatmap(1:length(labels), 1:length(labels), attention_maps[:, :, head, 1];\n",
+    "    xticks=(1:length(labels), labels), yticks=(1:length(labels), labels),\n",
+    "    xrotation=45, yflip=true, color=:Blues, clims=(0, 1),\n",
+    "    xlabel=\"Query position\", ylabel=\"Key position\", title=\"Last block · head $head\")\n",
+    "    for head in 1:2]\n",
+    "plot(attention_plots...; layout=(1,2), size=(1100, 510),\n",
+    "     margin=8Plots.mm, bottom_margin=17Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Did the input embedding table change?\n",
+    "\n",
+    "The next figure measures how far each token's vector moved from its own initialization. It verifies that embeddings participated in training. Movement alone does not prove a semantic interpretation, and a 2D projection of a 32D table would not preserve all its information."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "embedding_movement = vec(sqrt.(sum(abs2, teaching_model.tokens.weight - embedding_before; dims=1)))\n",
+    "selected_words = [\"inflation\", \"rises\", \"falls\", \"bank\", \"raises\", \"cuts\", \"rates\", \"<unk>\"]\n",
+    "selected_ids = [to_id[word] for word in selected_words]\n",
+    "bar(selected_words, embedding_movement[selected_ids]; color=blue, label=false,\n",
+    "    ylabel=\"Distance from initial vector (L2)\", xrotation=25,\n",
+    "    ylims=(0, 1.15maximum(embedding_movement[selected_ids])),\n",
+    "    title=\"Input embeddings learned through the next-token objective\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 11. Generate: repeatedly append a predicted token\n",
+    "\n",
+    "**Autoregressive generation** repeats the same operation: compute a next-token distribution, select a token, append it, and recompute. Stop at `<eos>` or the length limit.\n",
+    "\n",
+    "- **Greedy decoding** chooses the highest-probability token.\n",
+    "- **Sampling** draws a token from the distribution.\n",
+    "- **Temperature** rescales logits before sampling. Lower positive values make the distribution sharper; higher values make it flatter. Temperature does not add knowledge.\n",
+    "\n",
+    "We use the **same sampler, seed, prompt, and temperature** to compare the untrained and trained networks. Special tokens are not manually banned; odd outputs from the untrained model are part of the comparison. We stop when the fixed context window is full rather than silently discarding earlier tokens."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 11a · Probabilities → one ID → readable text\n",
+    "\n",
+    "The network outputs $V$ **scores**, not a word or an embedding to invert.\n",
+    "A generation rule selects an ID; tokenizer decoding reconstructs text from the IDs.\n",
+    "This reconstruction requires no second neural network.\n",
+    "For byte-based tokenizers, one token can contain only part of a Unicode character;\n",
+    "decode a sequence rather than assuming one token equals one displayed character.\n",
+    "\n",
+    "For positive temperature $\\tau$,\n",
+    "\n",
+    "$$p_i(\\tau)=\\frac{\\exp(z_i/\\tau)}{\\sum_j\\exp(z_j/\\tau)}.$$\n",
+    "\n",
+    "| Generation rule | What happens after the network supplies scores? |\n",
+    "|---|---|\n",
+    "| Greedy | Select $\\arg\\max_i z_i$ |\n",
+    "| Sampling | Draw an ID with probabilities $p_i(\\tau)$ |\n",
+    "| Top-k | Retain the k highest scores, renormalize, then sample |\n",
+    "| Top-p / nucleus | Retain the smallest sorted prefix reaching cumulative mass p, renormalize, then sample |\n",
+    "\n",
+    "Temperature changes concentration, not knowledge.\n",
+    "$\\tau$ is distinct from sequence length $T$; a separate greedy option avoids division by zero.\n",
+    "Our teaching sampler offers greedy or temperature sampling.\n",
+    "The English sampler later uses **top-k=40**. Top-p is an isolated demonstration here.\n",
+    "\n",
+    "Equivalently, a positive initial distribution transforms as $p_i(\\tau)\\propto p_i^{1/\\tau}$.\n",
+    "Starting from $(0.8,0.2)$, temperatures $0.5,1,2$ give\n",
+    "approximately $(0.941,0.059)$, $(0.8,0.2)$, $(0.667,0.333)$.\n",
+    "Training uses the observed target directly in cross-entropy; it does not first sample\n",
+    "a candidate and backpropagate through that discrete draw."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "foundation_candidate_words = [\"rice\", \"noodles\", \"hotpot\", \"other\"]\n",
+    "foundation_candidate_p = [0.40, 0.35, 0.20, 0.05]\n",
+    "foundation_candidate_logits = log.(foundation_candidate_p)\n",
+    "function foundation_top_p(probabilities, threshold)\n",
+    "    @assert 0 < threshold <= 1\n",
+    "    order = sortperm(probabilities; rev=true)\n",
+    "    count = min(searchsortedfirst(cumsum(probabilities[order]), threshold), length(order))\n",
+    "    keep = order[1:count]\n",
+    "    result = zeros(length(probabilities))\n",
+    "    result[keep] = probabilities[keep] ./ sum(probabilities[keep])\n",
+    "    result\n",
+    "end\n",
+    "foundation_nucleus = foundation_top_p(foundation_candidate_p, 0.9)\n",
+    "@assert findall(>(0), foundation_nucleus) == [1, 2, 3]\n",
+    "@assert isapprox(sum(foundation_nucleus), 1)\n",
+    "foundation_sampling_rng = MersenneTwister(42)\n",
+    "foundation_sampling_draws = [\n",
+    "    min(searchsortedfirst(cumsum(foundation_nucleus), rand(foundation_sampling_rng)), 4)\n",
+    "    for _ in 1:12]\n",
+    "println(\"Greedy ID/text: \", argmax(foundation_candidate_p), \" / \",\n",
+    "    foundation_candidate_words[argmax(foundation_candidate_p)])\n",
+    "println(\"Sampled IDs: \", foundation_sampling_draws)\n",
+    "println(\"IDs decoded by vocabulary lookup: \",\n",
+    "    join(foundation_candidate_words[foundation_sampling_draws], \" | \"))\n",
+    "@assert all(in([1, 2, 3]), foundation_sampling_draws)\n",
+    "foundation_temperatures = [0.5, 1.0, 2.0]\n",
+    "foundation_temperature_plot = plot(xticks=(1:4, foundation_candidate_words),\n",
+    "    xlims=(0.4, 4.6), ylims=(0, 0.6), ylabel=\"Selection probability\",\n",
+    "    title=\"Same scores, different generation settings\", size=(900, 320))\n",
+    "for (index, tau) in enumerate(foundation_temperatures)\n",
+    "    bar!(foundation_temperature_plot, collect(1:4) .+ 0.24*(index-2),\n",
+    "        Flux.softmax(foundation_candidate_logits ./ tau);\n",
+    "        bar_width=0.22, label=\"τ=$(tau)\", color=[blue, green, gold][index])\n",
+    "end\n",
+    "foundation_temperature_plot"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Nucleus mass is a set threshold</strong><p>With probabilities 0.40, 0.35, 0.20, 0.05 and top-p=0.9, which candidates remain? Does each need probability 0.9?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>The first three remain: 0.40+0.35=0.75 and adding 0.20 reaches 0.95. The threshold applies to their combined original mass. Retained probabilities are then normalized to sum to one.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "Greedy is locally optimal at each position, not necessarily optimal for the whole\n",
+    "sequence probability $\\prod_t P(x_t\\mid x_{<t})$.\n",
+    "High model probability also does not guarantee factual correctness.\n",
+    "For the research motivation behind nucleus sampling, see\n",
+    "[Holtzman et al.](https://arxiv.org/abs/1904.09751)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function sample_token(rng, probabilities)\n",
+    "    u = rand(rng)\n",
+    "    cumulative = cumsum(probabilities)\n",
+    "    something(findfirst(x -> x >= u, cumulative), length(probabilities))\n",
+    "end\n",
+    "\n",
+    "function generate_teaching_text(m, prompt=\"\"; max_new_tokens=14, temperature=0.8f0,\n",
+    "                  greedy=false, seed=7)\n",
+    "    temperature > 0 || error(\"Temperature must be positive; use greedy=true for argmax.\")\n",
+    "    ids = teaching_prefix_ids(prompt)\n",
+    "    max_context = size(m.positions.weight, 2)\n",
+    "    length(ids) <= max_context || error(\"Prompt exceeds the context window.\")\n",
+    "    rng = MersenneTwister(seed)\n",
+    "    emitted = copy(ids[2:end])\n",
+    "    for _ in 1:max_new_tokens\n",
+    "        length(ids) >= max_context && break\n",
+    "        logits = vec(m(reshape(ids, :, 1))[:, end, 1])\n",
+    "        p = Flux.softmax(logits ./ Float32(temperature))\n",
+    "        next = greedy ? argmax(p) : sample_token(rng, p)\n",
+    "        next == EOS && break\n",
+    "        push!(ids, next)\n",
+    "        push!(emitted, next)\n",
+    "    end\n",
+    "    decode_ids(emitted)\n",
+    "end\n",
+    "\n",
+    "generation_prompt = \"when inflation rises\"\n",
+    "println(\"Same sampler, temperature=0.8, seed=7:\")\n",
+    "println(\"Before training: \", generate_teaching_text(untrained_teaching_model, generation_prompt))\n",
+    "println(\"After training:  \", generate_teaching_text(teaching_model, generation_prompt))\n",
+    "println(\"\\nGreedy continuations:\")\n",
+    "for prompt in [\"when inflation rises\", \"when inflation falls\", \"if demand rises\", \"as income falls\"]\n",
+    "    println(\"  \", generate_teaching_text(teaching_model, prompt; greedy=true))\n",
+    "end\n",
+    "println(\"\\nSample from a sentence boundary:\")\n",
+    "for seed in 1:3\n",
+    "    println(\"  \", generate_teaching_text(teaching_model; seed=seed))\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 12. Check the mechanism, not just the training curve\n",
+    "\n",
+    "The following checks test concrete properties:\n",
+    "\n",
+    "1. Whole training and held-out sentences are disjoint.\n",
+    "2. All learned parameters and losses are finite, and training loss fell.\n",
+    "3. Attention columns sum to one and future positions receive zero weight.\n",
+    "4. Replacing future input tokens leaves earlier logits unchanged.\n",
+    "5. Predicting from a prefix agrees with the corresponding position in the full masked sequence.\n",
+    "6. Used input embeddings moved; the never-used `<unk>` input column stayed fixed. This last property relies on our separate input and output weights and absence of weight decay.\n",
+    "\n",
+    "These are implementation and learning checks. They do not turn the synthetic held-out set into evidence of general intelligence."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "@assert isempty(intersect(Set(train_text), Set(heldout_text)))\n",
+    "@assert all(all(isfinite, parameter) for parameter in Flux.trainables(teaching_model))\n",
+    "@assert all(isfinite, teaching_history.train) && all(isfinite, teaching_history.heldout)\n",
+    "@assert last(teaching_history.train) < first(teaching_history.train)\n",
+    "\n",
+    "check_X = copy(X_heldout[:, 1:1])\n",
+    "check_A = teaching_attention_maps(teaching_model, check_X)\n",
+    "@assert maximum(abs.(sum(check_A; dims=1) .- 1)) < 1f-5\n",
+    "future_weights = [check_A[key, query, head, 1]\n",
+    "                  for key in 1:T for query in 1:T for head in 1:2 if key > query]\n",
+    "@assert maximum(abs, future_weights) < 1f-7\n",
+    "\n",
+    "cut = 4\n",
+    "changed_X = copy(check_X)\n",
+    "changed_X[cut+1:end, 1] .= to_id[\"cuts\"]\n",
+    "future_effect = maximum(abs.(teaching_model(check_X)[:, 1:cut, :] - teaching_model(changed_X)[:, 1:cut, :]))\n",
+    "@assert future_effect < 1f-5\n",
+    "full_logits = teaching_model(check_X)\n",
+    "prefix_error = maximum(maximum(abs.(teaching_model(check_X[1:i, :])[:, end, 1] - full_logits[:, i, 1]))\n",
+    "                       for i in 1:T)\n",
+    "@assert prefix_error < 2f-5\n",
+    "@assert embedding_movement[to_id[\"bank\"]] > 1f-4\n",
+    "@assert embedding_movement[UNK] < 1f-7\n",
+    "@printf(\"All checks passed. Future-token effect: %.2e | prefix/full error: %.2e\\n\",\n",
+    "        future_effect, prefix_error)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Milestone · What did you actually train?\n",
+    "\n",
+    "You trained a small decoder-only Transformer from random parameters on 180 artificial sentences.\n",
+    "Its learned embeddings, attention projections, MLP, and output matrix were optimized together.\n",
+    "The bigram comparison and earlier-context probe test the specific dependency built into that grammar.\n",
+    "\n",
+    "Before the real-English session, try one small experiment: change `steps=800` to `steps=100`,\n",
+    "restart, run again, and compare both training and held-out loss. Return to the default afterward.\n",
+    "The controlled grammar is useful for learning mechanisms; it is not a general English corpus."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<a id=\"english-lab\"></a>\n",
+    "# Part III · Apply the same ideas to real English\n",
+    "\n",
+    "This is a new experiment, with a new vocabulary and newly initialized parameters. The saved large-model checkpoint comes from the earlier completed Julia GPU run; it is not obtained by expanding or fine-tuning `teaching_model`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 13 · Give the learner enough ordinary sentences\n",
+    "\n",
+    "[TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) is a public corpus of short\n",
+    "stories generated by GPT-3.5/GPT-4 using simple vocabulary. We use a bounded prefix of its\n",
+    "**GPT-4-only V2** files: 81,694 training stories, about 65.8 million normalized characters.\n",
+    "The [paper](https://arxiv.org/abs/2305.07759) studies small language models trained on this kind\n",
+    "of restricted language environment; its results do not guarantee what our one-hour experiment achieves.\n",
+    "\n",
+    "Training text comes from the upstream training file. A separate prefix of the official validation\n",
+    "file is deduplicated against training and divided into **our own validation and test sets**.\n",
+    "Both have 2,581 stories. Exact normalized duplicates are removed; paraphrases can remain.\n",
+    "Bounded file prefixes are not a random sample of the entire released dataset.\n",
+    "\n",
+    "We normalize punctuation and whitespace to ASCII for a transparent implementation. This changes the\n",
+    "original text. Source notices, hashes, filtering, and the CDLA-Sharing-1.0 data license are recorded\n",
+    "in `reference/datasets/english_basics/README.md` and `manifest.json`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "split_names=[\"train\",\"validation\",\"test\"]\n",
+    "story_counts=Int[]\n",
+    "character_counts=Int[]\n",
+    "for name in split_names\n",
+    "    lines=readlines(joinpath(DATA,name*\".txt\"))\n",
+    "    push!(story_counts,length(lines))\n",
+    "    push!(character_counts,sum(length,lines))\n",
+    "    @printf(\"%-10s %6d stories | %9d characters\\n\",name,length(lines),sum(length,lines))\n",
+    "end\n",
+    "training_lengths=length.(readlines(joinpath(DATA,\"train.txt\")))\n",
+    "p1=bar(split_names,story_counts;fillcolor=[\"#2c9e94\",\"#5d85c6\",\"#a88ac5\"],legend=false,\n",
+    "    ylabel=\"Whole stories\",title=\"Split documents before token windows\")\n",
+    "p2=histogram(training_lengths;bins=40,color=\"#5d85c6\",legend=false,\n",
+    "    xlabel=\"Normalized characters per story\",ylabel=\"Stories\",title=\"Short, simple texts for a small learner\")\n",
+    "plot(p1,p2;layout=(1,2),size=(1100,380))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Keep the two experiments distinct\n",
+    "\n",
+    "| Setting | Teaching model from Part II | Real English model |\n",
+    "|---|---|---|\n",
+    "| Training language | 180 rule-generated sentences | 81,694 public TinyStories texts |\n",
+    "| Tokenizer | Small lowercase word lookup | Learned BPE over ASCII English |\n",
+    "| Vocabulary | 36 tokens | 2,048 tokens |\n",
+    "| Embedding width | 32 | 256 |\n",
+    "| Blocks / heads per block | 2 / 2 | 6 / 8 |\n",
+    "| Maximum context | 16 word tokens; training sequences use 10 | 128 BPE tokens |\n",
+    "| Execution | Small fresh CPU training run | Load saved CPU weights, or opt into fresh CUDA training |\n",
+    "\n",
+    "The stored English run began from random weights and completed in about 38 minutes.\n",
+    "Its spelling, grammar, and story continuity must be assessed from real samples, separately from toy results."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 14 · Tokens can be longer than characters\n",
+    "\n",
+    "The teaching model used a tiny word vocabulary. For a larger English corpus, we learn a flexible **byte-pair encoding (BPE)** vocabulary:\n",
+    "start with characters, repeatedly merge frequent adjacent pieces, and save the merge rules.\n",
+    "Common words or phrases may become a single token; uncommon words can still be assembled from pieces.\n",
+    "\n",
+    "We first split text into words/numbers/punctuation with an optional leading space, then learn merges\n",
+    "within each piece. This keeps a word and its following space from being merged together, which is\n",
+    "helpful when a prompt ends at that word. We cap token length at 24 characters.\n",
+    "It is a teaching BPE, rather than an exact copy of GPT-2's tokenizer. It has 2,048 IDs, including\n",
+    "`<bos>` (beginning of a story), `<eos>` (end), and `<unk>` (unused for supported ASCII text).\n",
+    "Token IDs themselves have no numerical meaning. All vocabulary learning uses **training text only**.\n",
+    "\n",
+    "The model predicts these pieces, so it does not have to reconstruct every common word one letter\n",
+    "at a time. It can still make up words or generate ungrammatical text; a tokenizer supplies no grammar rules."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### BPE can also be learned in Julia: a tiny example\n",
+    "\n",
+    "This simplified trainer counts adjacent symbol pairs inside words, merges the most frequent pair,\n",
+    "and repeats. It is a frequency-counting algorithm, not gradient descent on an embedding.\n",
+    "The full-corpus tokenizer uses the same merge idea with additional text segmentation and special tokens."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "function merge_word_pieces(parts,pair)\n",
+    "    result=String[]\n",
+    "    i=1\n",
+    "    while i<=length(parts)\n",
+    "        if i<length(parts) && (parts[i],parts[i+1])==pair\n",
+    "            push!(result,parts[i]*parts[i+1])\n",
+    "            i+=2\n",
+    "        else\n",
+    "            push!(result,parts[i])\n",
+    "            i+=1\n",
+    "        end\n",
+    "    end\n",
+    "    result\n",
+    "end\n",
+    "\n",
+    "function learn_teaching_bpe(words;merges=8)\n",
+    "    segments=[string.(collect(word)) for word in words]\n",
+    "    rules=Tuple{String,String}[]\n",
+    "    trace=NamedTuple[]\n",
+    "    for step in 1:merges\n",
+    "        counts=Dict{Tuple{String,String},Int}()\n",
+    "        for pieces in segments, i in 1:length(pieces)-1\n",
+    "            pair=(pieces[i],pieces[i+1])\n",
+    "            counts[pair]=get(counts,pair,0)+1\n",
+    "        end\n",
+    "        isempty(counts) && break\n",
+    "        pair=first(sort(collect(keys(counts));by=p->(-counts[p],p[1],p[2])))\n",
+    "        push!(rules,pair)\n",
+    "        push!(trace,(;step,pair,count=counts[pair],piece=pair[1]*pair[2]))\n",
+    "        segments=[merge_word_pieces(pieces,pair) for pieces in segments]\n",
+    "    end\n",
+    "    @assert join.(segments)==words\n",
+    "    (;segments,rules,trace)\n",
+    "end\n",
+    "\n",
+    "bpe_words=vcat(fill(\"low\",5),fill(\"lower\",2),fill(\"newest\",6),fill(\"widest\",3))\n",
+    "bpe_demo=learn_teaching_bpe(bpe_words)\n",
+    "for row in bpe_demo.trace\n",
+    "    println(\"merge \",row.step,\": \",repr(row.pair),\" | count \",row.count,\" -> \",repr(row.piece))\n",
+    "end\n",
+    "unseen_pieces=string.(collect(\"lowest\"))\n",
+    "for pair in bpe_demo.rules\n",
+    "    global unseen_pieces=merge_word_pieces(unseen_pieces,pair)\n",
+    "end\n",
+    "println(\"A new whole word, lowest, can use learned pieces: \",unseen_pieces)\n",
+    "@assert join(unseen_pieces)==\"lowest\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Two different kinds of learning</strong><p>Did BPE learn the floating-point embedding values? Must a new whole word be in its training word list?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>No. BPE learns segmentation rules by counting adjacent pieces; the neural embedding values learn later through prediction loss. A new word can be built from existing pieces, as lowest illustrates. The real tokenizer supports the supplied ASCII alphabet.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "tok=load_bpe(DATA)\n",
+    "println(\"Julia/reference tokenizer agreement: \",check_bpe(tok,DATA),\" cases passed\")\n",
+    "text_example=\"The cat was happy.\"\n",
+    "example_ids=bpe_encode(tok,text_example)\n",
+    "println(\"Text:   \",repr(text_example))\n",
+    "println(\"Pieces: \",repr.(tok.tokens[example_ids]))\n",
+    "println(\"IDs:    \",example_ids)\n",
+    "@assert bpe_decode(tok,example_ids)==text_example\n",
+    "println(\"Character count: \",length(text_example),\" | BPE token count: \",length(example_ids))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 14a · Misspellings change pieces, not the reconstruction rule\n",
+    "\n",
+    "Our English BPE can fall back to supported ASCII characters, so a new spelling need not\n",
+    "be a whole-word entry. Encoding `plya` still works; decoding restores `plya` rather\n",
+    "than silently correcting it. Whether the model infers \"play\" from context is a separate\n",
+    "question. This checks reconstruction, not typo understanding.\n",
+    "\n",
+    "Chinese has no fixed characters-to-tokens conversion: a character can span byte pieces,\n",
+    "and several characters can share a token. Exact counts require the target tokenizer.\n",
+    "**The prepared English tokenizer here is ASCII-only**; this demo is not evidence of Chinese ability."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "for foundation_spelling in [\"I want to play football.\", \"I want to plya football.\"]\n",
+    "    foundation_spelling_ids = EnglishBasics.bpe_encode(tok, foundation_spelling)\n",
+    "    foundation_reconstructed = EnglishBasics.bpe_decode(tok, foundation_spelling_ids)\n",
+    "    @assert foundation_reconstructed == foundation_spelling\n",
+    "    println(repr(foundation_spelling), \" → \", length(foundation_spelling_ids), \" tokens\")\n",
+    "    println(\"Pieces: \", repr.(tok.tokens[foundation_spelling_ids]))\n",
+    "    println(\"Decode: \", repr(foundation_reconstructed))\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Same representation idea, a larger configuration\n",
+    "\n",
+    "The next cell loads the recorded **random initialization**, not trained language knowledge.\n",
+    "For the real model, $E$ has shape $256\\times2048$ and each token still selects one column.\n",
+    "The complete Julia model is in `src/JokesGPT.jl` and its BPE encoder/sampler are in `src/EnglishBasics.jl`.\n",
+    "The source filename is historical; this experiment uses only the English-story corpus."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "initial=load_checkpoint(joinpath(OUT,\"initial.jls\"))\n",
+    "println(\"Token embedding table: \",size(initial.model.tokens.weight))\n",
+    "println(\"Position embedding table: \",size(initial.model.positions.weight))\n",
+    "println(\"Trainable parameters: \",parameter_count(initial.model))\n",
+    "println(\"First piece: \",repr(tok.tokens[first(example_ids)]))\n",
+    "println(\"Its first 8 coordinates before training: \",round.(initial.model.tokens.weight[1:8,first(example_ids)];digits=3))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "english_flow([\"Token + position\",\"6 GPT blocks\",\"Final norm\",\"Linear head\",\"Distribution\"],\n",
+    "    [\"256 features\",\"8 heads + MLP\",\"stabilize features\",\"2,048 logits\",\"next BPE piece\"];\n",
+    "    title=\"5,820,416 parameters, all initialized randomly\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Trace the real model's inputs and targets\n",
+    "\n",
+    "The one-position shift from Part II is unchanged. Only the tokenizer, vocabulary, and model dimensions\n",
+    "differ. A one-hot target identifies the observed next piece; it does not prescribe an embedding vector."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "real_sequence=vcat(tok.bos,bpe_encode(tok,\"The cat was happy.\"),tok.eos)\n",
+    "real_X=reshape(real_sequence[1:end-1],:,1)\n",
+    "real_Y=real_sequence[2:end]\n",
+    "println(\"Input pieces:  \",repr.(tok.tokens[vec(real_X)]))\n",
+    "println(\"Target pieces: \",repr.(tok.tokens[real_Y]))\n",
+    "real_T=size(real_X,1)\n",
+    "real_initial_logits=predict(initial.model,real_X,causal_mask(real_T),collect(1:real_T))\n",
+    "println(\"Input (time, batch): \",size(real_X))\n",
+    "println(\"Logits (vocabulary, time, batch): \",size(real_initial_logits))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 15 · A real training run with a measured time budget\n",
+    "\n",
+    "The trainer uses Adam, gradient norm clipping, a 150-step learning-rate warmup, then a cosine decrease\n",
+    "based on elapsed time. Parameters are stored in Float32; GPU matrix products may use TensorFloat32.\n",
+    "The first complete optimizer step is timed separately because compilation is expensive.\n",
+    "\n",
+    "Validation uses fixed windows from unseen stories. It selects the checkpoint. The final test windows\n",
+    "are evaluated after selection and do not choose the best step. Model saving, the last validation,\n",
+    "and final samples get a two-minute reserve inside the 40-minute process budget.\n",
+    "The measured duration of the supplied run is printed below; other GPU workloads can change speed.\n",
+    "\n",
+    "Set the switch to `true` to start from new random parameters. That replaces only this experiment's\n",
+    "`output/english_basics/` files. The earlier notebooks and their checkpoints remain separate."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Inspecting a run versus starting a run</strong><p>What happens when RUN_TRAINING is false? Does setting it to true reuse the trained TeachingGPT?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>False loads and inspects the supplied English experiment. True constructs a fresh large model and trains it on the prepared story corpus. It does not initialize from TeachingGPT or download pretrained model weights.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "RUN_TRAINING=false\n",
+    "if RUN_TRAINING\n",
+    "    include(joinpath(ROOT,\"experiments\",\"train_english_basics.jl\"))\n",
+    "    train_english(;budget_seconds=40*60)\n",
+    "    initial=load_checkpoint(joinpath(OUT,\"initial.jls\"))\n",
+    "end\n",
+    "trained=load_checkpoint(joinpath(OUT,\"best.jls\"))\n",
+    "model=trained.model\n",
+    "@assert trained.vocab==tok.tokens\n",
+    "@assert all(p isa Array for p in Flux.trainables(model))\n",
+    "@assert trained.metadata[\"tokenizer_sha256\"]==bytes2hex(sha256(read(joinpath(DATA,\"tokenizer.json\"))))\n",
+    "@assert trained.metadata[\"train_sha256\"]==bytes2hex(sha256(read(joinpath(DATA,\"train.bin\"))))\n",
+    "@printf(\"Measured process duration: %.2f minutes | best step %d | last step %d\\n\",\n",
+    "    trained.metadata[\"elapsed_seconds\"]/60,trained.metadata[\"best_step\"],trained.metadata[\"last_step\"])\n",
+    "println(\"Training GPU: \",trained.metadata[\"gpu\"])\n",
+    "println(\"Stop reason: \",trained.metadata[\"stop_reason\"])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 16 · Inspect learning, then inspect language\n",
+    "\n",
+    "Training loss measures fit to seen text; validation measures prediction on held-out stories.\n",
+    "A growing gap is evidence of overfitting. Perplexity is `exp(loss)` and is measured **per BPE token**.\n",
+    "It cannot be directly compared with the earlier word-token teaching model's perplexity.\n",
+    "\n",
+    "These losses use fixed sampled windows, rather than an exhaustive whole-corpus likelihood.\n",
+    "Lower loss helps, but the next section checks actual sentences for grammar and continuity."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "history=trained.history\n",
+    "steps=[h.step for h in history]\n",
+    "tr=[h.train_loss for h in history]\n",
+    "va=[h.validation_loss for h in history]\n",
+    "p1=plot(steps./1000,tr;label=\"Training windows\",color=\"#2c9e94\",\n",
+    "    xlabel=\"Thousands of optimizer updates\",ylabel=\"Cross-entropy / BPE token\",title=\"Real learning curves\")\n",
+    "plot!(p1,steps./1000,va;label=\"Validation windows\",color=\"#5d85c6\")\n",
+    "vline!(p1,[trained.metadata[\"best_step\"]/1000];label=\"Selected checkpoint\",color=\"#aa7caf\",linestyle=:dot)\n",
+    "lr_history=[h for h in history if h.learning_rate>0]\n",
+    "p2=plot([h.seconds/60 for h in lr_history],Float64[h.learning_rate for h in lr_history].*1000;\n",
+    "    color=\"#bc874f\",legend=false,xlabel=\"Elapsed minutes\",ylabel=\"Learning rate × 1,000\",title=\"Learning rate decreases with the budget\")\n",
+    "@printf(\"Best validation CE %.4f | final test CE %.4f | test BPE perplexity %.2f\\n\",\n",
+    "    trained.metadata[\"best_validation_loss\"],trained.metadata[\"test_loss\"],exp(trained.metadata[\"test_loss\"]))\n",
+    "@printf(\"Training tokens processed: %.2f million\\n\",trained.metadata[\"tokens_processed\"]/1e6)\n",
+    "plot(p1,p2;layout=(1,2),size=(1150,400),left_margin=12Plots.mm,bottom_margin=13Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### The embeddings changed without being assigned semantic labels\n",
+    "\n",
+    "The two panels use the same color scale and show the first eight coordinates of the same token pieces.\n",
+    "Coordinates moved because prediction errors flowed back through the network. This demonstrates\n",
+    "learning; it does not identify human-readable meanings for those axes."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "shown_ids=unique(vcat(bpe_encode(tok,\"The little cat was happy.\"),bpe_encode(tok,\"One day, a dog said hello.\")))[1:10]\n",
+    "E0=initial.model.tokens.weight[1:8,shown_ids]\n",
+    "E1=model.tokens.weight[1:8,shown_ids]\n",
+    "limit=max(maximum(abs,E0),maximum(abs,E1))\n",
+    "piece_labels=replace.(tok.tokens[shown_ids],\" \"=>\"·\")\n",
+    "p0=heatmap(piece_labels,1:8,E0;clims=(-limit,limit),color=:RdBu,colorbar=false,\n",
+    "    xlabel=\"Token piece (· is a space)\",ylabel=\"Embedding coordinate\",title=\"Random initialization\",xrotation=30)\n",
+    "p1=heatmap(piece_labels,1:8,E1;clims=(-limit,limit),color=:RdBu,\n",
+    "    xlabel=\"Token piece (· is a space)\",ylabel=\"Embedding coordinate\",title=\"Trained checkpoint\",xrotation=30)\n",
+    "@printf(\"Embedding-table movement norm: %.4f\\n\",norm(model.tokens.weight-initial.model.tokens.weight))\n",
+    "plot(p0,p1;layout=(1,2),size=(1150,430),bottom_margin=20Plots.mm)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Compare the right quantities</strong><p>Can the toy model's word perplexity be directly ranked against this model's BPE perplexity?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>No. They predict different units over different datasets. Compare losses on a fixed tokenizer and evaluation set; use actual English continuations to assess language quality in this experiment.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 17 · Read the actual continuations\n",
+    "\n",
+    "The prompts below are supplied text. Everything after `CONTINUATION:` is produced by the model.\n",
+    "We use a fixed prompt list, fixed seeds, temperature 0.65, and top-k 40. There is no rewriting or\n",
+    "searching over seeds for better answers. The first sample shows the random model before training.\n",
+    "That random sample may already contain English words because BPE pieces were learned from real text;\n",
+    "the untrained network has not yet learned how to arrange those pieces into sensible sentences.\n",
+    "\n",
+    "Temperature changes randomness, not knowledge. Lower values concentrate the probabilities and can\n",
+    "increase repetition; higher values can produce more variety and more mistakes. An end marker stops\n",
+    "generation; otherwise the sample ends at the token limit, possibly in the middle of a sentence."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "prompt_list=[\"Once upon a time, there was a little\",\"The cat looked at the dog and said,\",\n",
+    "    \"One day, a little girl found a\",\"\\\"Hello,\\\" said Tom. \\\"How are you?\\\"\"]\n",
+    "untrained_sample=sample_text(initial.model,tok;prompt=prompt_list[1],seed=8,max_new=35)\n",
+    "println(\"BEFORE TRAINING\\nPROMPT: \",untrained_sample.prompt,\"\\nCONTINUATION: \",untrained_sample.continuation,\"\\n\")\n",
+    "generated=[sample_text(model,tok;prompt,seed=7+i,max_new=110) for (i,prompt) in enumerate(prompt_list)]\n",
+    "for (i,s) in enumerate(generated)\n",
+    "    println(\"AFTER TRAINING — sample \",i,\"\\nPROMPT: \",s.prompt,\"\\nCONTINUATION: \",s.continuation,\n",
+    "        \"\\nEnded at story end: \",s.ended_at_eos,\" | New tokens: \",s.new_tokens,\"\\n\")\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Fluent text can still be copied, repetitive, or inconsistent\n",
+    "\n",
+    "Evaluate spelling, grammar, and whether each sentence follows the previous one. Separately check\n",
+    "whether the model repeats familiar training text. The following exact-substring diagnostic checks\n",
+    "only whether a generated passage of at least 80 characters appears verbatim in training.\n",
+    "Failure to find one does not prove originality: altered wording or memorized fragments may remain."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "training_text=read(joinpath(DATA,\"train.txt\"),String)\n",
+    "for (i,s) in enumerate(generated)\n",
+    "    passage=strip(s.continuation)\n",
+    "    if length(passage)<80\n",
+    "        println(\"Sample \",i,\" is too short for the long-passage copying check.\")\n",
+    "    else\n",
+    "        println(\"Sample \",i,\" long exact training substring: \",occursin(passage,training_text))\n",
+    "    end\n",
+    "end"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 18 · Look inside one learned attention head\n",
+    "\n",
+    "This figure is measured from the **trained first layer**, not drawn as an illustrative weight pattern.\n",
+    "Rows are keys being read; columns are queries making predictions. Future entries remain zero.\n",
+    "One head's weights describe one information-routing step; they do not by themselves explain the\n",
+    "whole model's final choice or establish that it understands a word."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "attention_ids=vcat(tok.bos,bpe_encode(tok,\"The small cat looked at the dog.\"))\n",
+    "T_attn=length(attention_ids)\n",
+    "H=model.tokens(reshape(attention_ids,:,1)) .+ reshape(model.positions(collect(1:T_attn)),256,T_attn,1)\n",
+    "block=model.blocks[1]\n",
+    "Z=block.norm1(H)\n",
+    "Q=JokesGPT.split_heads(block.attention.query(Z),8)\n",
+    "K=JokesGPT.split_heads(block.attention.key(Z),8)\n",
+    "scores=Flux.NNlib.batched_mul(permutedims(K,(2,1,3)),Q)./sqrt(32f0)\n",
+    "weights=Flux.softmax(scores.+reshape(causal_mask(T_attn),T_attn,T_attn,1);dims=1)\n",
+    "labels=replace.(tok.tokens[attention_ids],\" \"=>\"·\")\n",
+    "heatmap(labels,labels,weights[:,:,1];clims=(0,1),color=:blues,\n",
+    "    xlabel=\"Query: position making the prediction\",ylabel=\"Key: position being read\",\n",
+    "    title=\"Trained first layer, attention head 1\",xrotation=35,\n",
+    "    size=(950,550),bottom_margin=23Plots.mm,left_margin=20Plots.mm,colorbar_title=\"Weight\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### 18a · Check that prediction does not read the answer\n",
+    "\n",
+    "Change future input IDs and require earlier logits to stay fixed. Also compare a prefix predicted on\n",
+    "its own with its predictions inside the full sequence. These numerical checks test the causal mask,\n",
+    "not fluency. Loading the saved reference also checks the checkpoint's CPU predictions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "reference=deserialize(joinpath(OUT,\"verification_probe.jls\"))\n",
+    "probe=reference.probe\n",
+    "T_probe=size(probe,1)\n",
+    "L=predict(model,probe,causal_mask(T_probe),collect(1:T_probe))\n",
+    "changed=copy(probe)\n",
+    "changed[4:end,1].=tok.eos\n",
+    "Lc=predict(model,changed,causal_mask(T_probe),collect(1:T_probe))\n",
+    "Lp=predict(model,probe[1:3,:],causal_mask(3),collect(1:3))\n",
+    "future_effect=maximum(abs.(L[:,1:3,:]-Lc[:,1:3,:]))\n",
+    "prefix_error=maximum(abs.(L[:,1:3,:]-Lp))\n",
+    "reload_error=maximum(abs.(L-reference.logits))\n",
+    "@printf(\"Future-input effect: %.3g | prefix difference: %.3g | CPU checkpoint reference: %.3g\\n\",\n",
+    "    future_effect,prefix_error,reload_error)\n",
+    "@assert future_effect<1f-5\n",
+    "@assert prefix_error<1f-4\n",
+    "@assert reload_error<1f-5\n",
+    "@assert norm(model.tokens.weight-initial.model.tokens.weight)>0\n",
+    "println(\"Causal prediction and learned-embedding checks passed.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## 19 · A small grammar probe\n",
+    "\n",
+    "Does the prefix `The cats` make the model prefer ` are` over ` is`? Each alternative below is a\n",
+    "single BPE token. We restrict the comparison to those two choices and report\n",
+    "\n",
+    "$$P(\\text{correct}\\mid\\text{correct or incorrect})=\n",
+    "\\frac{\\exp(z_{correct})}{\\exp(z_{correct})+\\exp(z_{incorrect})}.$$\n",
+    "\n",
+    "This tests a few handpicked subject–verb agreement patterns. It is not a standardized grammar\n",
+    "benchmark or proof of general fluency. Some prefixes are less typical story openings than others.\n",
+    "The random model provides a before-training comparison using exactly the same tokenizer."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "source": [
+    "grammar_cases=[(\"She\",\" is\",\" are\"),(\"He\",\" has\",\" have\"),(\"They\",\" are\",\" is\"),\n",
+    "    (\"We\",\" are\",\" is\"),(\"I\",\" am\",\" are\"),(\"The cat\",\" is\",\" are\"),\n",
+    "    (\"The cats\",\" are\",\" is\"),(\"The dog\",\" has\",\" have\"),(\"The dogs\",\" have\",\" has\"),\n",
+    "    (\"The little girl\",\" is\",\" are\"),(\"The little girls\",\" are\",\" is\"),(\"The two boys\",\" are\",\" is\")]\n",
+    "function agreement_probability(m,prefix,correct,wrong)\n",
+    "    @assert haskey(tok.bytext,correct) && haskey(tok.bytext,wrong)\n",
+    "    ids=vcat(tok.bos,bpe_encode(tok,prefix))\n",
+    "    T=length(ids)\n",
+    "    z=vec(predict(m,reshape(ids,:,1),causal_mask(T),collect(1:T))[:,end,1])\n",
+    "    Flux.softmax(z[[tok.bytext[correct],tok.bytext[wrong]]])[1]\n",
+    "end\n",
+    "before=[agreement_probability(initial.model,c...) for c in grammar_cases]\n",
+    "after=[agreement_probability(model,c...) for c in grammar_cases]\n",
+    "labels=[prefix*\":\"*correct for (prefix,correct,wrong) in grammar_cases]\n",
+    "for (c,p) in zip(grammar_cases,after)\n",
+    "    @printf(\"%-18s prefers %-5s over %-5s: %5.1f%% (two-choice probability)\\n\",c[1],c[2],c[3],100p)\n",
+    "end\n",
+    "println(\"Correct alternative preferred: \",count(>(.5),after),\" / \",length(after),\" handpicked cases\")\n",
+    "x=collect(eachindex(grammar_cases))\n",
+    "p=bar(x.-.18,before;bar_width=.32,label=\"Random weights\",color=\"#a9bdca\")\n",
+    "bar!(p,x.+.18,after;bar_width=.32,label=\"Trained weights\",color=\"#2c9e94\",\n",
+    "    xticks=(x,labels),xrotation=40,ylims=(0,1.12),ylabel=\"Two-choice probability of correct verb\",\n",
+    "    title=\"A narrow agreement check, not a general English exam\",size=(1200,480),bottom_margin=28Plots.mm)\n",
+    "hline!(p,[.5];label=\"Equal preference\",linestyle=:dash,color=\"#a77c50\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<div style=\"border-left:4px solid #21A179;background:#eef8f4;color:#183153;padding:12px 16px\">\n",
+    "<strong>Pause and explain · Do not turn a small probe into a broad claim</strong><p>If the model prefers the correct verb in all twelve binary comparisons, has it passed a comprehensive English exam?</p></div>\n",
+    "<details><summary>Check your reasoning</summary><p>No. These are handpicked alternatives, not unrestricted generation or a standardized benchmark. Check the full raw continuations for repetition, grammar errors, and inconsistent characters or objects.</p></details>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "## Connect the mechanism to larger LLM questions\n",
+    "\n",
+    "| Question | Connection to the code you have run |\n",
+    "|---|---|\n",
+    "| Does ordinary generation keep training the model? | No optimizer step occurs in our samplers. Weights stay fixed while the sequence and states change. |\n",
+    "| Do intermediate reasoning steps require a new architecture? | The same autoregressive network can generate intermediate text and condition later tokens on it. This alone does not guarantee correct reasoning. |\n",
+    "| Why is exact arithmetic harder than plausible prose? | Cross-entropy rewards the observed token, rather than directly penalizing numerical distance. Approximate pattern fit provides no guarantee of an exact algorithm on unseen numbers. |\n",
+    "| Is larger context the same as wider embeddings? | Context changes the number of positions $T$; width changes coordinates per position $d$. |\n",
+    "| Can this English model read a million tokens at once? | No. Its learned position table and training setup support a 128-token window. The rolling sampler can write longer output while discarding earlier context; that does not enlarge the simultaneous window. |\n",
+    "| Why is full attention expensive with length? | Each head forms $T\\times T$ scores. Doubling $T$ quadruples pairwise scores with width and heads fixed. |\n",
+    "| Does adding documents by RAG retrain embeddings? | Retrieval puts selected evidence into the input. Ordinary inference does not update this model's weights. |\n",
+    "| Is DAG another language model? | A directed acyclic graph describes dependencies, such as a workflow or computation graph. This is a different kind of concept from RAG. |\n",
+    "\n",
+    "These are connections to the computation you have run, rather than claims about a closed\n",
+    "model's internal architecture or current product context limits.\n",
+    "\n",
+    "The reference dialogue is archived at `reference/chat_records/rag_dag_transcript.md`.\n",
+    "Raw App pages and a six-page pagination verification accompany it.\n",
+    "The new explanations adapt its useful teaching sequence.\n",
+    "Historical product comparisons stay in the source record rather than being copied here as new facts."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "<a id=\"field-guide\"></a>\n",
+    "# Field guide · Work independently from here\n",
+    "\n",
+    "## Tensor shapes to keep beside the code\n",
+    "\n",
+    "Here $V$ means vocabulary size; the attention value vectors are written as $v$ to avoid mixing them up.\n",
+    "\n",
+    "| Object | Shape / meaning |\n",
+    "|---|---|\n",
+    "| Input IDs | $T\\times B$: time positions by sentences |\n",
+    "| Token table $E$ | $d\\times V$: one learned column per token |\n",
+    "| Embedded / contextual states | $d\\times T\\times B$ |\n",
+    "| One head's width | $d_h=d/H$; the width must be divisible by the number of heads |\n",
+    "| Folded attention scores | $T_{\\rm key}\\times T_{\\rm query}\\times(HB)$ |\n",
+    "| Attention normalization | Down the key axis; one probability distribution per query |\n",
+    "| Output logits | $V\\times T\\times B$ |\n",
+    "| Flattened loss inputs | $V\\times(TB)$ logits and matching one-hot targets |\n",
+    "\n",
+    "## Small experiments, one change at a time\n",
+    "\n",
+    "| Experiment | Change | Keep fixed | Inspect |\n",
+    "|---|---|---|---|\n",
+    "| Undertraining | Teaching lab: 100 instead of 800 updates | Corpus, split, architecture | Loss, context sensitivity, and generated sentences |\n",
+    "| Width | Teaching lab: width 16 instead of 32 | Data and number of heads | Parameter count, runtime, held-out loss |\n",
+    "| Sampling | Temperature 0.5 versus 0.9 | Model, prompt, seed | Variety, repetition, and mistakes |\n",
+    "| Earlier context | Replace rises with falls | The final word bank | Both next-token distributions |\n",
+    "| Tokenization | Inspect words versus BPE pieces | The original text | Token count, supported characters, and reconstruction |\n",
+    "\n",
+    "Restart and run all cells after editing model definitions or the teaching configuration.\n",
+    "The teaching attention plots assume two heads. Do not repeatedly tune against the final test set.\n",
+    "\n",
+    "## Short glossary\n",
+    "\n",
+    "| Term | Meaning in this course |\n",
+    "|---|---|\n",
+    "| NLP | Computational work with human language |\n",
+    "| Language model | A conditional distribution over the next token |\n",
+    "| Tokenizer / vocabulary | The segmentation rule / its allowed pieces |\n",
+    "| Token ID | An integer address with no intrinsic semantic distance |\n",
+    "| Embedding | A trainable vector looked up by ID |\n",
+    "| Position embedding | A learned vector describing a slot |\n",
+    "| Hidden state | An intermediate representation that can depend on context |\n",
+    "| Query / key / value | Learned vectors used to match and combine context |\n",
+    "| Attention head | One set of those projections and weighted-value computations |\n",
+    "| Causal mask | A restriction excluding future input positions |\n",
+    "| Residual / normalization / MLP | Preserve an old state / rescale features / transform each position |\n",
+    "| Logit / softmax | A score / a map from scores to probabilities |\n",
+    "| Cross-entropy | Negative log probability of observed targets |\n",
+    "| Backpropagation / Adam | Compute gradients / use them to update parameters |\n",
+    "| Teacher forcing | Train using the actual preceding tokens |\n",
+    "| Autoregressive generation | Append a predicted token, then predict again |\n",
+    "| Perplexity | Exponentiated mean loss on a specified tokenizer and evaluation set |\n",
+    "| Checkpoint | Saved parameters and metadata; optimizer state is not included here |\n",
+    "| From scratch / fine-tuning | Start with random weights / further train an existing model |\n",
+    "\n",
+    "## If a cell surprises you\n",
+    "\n",
+    "- **Unknown words in the teaching lab:** its small word vocabulary deliberately cannot cover general English.\n",
+    "- **Unsupported prompt characters in the English lab:** this prepared tokenizer supports ASCII English.\n",
+    "- **Context-length error:** the teaching model has a finite maximum prefix. A larger context is a separate design change.\n",
+    "- **Layer/head dimensions do not divide:** choose a width divisible by the number of heads.\n",
+    "- **A fluent-looking sample makes no sense:** inspect the complete output, not just its opening. Probability fit is not truth or reliable reasoning.\n",
+    "- **A low toy loss looks better than a real-language loss:** the tokenizers, vocabulary, and tasks differ.\n",
+    "- **Re-running a saved-model section does not improve the model:** inspection is not a gradient update.\n",
+    "\n",
+    "## A final explain-it-yourself checklist\n",
+    "\n",
+    "Can you describe the path from a text string to a token ID, a vector, a contextual state, a next-token\n",
+    "distribution, a loss, and a parameter update? Can you explain why attention must be masked and how\n",
+    "generation differs from teacher-forced training? Can you identify what the held-out evaluation tests,\n",
+    "and why twelve agreement choices do not establish general conversational ability?\n",
+    "\n",
+    "If so, you have the central mechanism of this NLP workflow.\n",
+    "\n",
+    "The supplied real-English run, all original continuations, checkpoint hashes, and numerical checks\n",
+    "remain available in `output/english_basics/`. To start its fresh GPU recipe, change `RUN_TRAINING`\n",
+    "in Section 15 or run `julia --startup-file=no --project=. experiments/train_english_basics.jl`.\n",
+    "The original `Intro_NLP.ipynb` remains available separately as a compact CPU-only notebook.\n",
+    "\n",
+    "Sources and implementation references:\n",
+    "[Bengio et al. (2003)](https://jmlr.org/papers/v3/bengio03a.html),\n",
+    "[Attention Is All You Need](https://arxiv.org/abs/1706.03762),\n",
+    "[TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories),\n",
+    "[TinyStories paper](https://arxiv.org/abs/2305.07759),\n",
+    "[Flux layers](https://fluxml.ai/Flux.jl/stable/reference/models/layers/),\n",
+    "and [Flux training](https://fluxml.ai/Flux.jl/stable/guide/training/training/)."
+   ]
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+{
+  "course": "notebooks/Intro_English_GPT.ipynb",
+  "principles_source": "notebooks/Intro_NLP.ipynb",
+  "parts": [
+    "Principles and hand calculations",
+    "A transparent CPU training lab",
+    "The real English GPT experiment"
+  ],
+  "executable_language": "Julia",
+  "cells": 96,
+  "executed_code_cells": 37,
+  "embedded_figures": 18,
+  "self_checks_with_answer_hints": 12,
+  "math_checks": "No control characters; balanced dollar delimiters in all prose cells",
+  "gpu_retraining_during_integration": false,
+  "preserved_artifact_sha256": {
+    "notebooks/Intro_NLP.ipynb": "415152aade86389296d5eab38d471a13190a89f83030ea220f1f96166064257e",
+    "notebooks/Intro_DL.ipynb": "d1206f1c19a54cbf6705789e60c3ce377167e72814d11e62be30d79bf449e7a5",
+    "src/JokesGPT.jl": "bb52ff29ef0fb61ed68a73937d76ec1d7cd31f1722a75c5737fdf7c6453130b6",
+    "src/EnglishBasics.jl": "a55b3d6cdfc83f816993456abc304a2016e782a24dd802c02e242cb12a9414c3",
+    "experiments/train_english_basics.jl": "a31d314f32eefcba1d260800cf44e2e31cfe523c67b17c6506387e27c8b793fb",
+    "output/english_basics/best.jls": "b75776ae7850c7b6c7d980bb8d84d7bb0edab33153209ad0d015608074f9bd54",
+    "output/english_basics/initial.jls": "89aad3c48c49b67fe02d0685e20aa4e0f2b0281a3852829114e4cede20ac3c23",
+    "output/english_basics/run_summary.txt": "4f2c9d3439bf0fc272dff5a51136490ac5a8170a7febfce339ba98aa43654935",
+    "output/english_basics/run_summary.jls": "80c8fef0c11b3d486bb1d755443800f05c0187dfb45528eebc3e0e33e1e4693f",
+    "output/english_basics/metrics.csv": "a5118a41fc9add9a2245a1b4a732212cc1a851e0a72efa3dcdd9929df00c1228",
+    "output/english_basics/verification_probe.jls": "3d98a78bf1e631d570020d00e437fb02943e91a427dec01f1280af2f301cab0d",
+    "output/english_basics/samples.txt": "e6769671d366b50fc0122ccfdbde214be91d4b814611eb25601af7e04be047bc",
+    "output/english_basics/samples.jls": "be46b5a25f11b8db2d51f64dab6702e238909ec82ac89b8d70005844d2ecd251",
+    "output/english_basics/notebook_samples.txt": "f39f8b0ee6a45911189e41524f57e6f2e391df168f2f74152df56ab905550c1b",
+    "reference/datasets/english_basics/tokenizer.json": "e5f6b81d44ca6310878bbf319957cdfaf14894c3e2298afda85c4005deeae823",
+    "reference/datasets/english_basics/manifest.json": "7a6ffac3af557b36cfb63a3a51dc70d95e7d2d653c52848b06e977ca07315d29"
+  },
+  "recorded_english_continuations_identical": true,
+  "notebook_sha256": "373986b81140786be11eecc0cd3dd1582b9f2aebff4a7fb9279dbd1e164e084f",
+  "execution_method": "Exact saved Julia code cells executed sequentially in a fresh Julia process; not an IJulia-kernel run"
+}

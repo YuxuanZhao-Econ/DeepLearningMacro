@@ -1,0 +1,24 @@
+BEFORE TRAINING
+PROMPT: Once upon a time, there was a little
+CONTINUATION:  Emma sorry course Le Asorm Be joinituc Tileark backrowat9 dan letter hooom birdsthucbowrowier milkile rainbowaybe fullaybethste
+
+AFTER TRAINING — sample 1
+PROMPT: Once upon a time, there was a little
+CONTINUATION:  girl named Amy. She had a toy that she loved very much. She loved her toy so much that she played with it every day. One day, Amy saw her toy in the kitchen. It was a big bowl of yummy food. Amy wanted to eat the food, but it was too little. She tried to reach it, but she could not. She was sad and thought, "I will not eat the food." Amy had an idea. She told her mom, "I will find the food to eat, but you must promise to
+Ended at story end: false | New tokens: 110
+
+AFTER TRAINING — sample 2
+PROMPT: The cat looked at the dog and said,
+CONTINUATION:  "Why are you so scared, dog?" The dog said, "I am too scared to fly. I am too small to fly and get hurt." The cat felt bad for the dog. The cat said, "I will help you. I am a magic cat. I can make your lives hurt." The dog thought for a moment. He decided to be brave. He walked and walked until he found a big tree. The magic cat touched the tree, and the dog could fly again. The dog was very happy and thanked the magic
+Ended at story end: false | New tokens: 110
+
+AFTER TRAINING — sample 3
+PROMPT: One day, a little girl found a
+CONTINUATION:  pretty package. She was very happy and wanted to show it to her friend, Tom. Lily went to Tom's house and said, "Look, Tom! I found a package!" Tom smiled and said, "Let's open it and see what's inside!" They opened the package and found many colorful papers inside. They were very happy and shared the papers. From that day on, they always shared their papers with each other.
+Ended at story end: true | New tokens: 102
+
+AFTER TRAINING — sample 4
+PROMPT: "Hello," said Tom. "How are you?"
+CONTINUATION:  "I'm the king of the trash and the trash is," said the old man. "That's my trash. Go gets a price. I need to put a price." Tom saw a big structure with many words and a price. He was curious and wanted to know what it was. He reached out his hand and touched the price. It was very hard and heavy. It did not move or move. "Ow!" Tom said. He wanted to
+Ended at story end: false | New tokens: 110
+

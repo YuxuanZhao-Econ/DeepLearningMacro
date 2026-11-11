@@ -1,0 +1,8 @@
+Fresh CPU Julia process; no GPU or pretrained weights used for verification.
+Julia/reference BPE agreement: 11 cases
+Vocabulary and training/validation/test hashes matched.
+Fresh-process CPU reference error: 0.0
+Repeated checkpoint loading: identical CPU logits.
+Future-input effect: 0.0
+Full vs separate prefix difference: 6.67572e-6
+Embedding movement norm: 68.62104

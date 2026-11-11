@@ -1,0 +1,6 @@
+Fresh Julia process loaded finite CPU checkpoint parameters; data hashes matched.
+Serialize/reload prediction difference = 0.0
+Changing future characters: earlier-logit effect = 0.0
+Embedding movement norm = 4.5848308
+Matched-window validation bigram CE = 2.357191539546811
+Matched-window test bigram CE = 2.368719742851075

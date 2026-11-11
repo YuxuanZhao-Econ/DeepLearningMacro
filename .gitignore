@@ -33,3 +33,6 @@ __pycache__/
 /output/jokes_gpt/*.jls
 /output/nlp_course/*.jls
 /output/sentiment_imdb/*.jls
+
+# Private chat transcripts
+/reference/chat_records/

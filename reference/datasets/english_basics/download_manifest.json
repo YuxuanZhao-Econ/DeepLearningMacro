@@ -1,0 +1,16 @@
+{
+  "TinyStoriesV2-GPT4-train.txt": {
+    "url": "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStoriesV2-GPT4-train.txt",
+    "download": "bounded prefix ending at last complete document",
+    "max_bytes": 67108864,
+    "bytes": 67108764,
+    "sha256": "5522d4ae2c20fad84a975e707768639676269dac46fc4f6d08794ac557451bf2"
+  },
+  "TinyStoriesV2-GPT4-valid.txt": {
+    "url": "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/TinyStoriesV2-GPT4-valid.txt",
+    "download": "bounded prefix ending at last complete document",
+    "max_bytes": 4194304,
+    "bytes": 4194182,
+    "sha256": "e05ca406b4214c9b3fb2721b3f671d08f8fe4631f553b7c201ab9274a21cb181"
+  }
+}

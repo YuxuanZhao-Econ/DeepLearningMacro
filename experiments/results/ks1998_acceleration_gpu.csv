@@ -1,0 +1,7 @@
+device,precision,includes_transfer,seconds,minimum_seconds,maximum_seconds,repetitions,valid
+cpu,Float64,false,0.0889625,0.0706558,0.1831159,10,true
+gpu_resident,Float64,false,0.0256657,0.0242734,0.0352872,10,true
+gpu_with_host_transfer,Float64,true,0.02594825,0.0248547,0.0335253,10,true
+cpu,Float32,false,0.0735035,0.0691753,0.1320298,10,true
+gpu_resident,Float32,false,0.02581385,0.0239482,0.0550441,10,true
+gpu_with_host_transfer,Float32,true,0.02552705,0.0242371,0.0565717,10,true

@@ -1,0 +1,6 @@
+Two-step GPU training check of the notebook's exact trainer and 5,820,416-parameter model.
+Device: NVIDIA GeForce RTX 5070
+Steps completed: 2
+Seconds inside fit: 70.60099983215332
+Validation loss before/after: 7.736730416615804 / 7.6299004554748535
+CPU restore: passed; no supplied training artifacts overwritten.

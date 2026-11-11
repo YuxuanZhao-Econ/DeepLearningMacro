@@ -1,0 +1,9898 @@
+{
+  "version": "1.0",
+  "truncation": null,
+  "padding": null,
+  "added_tokens": [
+    {
+      "id": 0,
+      "content": "<unk>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": false,
+      "special": true
+    },
+    {
+      "id": 1,
+      "content": "<eos>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": false,
+      "special": true
+    },
+    {
+      "id": 2,
+      "content": "<bos>",
+      "single_word": false,
+      "lstrip": false,
+      "rstrip": false,
+      "normalized": false,
+      "special": true
+    }
+  ],
+  "normalizer": null,
+  "pre_tokenizer": null,
+  "post_processor": null,
+  "decoder": {
+    "type": "Fuse"
+  },
+  "model": {
+    "type": "BPE",
+    "dropout": null,
+    "unk_token": "<unk>",
+    "continuing_subword_prefix": null,
+    "end_of_word_suffix": null,
+    "fuse_unk": false,
+    "byte_fallback": false,
+    "ignore_merges": false,
+    "vocab": {
+      "<unk>": 0,
+      "<eos>": 1,
+      "<bos>": 2,
+      "\n": 3,
+      " ": 4,
+      "!": 5,
+      "\"": 6,
+      "#": 7,
+      "$": 8,
+      "%": 9,
+      "&": 10,
+      "'": 11,
+      "(": 12,
+      ")": 13,
+      "*": 14,
+      "+": 15,
+      ",": 16,
+      "-": 17,
+      ".": 18,
+      "/": 19,
+      "0": 20,
+      "1": 21,
+      "2": 22,
+      "3": 23,
+      "4": 24,
+      "5": 25,
+      "6": 26,
+      "7": 27,
+      "8": 28,
+      "9": 29,
+      ":": 30,
+      ";": 31,
+      "<": 32,
+      "=": 33,
+      ">": 34,
+      "?": 35,
+      "@": 36,
+      "A": 37,
+      "B": 38,
+      "C": 39,
+      "D": 40,
+      "E": 41,
+      "F": 42,
+      "G": 43,
+      "H": 44,
+      "I": 45,
+      "J": 46,
+      "K": 47,
+      "L": 48,
+      "M": 49,
+      "N": 50,
+      "O": 51,
+      "P": 52,
+      "Q": 53,
+      "R": 54,
+      "S": 55,
+      "T": 56,
+      "U": 57,
+      "V": 58,
+      "W": 59,
+      "X": 60,
+      "Y": 61,
+      "Z": 62,
+      "[": 63,
+      "\\": 64,
+      "]": 65,
+      "^": 66,
+      "_": 67,
+      "`": 68,
+      "a": 69,
+      "b": 70,
+      "c": 71,
+      "d": 72,
+      "e": 73,
+      "f": 74,
+      "g": 75,
+      "h": 76,
+      "i": 77,
+      "j": 78,
+      "k": 79,
+      "l": 80,
+      "m": 81,
+      "n": 82,
+      "o": 83,
+      "p": 84,
+      "q": 85,
+      "r": 86,
+      "s": 87,
+      "t": 88,
+      "u": 89,
+      "v": 90,
+      "w": 91,
+      "x": 92,
+      "y": 93,
+      "z": 94,
+      "{": 95,
+      "|": 96,
+      "}": 97,
+      "~": 98,
+      "e ": 99,
+      "d ": 100,
+      "th": 101,
+      ". ": 102,
+      " a": 103,
+      "t ": 104,
+      "y ": 105,
+      "s ": 106,
+      "nd ": 107,
+      "to": 108,
+      "er": 109,
+      "ed ": 110,
+      "the ": 111,
+      ", ": 112,
+      "wa": 113,
+      "in": 114,
+      "he ": 115,
+      "to ": 116,
+      "ou": 117,
+      " and ": 118,
+      ". T": 119,
+      "en": 120,
+      "ha": 121,
+      " a ": 122,
+      "om": 123,
+      "sa": 124,
+      "ar": 125,
+      " the ": 126,
+      "he": 127,
+      "on": 128,
+      "im": 129,
+      "ll": 130,
+      "g ": 131,
+      "an": 132,
+      "was ": 133,
+      "or": 134,
+      "ay": 135,
+      "it": 136,
+      "er ": 137,
+      "id": 138,
+      "re": 139,
+      "is ": 140,
+      "pl": 141,
+      "\" ": 142,
+      "ir": 143,
+      "ed to ": 144,
+      "il": 145,
+      "the": 146,
+      ". S": 147,
+      "am": 148,
+      "wi": 149,
+      "ri": 150,
+      "st": 151,
+      "lo": 152,
+      ". H": 153,
+      ". The": 154,
+      "and ": 155,
+      "a ": 156,
+      "o ": 157,
+      ". He ": 158,
+      ". The ": 159,
+      ". They ": 160,
+      "no": 161,
+      " h": 162,
+      "at ": 163,
+      "ere ": 164,
+      "with": 165,
+      "un": 166,
+      "ing ": 167,
+      "On": 168,
+      "pp": 169,
+      "ver": 170,
+      "ck": 171,
+      "li": 172,
+      ", \"": 173,
+      "ll ": 174,
+      "bi": 175,
+      "le": 176,
+      ". She ": 177,
+      "be": 178,
+      "day": 179,
+      "ut ": 180,
+      "it ": 181,
+      "you": 182,
+      "w ": 183,
+      "ok": 184,
+      "om ": 185,
+      "said": 186,
+      "ing": 187,
+      "ma": 188,
+      "se": 189,
+      "ld ": 190,
+      "le ": 191,
+      "bo": 192,
+      "happ": 193,
+      "end": 194,
+      "do": 195,
+      "fri": 196,
+      "ba": 197,
+      "gh": 198,
+      "im ": 199,
+      "of": 200,
+      "up": 201,
+      "ed": 202,
+      "ch": 203,
+      "an ": 204,
+      "ay ": 205,
+      "sh": 206,
+      "ne": 207,
+      "for": 208,
+      "very ": 209,
+      "was": 210,
+      "wan": 211,
+      "had ": 212,
+      "l ": 213,
+      "ce ": 214,
+      "en ": 215,
+      "said, \"": 216,
+      "friend": 217,
+      "big ": 218,
+      "itt": 219,
+      "Lil": 220,
+      "they ": 221,
+      "ve ": 222,
+      "e, ": 223,
+      ". I": 224,
+      "ro": 225,
+      "ted to ": 226,
+      "play": 227,
+      "not ": 228,
+      "One ": 229,
+      "ke ": 230,
+      "ge": 231,
+      "'s ": 232,
+      "was a ": 233,
+      "litt": 234,
+      "tim": 235,
+      "little ": 236,
+      "es": 237,
+      "his ": 238,
+      "that ": 239,
+      "at": 240,
+      "car": 241,
+      ".\" ": 242,
+      "One day": 243,
+      "nam": 244,
+      "ould ": 245,
+      "id ": 246,
+      "in the ": 247,
+      "she ": 248,
+      "named ": 249,
+      ". \"": 250,
+      "were ": 251,
+      "ra": 252,
+      "y and ": 253,
+      "to the ": 254,
+      "her ": 255,
+      "ther": 256,
+      "there ": 257,
+      "so ": 258,
+      "ed and ": 259,
+      "go": 260,
+      "ent ": 261,
+      "play ": 262,
+      "!\" ": 263,
+      "fe": 264,
+      "bir": 265,
+      "wh": 266,
+      "on a ": 267,
+      "saw": 268,
+      ", and ": 269,
+      "you ": 270,
+      "! ": 271,
+      "re ": 272,
+      "se ": 273,
+      "wanted to ": 274,
+      "hel": 275,
+      "but ": 276,
+      "Once ": 277,
+      "ed the ": 278,
+      "y a": 279,
+      "I ": 280,
+      "went ": 281,
+      ". A": 282,
+      "help": 283,
+      "with ": 284,
+      "look": 285,
+      "fi": 286,
+      "ound ": 287,
+      "upon a ": 288,
+      "Once upon a ": 289,
+      "Once upon a tim": 290,
+      " his ": 291,
+      ". B": 292,
+      "la": 293,
+      ". It ": 294,
+      ". One day": 295,
+      "ta": 296,
+      "there was a ": 297,
+      "sk": 298,
+      "fun": 299,
+      "ca": 300,
+      "po": 301,
+      "ur": 302,
+      "s and ": 303,
+      "som": 304,
+      "ea": 305,
+      "Once upon a time, ": 306,
+      "be ": 307,
+      ", but ": 308,
+      "Lily ": 309,
+      "of ": 310,
+      "toge": 311,
+      "tre": 312,
+      ". One day, ": 313,
+      "k ": 314,
+      "st ": 315,
+      "Tim": 316,
+      "ck ": 317,
+      "ame ": 318,
+      "et": 319,
+      "par": 320,
+      "m ": 321,
+      "ir ": 322,
+      "Tim ": 323,
+      "my ": 324,
+      ", a ": 325,
+      " her ": 326,
+      "bird ": 327,
+      "was very ": 328,
+      ". Tim ": 329,
+      "sm": 330,
+      "came ": 331,
+      "co": 332,
+      "ec": 333,
+      "wn": 334,
+      "fu": 335,
+      "gir": 336,
+      "mom ": 337,
+      "mom": 338,
+      "saw a ": 339,
+      "e and ": 340,
+      "their ": 341,
+      "'t ": 342,
+      "?\" ": 343,
+      "ga": 344,
+      "new ": 345,
+      "Ma": 346,
+      "t the ": 347,
+      "ter": 348,
+      "lov": 349,
+      "Max": 350,
+      "on the ": 351,
+      "ch ": 352,
+      "ic": 353,
+      "y, ": 354,
+      "is": 355,
+      "friends": 356,
+      "did ": 357,
+      "could ": 358,
+      "The ": 359,
+      "have ": 360,
+      "for ": 361,
+      "played ": 362,
+      "together": 363,
+      "um": 364,
+      "t to ": 365,
+      "es ": 366,
+      "had a ": 367,
+      "ough": 368,
+      "fa": 369,
+      "star": 370,
+      "smil": 371,
+      "can ": 372,
+      "girl ": 373,
+      "ue ": 374,
+      "happy": 375,
+      "sid": 376,
+      "ex": 377,
+      "mor": 378,
+      "bu": 379,
+      "found ": 380,
+      "lik": 381,
+      "way": 382,
+      "looked ": 383,
+      "ow": 384,
+      "al": 385,
+      ". But ": 386,
+      "in ": 387,
+      "said ": 388,
+      "sto": 389,
+      "did not ": 390,
+      "some": 391,
+      "boy ": 392,
+      "ho": 393,
+      "happy ": 394,
+      ". W": 395,
+      "fr": 396,
+      "fel": 397,
+      "nd": 398,
+      "Tom": 399,
+      "on ": 400,
+      "You": 401,
+      "thing ": 402,
+      "rea": 403,
+      "out": 404,
+      "hat ": 405,
+      "ther ": 406,
+      "like ": 407,
+      "would ": 408,
+      "od ": 409,
+      " an": 410,
+      "wor": 411,
+      "dog ": 412,
+      "sp": 413,
+      "toy": 414,
+      "p ": 415,
+      "day ": 416,
+      "r ": 417,
+      "lk": 418,
+      "gr": 419,
+      "ball": 420,
+      "with the ": 421,
+      "ke": 422,
+      "el": 423,
+      "one ": 424,
+      "felt ": 425,
+      "cat ": 426,
+      "make ": 427,
+      "thing": 428,
+      "dd": 429,
+      "Tom ": 430,
+      "sma": 431,
+      "tt": 432,
+      "scar": 433,
+      "sha": 434,
+      "of the ": 435,
+      "de ": 436,
+      "mu": 437,
+      "me": 438,
+      "go ": 439,
+      "ved ": 440,
+      "igh": 441,
+      "o, ": 442,
+      "though": 443,
+      "loved to ": 444,
+      "big": 445,
+      "see ": 446,
+      "ent": 447,
+      "man": 448,
+      "Sam": 449,
+      "started to ": 450,
+      "Mi": 451,
+      "pi": 452,
+      "was so ": 453,
+      "in a ": 454,
+      "park": 455,
+      "tr": 456,
+      "ug": 457,
+      "Max ": 458,
+      "out ": 459,
+      "com": 460,
+      "made ": 461,
+      "ugh": 462,
+      "say": 463,
+      ", the ": 464,
+      "arn": 465,
+      "tri": 466,
+      "liked to ": 467,
+      "little girl ": 468,
+      "pa": 469,
+      "them": 470,
+      "something ": 471,
+      " are ": 472,
+      "too": 473,
+      "find ": 474,
+      "want to ": 475,
+      "with his ": 476,
+      "down": 477,
+      "ell": 478,
+      "box": 479,
+      "friends ": 480,
+      "it was ": 481,
+      "gre": 482,
+      "fo": 483,
+      "cat": 484,
+      "pu": 485,
+      "ob": 486,
+      "fun ": 487,
+      "learn": 488,
+      "put ": 489,
+      "toy ": 490,
+      "kno": 491,
+      "uc": 492,
+      "sad": 493,
+      "help ": 494,
+      "ly ": 495,
+      "saw ": 496,
+      "op": 497,
+      "sun": 498,
+      "qu": 499,
+      "took": 500,
+      "pre": 501,
+      "found a ": 502,
+      "gain": 503,
+      "ever": 504,
+      "walk": 505,
+      "f ": 506,
+      "use ": 507,
+      "good ": 508,
+      "lon": 509,
+      "will ": 510,
+      "lived ": 511,
+      "n't ": 512,
+      "ful ": 513,
+      ",\" ": 514,
+      " and the ": 515,
+      "ce": 516,
+      "boy named ": 517,
+      "One day, a ": 518,
+      "ver ": 519,
+      "ted ": 520,
+      "hom": 521,
+      "all": 522,
+      "some ": 523,
+      "bird": 524,
+      ". They a": 525,
+      "od": 526,
+      "tree": 527,
+      "red ": 528,
+      "her": 529,
+      "ld": 530,
+      "flo": 531,
+      "pe": 532,
+      "ts ": 533,
+      "en, ": 534,
+      "back ": 535,
+      "other": 536,
+      "ti": 537,
+      "br": 538,
+      "Lily": 539,
+      "pr": 540,
+      "th ": 541,
+      "gi": 542,
+      "Luc": 543,
+      "laugh": 544,
+      "your ": 545,
+      "happy and ": 546,
+      "sti": 547,
+      "sad ": 548,
+      ". Lily ": 549,
+      "when ": 550,
+      "ar ": 551,
+      "them ": 552,
+      ". Tom ": 553,
+      ". Wh": 554,
+      "han": 555,
+      "we ": 556,
+      "You ": 557,
+      "what ": 558,
+      "Mom": 559,
+      "small ": 560,
+      ". I ": 561,
+      "dec": 562,
+      "playing ": 563,
+      ". F": 564,
+      "t's ": 565,
+      "ss": 566,
+      "der": 567,
+      "ask": 568,
+      "pot ": 569,
+      "da": 570,
+      "sw": 571,
+      ". They were ": 572,
+      "him": 573,
+      " all ": 574,
+      "al ": 575,
+      "smiled and ": 576,
+      "ow ": 577,
+      "ball ": 578,
+      "clo": 579,
+      "many ": 580,
+      "play with ": 581,
+      "na": 582,
+      "says": 583,
+      "di": 584,
+      "ice ": 585,
+      "ound": 586,
+      "too ": 587,
+      "wat": 588,
+      "who ": 589,
+      "hou": 590,
+      "ny ": 591,
+      "decid": 592,
+      "on't ": 593,
+      "es, ": 594,
+      "ed her ": 595,
+      ". Th": 596,
+      "cit": 597,
+      "went to the ": 598,
+      "back": 599,
+      "dog": 600,
+      "became ": 601,
+      "Ben ": 602,
+      "thought ": 603,
+      "mo": 604,
+      "The": 605,
+      "cause ": 606,
+      " a big ": 607,
+      "ump": 608,
+      "saw a big ": 609,
+      "excit": 610,
+      "ry ": 611,
+      "ry": 612,
+      "outsid": 613,
+      "little girl named ": 614,
+      "because ": 615,
+      "ways ": 616,
+      "cl": 617,
+      "ran": 618,
+      "sur": 619,
+      " and said, \"": 620,
+      "ff": 621,
+      " ar": 622,
+      "ed that ": 623,
+      "do ": 624,
+      "with her ": 625,
+      "got ": 626,
+      "pri": 627,
+      "ed his ": 628,
+      "run": 629,
+      "end ": 630,
+      "Sue ": 631,
+      "man ": 632,
+      "sh ": 633,
+      "hear": 634,
+      "big, ": 635,
+      "ble": 636,
+      "si": 637,
+      "knew ": 638,
+      "best ": 639,
+      "Mia ": 640,
+      "ran ": 641,
+      "sor": 642,
+      "on, ": 643,
+      "Let": 644,
+      "from": 645,
+      "e the ": 646,
+      "one": 647,
+      "wer": 648,
+      "oud ": 649,
+      "decided to ": 650,
+      "room": 651,
+      "ard": 652,
+      "tried to ": 653,
+      "both ": 654,
+      "Let's ": 655,
+      "lu": 656,
+      "day, ": 657,
+      "cou": 658,
+      "surpri": 659,
+      "each ": 660,
+      "lea": 661,
+      "They ": 662,
+      " ask": 663,
+      "Lily and ": 664,
+      "more ": 665,
+      "for a ": 666,
+      "ju": 667,
+      " ab": 668,
+      "Su": 669,
+      "insid": 670,
+      "care": 671,
+      "cle": 672,
+      "told ": 673,
+      "prett": 674,
+      "e to ": 675,
+      ". The bird ": 676,
+      ". And ": 677,
+      "gave ": 678,
+      ". Tim": 679,
+      "ind ": 680,
+      "t and ": 681,
+      "pla": 682,
+      "cre": 683,
+      "open": 684,
+      "de": 685,
+      "than": 686,
+      "saw the ": 687,
+      "happen": 688,
+      "can": 689,
+      "ve": 690,
+      "did": 691,
+      "hug": 692,
+      "shin": 693,
+      "so": 694,
+      " away": 695,
+      "looked at ": 696,
+      "Ben": 697,
+      "tter": 698,
+      "ly": 699,
+      "udd": 700,
+      "ful": 701,
+      ".\" The ": 702,
+      "Sam ": 703,
+      "jump": 704,
+      "fast": 705,
+      "up ": 706,
+      "by ": 707,
+      "s. They ": 708,
+      "take ": 709,
+      "tur": 710,
+      "che": 711,
+      ". M": 712,
+      "not": 713,
+      "they a": 714,
+      ". E": 715,
+      "jo": 716,
+      "this ": 717,
+      "every": 718,
+      "way ": 719,
+      "together ": 720,
+      "Yes, ": 721,
+      "ill": 722,
+      " al": 723,
+      "har": 724,
+      "s, ": 725,
+      "happy to ": 726,
+      "every ": 727,
+      "more": 728,
+      "other ": 729,
+      "imal": 730,
+      "there was a little ": 731,
+      "hank ": 732,
+      "rab": 733,
+      "its ": 734,
+      "Lucy ": 735,
+      "ep": 736,
+      "ing and ": 737,
+      ". It was ": 738,
+      "scared": 739,
+      "An": 740,
+      "Can ": 741,
+      "om that ": 742,
+      "show": 743,
+      ". As ": 744,
+      "mou": 745,
+      "old ": 746,
+      "they were ": 747,
+      "str": 748,
+      " again": 749,
+      "fle": 750,
+      ", but he ": 751,
+      "didn't ": 752,
+      "get ": 753,
+      "know ": 754,
+      "for the ": 755,
+      "could not ": 756,
+      "ev": 757,
+      " all": 758,
+      "under": 759,
+      "things ": 760,
+      "bea": 761,
+      "you, ": 762,
+      "om that day ": 763,
+      "cu": 764,
+      "water": 765,
+      "pped ": 766,
+      "with a ": 767,
+      "tree ": 768,
+      ". J": 769,
+      "list": 770,
+      ". Sue ": 771,
+      "went to ": 772,
+      "spec": 773,
+      "et ": 774,
+      "was not ": 775,
+      "me ": 776,
+      "tu": 777,
+      "ong": 778,
+      "said, \"I ": 779,
+      "n ": 780,
+      "dy ": 781,
+      "him ": 782,
+      "pick": 783,
+      "my": 784,
+      "war": 785,
+      ". When ": 786,
+      "Thank ": 787,
+      "or ": 788,
+      "su": 789,
+      "book": 790,
+      ". You ": 791,
+      "happened": 792,
+      "bl": 793,
+      "ite ": 794,
+      " him": 795,
+      "ing the ": 796,
+      ". Max ": 797,
+      "ily ": 798,
+      "heard ": 799,
+      "Bob": 800,
+      "es and ": 801,
+      "exp": 802,
+      "each other": 803,
+      " at the ": 804,
+      "house": 805,
+      ", he ": 806,
+      "ed, \"": 807,
+      "ple ": 808,
+      "righ": 809,
+      "idea": 810,
+      ". He wanted to ": 811,
+      "flower": 812,
+      "ts of ": 813,
+      "ked ": 814,
+      "col": 815,
+      "near": 816,
+      "ear": 817,
+      "dan": 818,
+      "ble ": 819,
+      "uck": 820,
+      "fter": 821,
+      "speci": 822,
+      "eat ": 823,
+      "from the ": 824,
+      "learned that ": 825,
+      "car ": 826,
+      "lots of ": 827,
+      "if ": 828,
+      "friend ": 829,
+      "park ": 830,
+      "small": 831,
+      "never ": 832,
+      ". In": 833,
+      "don't ": 834,
+      "rock": 835,
+      "long": 836,
+      "ed it ": 837,
+      "clim": 838,
+      ". His ": 839,
+      "Mia": 840,
+      "ile ": 841,
+      ". \"W": 842,
+      "You are ": 843,
+      "dre": 844,
+      "boy named Tim": 845,
+      ". Fr": 846,
+      "el ": 847,
+      " around ": 848,
+      "t, ": 849,
+      "nice ": 850,
+      "turn": 851,
+      ". We ": 852,
+      "ymore": 853,
+      "climb": 854,
+      "am ": 855,
+      "'s mom ": 856,
+      "e. The ": 857,
+      "every day": 858,
+      "win": 859,
+      "expec": 860,
+      "s. He ": 861,
+      "ge ": 862,
+      "just ": 863,
+      "hand": 864,
+      "and": 865,
+      "laughed and ": 866,
+      " as ": 867,
+      ", and the ": 868,
+      "per": 869,
+      "om that day on, ": 870,
+      "est": 871,
+      "squ": 872,
+      "Once upon a time, in a ": 873,
+      "smiled and said, \"": 874,
+      "peo": 875,
+      ". They played ": 876,
+      "sad and ": 877,
+      "il ": 878,
+      "in the park": 879,
+      "Da": 880,
+      "into the ": 881,
+      "to play ": 882,
+      "lled ": 883,
+      "Sar": 884,
+      "us": 885,
+      "unexpec": 886,
+      "s. She ": 887,
+      ". It was a ": 888,
+      "watch": 889,
+      "to be ": 890,
+      "give ": 891,
+      "then ": 892,
+      "all ": 893,
+      "up and ": 894,
+      "loved to play ": 895,
+      "hur": 896,
+      "udden": 897,
+      "high": 898,
+      "hea": 899,
+      "Tim and ": 900,
+      "pretty ": 901,
+      "fro": 902,
+      "fam": 903,
+      "ft": 904,
+      "Spo": 905,
+      ". They all ": 906,
+      "have a ": 907,
+      "! The ": 908,
+      "surprise": 909,
+      "hat": 910,
+      "far": 911,
+      "ep ": 912,
+      "share ": 913,
+      "unexpected ": 914,
+      "e. He ": 915,
+      "kind ": 916,
+      ". So, ": 917,
+      " her": 918,
+      "dad ": 919,
+      "sel": 920,
+      "'m ": 921,
+      "took ": 922,
+      "where ": 923,
+      "plan": 924,
+      "fin": 925,
+      "box ": 926,
+      "uck ": 927,
+      "ook": 928,
+      ". One ": 929,
+      "ed a ": 930,
+      "lly ": 931,
+      "gard": 932,
+      "from ": 933,
+      "even ": 934,
+      ". Then, ": 935,
+      "ving ": 936,
+      ". The cat ": 937,
+      "ink": 938,
+      "sun ": 939,
+      ", they ": 940,
+      "tra": 941,
+      "ry, ": 942,
+      "come ": 943,
+      "now": 944,
+      "lid": 945,
+      "much ": 946,
+      "something unexpected ": 947,
+      "ic ": 948,
+      "ber": 949,
+      "he was ": 950,
+      "made a ": 951,
+      "gg": 952,
+      "dog named ": 953,
+      "cha": 954,
+      "!\" The ": 955,
+      "could": 956,
+      " at ": 957,
+      "pic": 958,
+      "t a ": 959,
+      "Spot ": 960,
+      ", and they ": 961,
+      "by": 962,
+      "ss ": 963,
+      "unt": 964,
+      "Tom and ": 965,
+      "color": 966,
+      "I a": 967,
+      "wn ": 968,
+      "beau": 969,
+      "?\" The ": 970,
+      ". Spot ": 971,
+      "Thank you, ": 972,
+      "bra": 973,
+      "noi": 974,
+      "mak": 975,
+      "Kitt": 976,
+      "fir": 977,
+      ", so ": 978,
+      "home": 979,
+      "to his ": 980,
+      ". But th": 981,
+      "still ": 982,
+      "love ": 983,
+      "should ": 984,
+      "Sue": 985,
+      "said. \"": 986,
+      "s a ": 987,
+      "better": 988,
+      "beauti": 989,
+      ". A ": 990,
+      " always ": 991,
+      "out the ": 992,
+      "toys": 993,
+      "mom and ": 994,
+      "slid": 995,
+      "good": 996,
+      "ol": 997,
+      "nex": 998,
+      "boy named Tim ": 999,
+      "ally ": 1000,
+      "know": 1001,
+      "mag": 1002,
+      "fish ": 1003,
+      "feel ": 1004,
+      "had an ": 1005,
+      ". He was ": 1006,
+      "er and ": 1007,
+      "around ": 1008,
+      "kid": 1009,
+      "ground": 1010,
+      "t of ": 1011,
+      ". Sudden": 1012,
+      "ed a": 1013,
+      ". One day, the ": 1014,
+      "te": 1015,
+      "talk": 1016,
+      "blo": 1017,
+      "hugg": 1018,
+      "listen": 1019,
+      "gu": 1020,
+      "smiled": 1021,
+      ". The dog ": 1022,
+      "feel": 1023,
+      "ly, ": 1024,
+      "Wh": 1025,
+      "shar": 1026,
+      "put the ": 1027,
+      " about ": 1028,
+      "door": 1029,
+      "tw": 1030,
+      "friends and ": 1031,
+      "special ": 1032,
+      "in his ": 1033,
+      "friend, ": 1034,
+      "long ": 1035,
+      "Do ": 1036,
+      "to a ": 1037,
+      "proud ": 1038,
+      "pictu": 1039,
+      "na ": 1040,
+      "luff": 1041,
+      "they all ": 1042,
+      "ow, ": 1043,
+      "that he ": 1044,
+      ". Her ": 1045,
+      "ice": 1046,
+      "that": 1047,
+      "sky": 1048,
+      "great ": 1049,
+      "sof": 1050,
+      ".\" They ": 1051,
+      "bear ": 1052,
+      "things": 1053,
+      "No, ": 1054,
+      "ru": 1055,
+      "ark": 1056,
+      "d and ": 1057,
+      "see the ": 1058,
+      ". They are ": 1059,
+      "was very happy": 1060,
+      ". N": 1061,
+      "sle": 1062,
+      " all day": 1063,
+      "d. They ": 1064,
+      "gam": 1065,
+      "ick": 1066,
+      "up the ": 1067,
+      "fish": 1068,
+      "He ": 1069,
+      "took the ": 1070,
+      ". From that day on, ": 1071,
+      "But ": 1072,
+      "no ": 1073,
+      "ink ": 1074,
+      "brok": 1075,
+      "cat named ": 1076,
+      "to make ": 1077,
+      "says, \"": 1078,
+      " hou": 1079,
+      "yum": 1080,
+      "are ": 1081,
+      "I'm ": 1082,
+      "it and ": 1083,
+      "look ": 1084,
+      "lived in a ": 1085,
+      "zz": 1086,
+      "next ": 1087,
+      "had an idea": 1088,
+      "y. She ": 1089,
+      "lot of ": 1090,
+      "liked to play ": 1091,
+      "people ": 1092,
+      "imals ": 1093,
+      "eat": 1094,
+      "new": 1095,
+      "boy named Tim. Tim ": 1096,
+      "dra": 1097,
+      "in her ": 1098,
+      "how ": 1099,
+      "It ": 1100,
+      "wha": 1101,
+      "imp": 1102,
+      "ati": 1103,
+      "Look": 1104,
+      "Do you ": 1105,
+      "ey": 1106,
+      "loud ": 1107,
+      "our ": 1108,
+      "friends.": 1109,
+      " hom": 1110,
+      "happily ": 1111,
+      "Sara": 1112,
+      "ing to ": 1113,
+      "gra": 1114,
+      "ous ": 1115,
+      "thought": 1116,
+      "walked ": 1117,
+      ". Mia ": 1118,
+      "flew ": 1119,
+      "itch": 1120,
+      "forest": 1121,
+      "an to ": 1122,
+      "toys ": 1123,
+      "house ": 1124,
+      "fter ": 1125,
+      "was sad": 1126,
+      "being ": 1127,
+      "wanted to help": 1128,
+      "sta": 1129,
+      "shed ": 1130,
+      "e. They ": 1131,
+      "ing a ": 1132,
+      "thre": 1133,
+      "irre": 1134,
+      "said, \"Yes, ": 1135,
+      "girl": 1136,
+      "ing, ": 1137,
+      "shiny ": 1138,
+      "met": 1139,
+      "looked at the ": 1140,
+      "befor": 1141,
+      "cla": 1142,
+      "always ": 1143,
+      "brea": 1144,
+      "d. He ": 1145,
+      "clos": 1146,
+      "near the ": 1147,
+      "careful": 1148,
+      "nodd": 1149,
+      "s. The ": 1150,
+      "played with the ": 1151,
+      "couldn't ": 1152,
+      "y. He ": 1153,
+      "She ": 1154,
+      "loved ": 1155,
+      "excited": 1156,
+      "ant ": 1157,
+      "she": 1158,
+      "pt ": 1159,
+      "had to ": 1160,
+      "cook": 1161,
+      "cri": 1162,
+      "squirre": 1163,
+      "? ": 1164,
+      "Hi": 1165,
+      "is a ": 1166,
+      "girl named ": 1167,
+      "ort": 1168,
+      "need": 1169,
+      "stick": 1170,
+      "we": 1171,
+      "reach": 1172,
+      " an ": 1173,
+      "thank": 1174,
+      "ight": 1175,
+      ".\" Tim ": 1176,
+      ". One day, a ": 1177,
+      "sho": 1178,
+      "her mom ": 1179,
+      "clean": 1180,
+      "jumped ": 1181,
+      "I am ": 1182,
+      "little bird ": 1183,
+      "time ": 1184,
+      "magic ": 1185,
+      ". She was ": 1186,
+      "row": 1187,
+      "Anna": 1188,
+      "mon": 1189,
+      "Can I ": 1190,
+      ". In the ": 1191,
+      "she was ": 1192,
+      "bun": 1193,
+      ". Tom": 1194,
+      "part": 1195,
+      "aybe ": 1196,
+      "try ": 1197,
+      "had a big ": 1198,
+      "dr": 1199,
+      "work": 1200,
+      "bro": 1201,
+      " after": 1202,
+      ". Sam ": 1203,
+      "cry": 1204,
+      "were very ": 1205,
+      ". Tim and ": 1206,
+      "tree and ": 1207,
+      "back to ": 1208,
+      "beautiful ": 1209,
+      ". Bob": 1210,
+      "tin": 1211,
+      "bit ": 1212,
+      "bug ": 1213,
+      "play with the ": 1214,
+      "lk ": 1215,
+      ". It is ": 1216,
+      "en the ": 1217,
+      "a big ": 1218,
+      "int": 1219,
+      "everyone ": 1220,
+      "had lots of ": 1221,
+      "ate ": 1222,
+      "Don't ": 1223,
+      "story ": 1224,
+      "Spot": 1225,
+      "blue ": 1226,
+      ". She said, \"": 1227,
+      "the best ": 1228,
+      "bear": 1229,
+      "down ": 1230,
+      "yell": 1231,
+      "! I ": 1232,
+      "his mom ": 1233,
+      "scared ": 1234,
+      "food": 1235,
+      "s to ": 1236,
+      "tter ": 1237,
+      "garden": 1238,
+      "food ": 1239,
+      "tou": 1240,
+      "over": 1241,
+      "Ja": 1242,
+      "wind ": 1243,
+      "mem": 1244,
+      "sunny ": 1245,
+      "vo": 1246,
+      "town": 1247,
+      "played together": 1248,
+      "bad ": 1249,
+      "d, ": 1250,
+      " ad": 1251,
+      "on his ": 1252,
+      "let's ": 1253,
+      "y an": 1254,
+      "off": 1255,
+      ". Suddenly, ": 1256,
+      "hid": 1257,
+      ". But then, ": 1258,
+      "sat ": 1259,
+      "until ": 1260,
+      "gla": 1261,
+      "vent": 1262,
+      "day long": 1263,
+      "llow": 1264,
+      "time": 1265,
+      "ess": 1266,
+      " all the ": 1267,
+      "water ": 1268,
+      "cake ": 1269,
+      "con": 1270,
+      "did not want to ": 1271,
+      "heard a ": 1272,
+      "em": 1273,
+      "mouse ": 1274,
+      "fly": 1275,
+      "two ": 1276,
+      "Jo": 1277,
+      "fly ": 1278,
+      "opened the ": 1279,
+      ". Every ": 1280,
+      "called ": 1281,
+      "mi": 1282,
+      "spo": 1283,
+      "kept ": 1284,
+      "ght": 1285,
+      "min": 1286,
+      "our": 1287,
+      "enjo": 1288,
+      "much": 1289,
+      "you can ": 1290,
+      "out of the ": 1291,
+      "curi": 1292,
+      "doll": 1293,
+      "!\" They ": 1294,
+      "that the ": 1295,
+      " away ": 1296,
+      "remem": 1297,
+      "fav": 1298,
+      ". You are ": 1299,
+      "so much ": 1300,
+      "block": 1301,
+      "brigh": 1302,
+      "green ": 1303,
+      "thought it ": 1304,
+      "e. She ": 1305,
+      "low": 1306,
+      ". Lucy ": 1307,
+      "friends. They ": 1308,
+      "came to ": 1309,
+      "lived a ": 1310,
+      "have to ": 1311,
+      "d. The ": 1312,
+      ", but she ": 1313,
+      " and a ": 1314,
+      " how ": 1315,
+      "it is ": 1316,
+      "on the ground": 1317,
+      ", there ": 1318,
+      "did not know ": 1319,
+      "Hell": 1320,
+      ", there was a ": 1321,
+      "rabb": 1322,
+      "plea": 1323,
+      "beg": 1324,
+      "had many ": 1325,
+      "fix": 1326,
+      "very": 1327,
+      "noise": 1328,
+      "rain": 1329,
+      "picked ": 1330,
+      "try": 1331,
+      "found a big ": 1332,
+      "ger": 1333,
+      "sleep": 1334,
+      "One day, a little ": 1335,
+      "import": 1336,
+      "moral ": 1337,
+      ". At the ": 1338,
+      "lived happily ": 1339,
+      "kitch": 1340,
+      "s the ": 1341,
+      "fell ": 1342,
+      "yard": 1343,
+      "wait": 1344,
+      "e, but ": 1345,
+      "cho": 1346,
+      "bug": 1347,
+      "that she ": 1348,
+      "wer ": 1349,
+      "frog ": 1350,
+      "fru": 1351,
+      "strong": 1352,
+      "dro": 1353,
+      "he could ": 1354,
+      "Kitty ": 1355,
+      ". They both ": 1356,
+      "ay, ": 1357,
+      "Anna ": 1358,
+      "ous": 1359,
+      "big and ": 1360,
+      "it to ": 1361,
+      "like the ": 1362,
+      " anymore": 1363,
+      "Mom ": 1364,
+      "favor": 1365,
+      "back to the ": 1366,
+      " around the ": 1367,
+      "with their ": 1368,
+      "leav": 1369,
+      ", but the ": 1370,
+      "self": 1371,
+      "became good ": 1372,
+      "dir": 1373,
+      "together.": 1374,
+      ". She wanted to ": 1375,
+      ". One day, he ": 1376,
+      "yummy ": 1377,
+      "expl": 1378,
+      "under the ": 1379,
+      "ed, ": 1380,
+      "Once upon a time ": 1381,
+      "sure ": 1382,
+      "wo": 1383,
+      "wr": 1384,
+      "sna": 1385,
+      "cor": 1386,
+      "friend, a ": 1387,
+      "favorite ": 1388,
+      "explor": 1389,
+      "I will ": 1390,
+      "et and ": 1391,
+      "ever after": 1392,
+      "ster": 1393,
+      "met a ": 1394,
+      "We ": 1395,
+      "s, and ": 1396,
+      "beh": 1397,
+      "ventu": 1398,
+      "Fluff": 1399,
+      "place ": 1400,
+      "moral of the ": 1401,
+      "h ": 1402,
+      ". L": 1403,
+      "saf": 1404,
+      "toys and ": 1405,
+      "his friends ": 1406,
+      "hugged ": 1407,
+      "for help": 1408,
+      "bow": 1409,
+      "inside": 1410,
+      "on her ": 1411,
+      "y are ": 1412,
+      "go to the ": 1413,
+      "ig": 1414,
+      "it's ": 1415,
+      "having ": 1416,
+      "lost ": 1417,
+      "on it": 1418,
+      "ffer": 1419,
+      "can't ": 1420,
+      "ap": 1421,
+      "was so happy": 1422,
+      "down and ": 1423,
+      "famil": 1424,
+      ". Tim was ": 1425,
+      "say ": 1426,
+      "kids ": 1427,
+      "safe": 1428,
+      "ight ": 1429,
+      "moral of the story ": 1430,
+      "in the sky": 1431,
+      "played together ": 1432,
+      ". But the ": 1433,
+      "cro": 1434,
+      "oud": 1435,
+      "y. The ": 1436,
+      "stay": 1437,
+      "room ": 1438,
+      "danc": 1439,
+      "helped ": 1440,
+      "follow": 1441,
+      "says. \"": 1442,
+      "His ": 1443,
+      ". Every": 1444,
+      "ever after.": 1445,
+      "at the ": 1446,
+      ",\" said ": 1447,
+      "bor": 1448,
+      " him ": 1449,
+      "y was ": 1450,
+      "worked ": 1451,
+      "Bob ": 1452,
+      "floor": 1453,
+      "sad because ": 1454,
+      "behind ": 1455,
+      "careful ": 1456,
+      "hat's ": 1457,
+      "found the ": 1458,
+      "ed. \"": 1459,
+      "table": 1460,
+      "began to ": 1461,
+      "push": 1462,
+      "rough": 1463,
+      "her mom": 1464,
+      "hun": 1465,
+      " about the ": 1466,
+      "So, ": 1467,
+      "thanked ": 1468,
+      "Hello, ": 1469,
+      "tast": 1470,
+      "sorry": 1471,
+      ".\" Lily ": 1472,
+      ". One sunny ": 1473,
+      "e was ": 1474,
+      "less": 1475,
+      "differ": 1476,
+      "let ": 1477,
+      "Hi, ": 1478,
+      "Mom, ": 1479,
+      "Do you want to ": 1480,
+      "won": 1481,
+      "went for a ": 1482,
+      "together and ": 1483,
+      "ll the ": 1484,
+      "ran to the ": 1485,
+      ". Lily and ": 1486,
+      "shout": 1487,
+      ", but it was ": 1488,
+      "see what ": 1489,
+      "went to the park ": 1490,
+      "read ": 1491,
+      "swe": 1492,
+      "It's ": 1493,
+      "mis": 1494,
+      "ant": 1495,
+      "ild ": 1496,
+      "ed it": 1497,
+      "ong ": 1498,
+      "happy. They ": 1499,
+      "again": 1500,
+      "toy car": 1501,
+      "what to ": 1502,
+      "there was a big ": 1503,
+      "Look, ": 1504,
+      "pon": 1505,
+      "hed": 1506,
+      "we can ": 1507,
+      "picture": 1508,
+      "flew": 1509,
+      "small hou": 1510,
+      "est ": 1511,
+      "dad": 1512,
+      "show ": 1513,
+      "while ": 1514,
+      "Tim's ": 1515,
+      "had a great ": 1516,
+      "rock ": 1517,
+      "like to ": 1518,
+      "kitchen": 1519,
+      "want": 1520,
+      "animals ": 1521,
+      "mar": 1522,
+      "oon": 1523,
+      "cake": 1524,
+      "hard ": 1525,
+      "happened. The ": 1526,
+      "Her ": 1527,
+      "was very happy and ": 1528,
+      "dow": 1529,
+      ": ": 1530,
+      ", but they ": 1531,
+      "would be ": 1532,
+      "brave ": 1533,
+      "with his friends": 1534,
+      "had lots of fun": 1535,
+      "remember": 1536,
+      "hill": 1537,
+      "kin": 1538,
+      "prom": 1539,
+      "first": 1540,
+      "y again": 1541,
+      ". One day, Tim ": 1542,
+      "Amy ": 1543,
+      "need to ": 1544,
+      "goodby": 1545,
+      "sorry ": 1546,
+      "dirt": 1547,
+      "scared and ": 1548,
+      "din": 1549,
+      "le and ": 1550,
+      "tail": 1551,
+      "excited to ": 1552,
+      "stopped ": 1553,
+      " and Ben ": 1554,
+      ". Ben ": 1555,
+      "keep ": 1556,
+      " all day long": 1557,
+      "pret": 1558,
+      "deli": 1559,
+      ". This ": 1560,
+      "swing": 1561,
+      "ust ": 1562,
+      "came to the ": 1563,
+      "cream": 1564,
+      "Mr": 1565,
+      "hop": 1566,
+      ". He said, \"": 1567,
+      ". One day, they ": 1568,
+      "put it ": 1569,
+      "ag": 1570,
+      "wel": 1571,
+      "time to ": 1572,
+      "y. ": 1573,
+      "ut": 1574,
+      "wanted ": 1575,
+      "over ": 1576,
+      "does ": 1577,
+      "funny ": 1578,
+      "enjoy": 1579,
+      "my and ": 1580,
+      "ch the ": 1581,
+      "became best ": 1582,
+      "have fun": 1583,
+      "ally, ": 1584,
+      "!\" said ": 1585,
+      "cast": 1586,
+      "hat is ": 1587,
+      "laug": 1588,
+      "listen ": 1589,
+      "soft ": 1590,
+      "tea": 1591,
+      "hungr": 1592,
+      "get the ": 1593,
+      ". One day, she ": 1594,
+      "looking ": 1595,
+      "outside": 1596,
+      ", she ": 1597,
+      "stay ": 1598,
+      "of a ": 1599,
+      "tak": 1600,
+      "squirrel ": 1601,
+      "bunny ": 1602,
+      "es to ": 1603,
+      "sand": 1604,
+      "down the ": 1605,
+      "I can ": 1606,
+      "nice": 1607,
+      "sound": 1608,
+      "he had ": 1609,
+      "runn": 1610,
+      "ran to ": 1611,
+      "This ": 1612,
+      "thanked the ": 1613,
+      "ball and ": 1614,
+      "dri": 1615,
+      "outside ": 1616,
+      " and Lily ": 1617,
+      "! He ": 1618,
+      "warm": 1619,
+      "turned ": 1620,
+      "playing": 1621,
+      "happy.": 1622,
+      "ci": 1623,
+      "was happy and ": 1624,
+      "cooki": 1625,
+      ". His mom ": 1626,
+      "lli": 1627,
+      ". An": 1628,
+      "family ": 1629,
+      "y. They ": 1630,
+      "s were ": 1631,
+      ". I will ": 1632,
+      "!\" Lily ": 1633,
+      "high ": 1634,
+      " any": 1635,
+      "came and ": 1636,
+      "was playing ": 1637,
+      "surpris": 1638,
+      "hurt ": 1639,
+      "feeling ": 1640,
+      "find a ": 1641,
+      "clean ": 1642,
+      "make a ": 1643,
+      "truck": 1644,
+      "wing": 1645,
+      "en, a ": 1646,
+      "Ok": 1647,
+      "Tom. Tom ": 1648,
+      "not a ": 1649,
+      "new friend": 1650,
+      "tire": 1651,
+      "tor": 1652,
+      " angr": 1653,
+      ". Mom ": 1654,
+      "farm": 1655,
+      "only ": 1656,
+      "think": 1657,
+      "boat": 1658,
+      "had a lot of ": 1659,
+      "it. He ": 1660,
+      "shi": 1661,
+      ". Bob ": 1662,
+      "little boy ": 1663,
+      ". Let's ": 1664,
+      "moral of the story is ": 1665,
+      "sing": 1666,
+      "was too ": 1667,
+      "sorry, ": 1668,
+      "fl": 1669,
+      "home, ": 1670,
+      ". Everyone ": 1671,
+      "te ": 1672,
+      "y's ": 1673,
+      "there": 1674,
+      ". Her mom ": 1675,
+      " adventu": 1676,
+      "ed their ": 1677,
+      "liked the ": 1678,
+      "rabbit ": 1679,
+      "what to do": 1680,
+      ". They had ": 1681,
+      "when he ": 1682,
+      "wood": 1683,
+      "they could ": 1684,
+      ". After ": 1685,
+      "ner": 1686,
+      "pro": 1687,
+      "bar": 1688,
+      "s.": 1689,
+      "ine ": 1690,
+      ", and he ": 1691,
+      "to play": 1692,
+      "stea": 1693,
+      ". One sunny day, ": 1694,
+      "you are ": 1695,
+      "maz": 1696,
+      "walk ": 1697,
+      ", so he ": 1698,
+      "better ": 1699,
+      "moment": 1700,
+      ", there lived a ": 1701,
+      "asked, \"": 1702,
+      "pull": 1703,
+      "qui": 1704,
+      "song": 1705,
+      "you.\" ": 1706,
+      "quick": 1707,
+      "but": 1708,
+      "der ": 1709,
+      ". Sar": 1710,
+      ". After": 1711,
+      "se, ": 1712,
+      "very much": 1713,
+      "ce and ": 1714,
+      "y ask": 1715,
+      "could not find ": 1716,
+      "pli": 1717,
+      "see": 1718,
+      "!\" Tim ": 1719,
+      "home ": 1720,
+      "se and ": 1721,
+      "prin": 1722,
+      "said, \"Thank you, ": 1723,
+      "stre": 1724,
+      "to play with": 1725,
+      "!\" Tom ": 1726,
+      "glad ": 1727,
+      "were playing ": 1728,
+      "! It ": 1729,
+      "butter": 1730,
+      "Can you ": 1731,
+      "asked ": 1732,
+      "d. She ": 1733,
+      "Lily. She ": 1734,
+      "through": 1735,
+      "ready ": 1736,
+      "'re ": 1737,
+      "held ": 1738,
+      "now ": 1739,
+      "fair": 1740,
+      "s. \"": 1741,
+      "Lily, ": 1742,
+      ". They were very ": 1743,
+      ". As they ": 1744,
+      "full ": 1745,
+      "store ": 1746,
+      "red ball": 1747,
+      "y are you ": 1748,
+      "swa": 1749,
+      "ed to the ": 1750,
+      "cra": 1751,
+      ". Fin": 1752,
+      "knew that ": 1753,
+      "Don't wor": 1754,
+      " agre": 1755,
+      "able ": 1756,
+      "rac": 1757,
+      "Dais": 1758,
+      "wall": 1759,
+      "I want to ": 1760,
+      "started ": 1761,
+      "row ": 1762,
+      "ph": 1763,
+      "flower ": 1764,
+      "oun": 1765,
+      ". Then ": 1766,
+      "soon": 1767,
+      "hurt": 1768,
+      "wonder": 1769,
+      "sometim": 1770,
+      "hole": 1771,
+      "duck": 1772,
+      "repli": 1773,
+      "whil": 1774,
+      "like a ": 1775,
+      "game ": 1776,
+      "walking ": 1777,
+      "ill ": 1778,
+      ". Amy ": 1779,
+      "on the floor": 1780,
+      "ate": 1781,
+      "please": 1782,
+      "them and ": 1783,
+      "window": 1784,
+      "making ": 1785,
+      "fire": 1786,
+      "yellow ": 1787,
+      "ber ": 1788,
+      "it was": 1789,
+      "friendly ": 1790,
+      "does not ": 1791,
+      "Tom, ": 1792,
+      "grass": 1793,
+      "day.": 1794,
+      "help you ": 1795,
+      "vis": 1796,
+      "Sally ": 1797,
+      "grabb": 1798,
+      ". P": 1799,
+      "play with it": 1800,
+      "their": 1801,
+      "truck ": 1802,
+      "baby ": 1803,
+      "Tim, ": 1804,
+      "rid": 1805,
+      "pped and ": 1806,
+      "for a moment": 1807,
+      "full of ": 1808,
+      "Jan": 1809,
+      "bla": 1810,
+      " awa": 1811,
+      "Go": 1812,
+      "looked around ": 1813,
+      "run ": 1814,
+      " asked ": 1815,
+      "said, \"No, ": 1816,
+      "proud of": 1817,
+      "picture ": 1818,
+      "slow": 1819,
+      "hair": 1820,
+      "wished ": 1821,
+      "asked her ": 1822,
+      "coun": 1823,
+      "was happy ": 1824,
+      "heav": 1825,
+      "job": 1826,
+      "tree. The ": 1827,
+      "than ": 1828,
+      "to help": 1829,
+      "ed. They ": 1830,
+      "was happy to ": 1831,
+      "smell": 1832,
+      "dis": 1833,
+      "special": 1834,
+      "took a ": 1835,
+      "oke ": 1836,
+      "nodded and ": 1837,
+      "catch ": 1838,
+      "for his ": 1839,
+      "says ": 1840,
+      "inside the ": 1841,
+      "ugg": 1842,
+      "they had ": 1843,
+      "she could ": 1844,
+      "different ": 1845,
+      "ted": 1846,
+      "top": 1847,
+      "with a big ": 1848,
+      "nd and ": 1849,
+      "into ": 1850,
+      "showed ": 1851,
+      "gent": 1852,
+      "whi": 1853,
+      "ces": 1854,
+      "ft ": 1855,
+      "bran": 1856,
+      "do not ": 1857,
+      "cr": 1858,
+      "cold ": 1859,
+      "into a ": 1860,
+      "ome ": 1861,
+      "Don't worry, ": 1862,
+      "saw a big, ": 1863,
+      "gave the ": 1864,
+      "pur": 1865,
+      ". C": 1866,
+      "top ": 1867,
+      "grand": 1868,
+      "by the ": 1869,
+      "notic": 1870,
+      "tiny ": 1871,
+      "face": 1872,
+      "frog": 1873,
+      "wise ": 1874,
+      "boat ": 1875,
+      "want ": 1876,
+      "climbed ": 1877,
+      "went outsid": 1878,
+      "must ": 1879,
+      ". Insid": 1880,
+      "x ": 1881,
+      "fini": 1882,
+      "cam": 1883,
+      "ed. He ": 1884,
+      "Joh": 1885,
+      "pen": 1886,
+      "ark ": 1887,
+      "own": 1888,
+      "liz": 1889,
+      "land": 1890,
+      "pe ": 1891,
+      "so much fun": 1892,
+      "sees ": 1893,
+      "when they ": 1894,
+      "ard ": 1895,
+      "pain": 1896,
+      "went to the park": 1897,
+      "book ": 1898,
+      "His mom ": 1899,
+      "tir": 1900,
+      "!\"": 1901,
+      "time, ": 1902,
+      ". So, he ": 1903,
+      "mommy ": 1904,
+      "keep": 1905,
+      "Lily's ": 1906,
+      ". Jo": 1907,
+      "when she ": 1908,
+      "bed": 1909,
+      "play and ": 1910,
+      "?\"": 1911,
+      "shared ": 1912,
+      "ever ": 1913,
+      "tor ": 1914,
+      "in the water": 1915,
+      "mus": 1916,
+      "fur": 1917,
+      "anymore": 1918,
+      "stran": 1919,
+      "sig": 1920,
+      "paper": 1921,
+      "Sara ": 1922,
+      "ab": 1923,
+      " amaz": 1924,
+      ".\" Tom ": 1925,
+      "help me ": 1926,
+      "tall ": 1927,
+      "stop": 1928,
+      "gone": 1929,
+      "kind and ": 1930,
+      "sy ": 1931,
+      "vi": 1932,
+      "was happy": 1933,
+      "peopl": 1934,
+      ". In the end": 1935,
+      "a and ": 1936,
+      "mess": 1937,
+      "call": 1938,
+      "with his mom": 1939,
+      "ol ": 1940,
+      "bag": 1941,
+      "for her ": 1942,
+      "mean": 1943,
+      "cheer": 1944,
+      "didn't know ": 1945,
+      "ed to be ": 1946,
+      "ed. The ": 1947,
+      " again.": 1948,
+      "Okay, ": 1949,
+      "ad": 1950,
+      "wanted to help the ": 1951,
+      "stuck ": 1952,
+      "before ": 1953,
+      "been ": 1954,
+      "going ": 1955,
+      ", but it ": 1956,
+      "ely ": 1957,
+      "curiou": 1958,
+      "excited and ": 1959,
+      "That ": 1960,
+      "said \"": 1961,
+      "word": 1962,
+      "ez": 1963,
+      "stu": 1964,
+      "day, the ": 1965,
+      "table ": 1966,
+      "all the ": 1967,
+      " how to ": 1968,
+      ". Finally, ": 1969,
+      "i ": 1970,
+      "rain ": 1971,
+      "Mommy ": 1972,
+      "b ": 1973,
+      "dark": 1974,
+      "eal": 1975,
+      "together. They ": 1976,
+      "it was time to ": 1977,
+      "w the ": 1978,
+      "work ": 1979,
+      "picked it ": 1980,
+      "clothe": 1981,
+      "on and ": 1982,
+      " high": 1983,
+      "wanted to play ": 1984,
+      "hor": 1985,
+      "care ": 1986,
+      "find the ": 1987,
+      "Her mom ": 1988,
+      " adventure": 1989,
+      "felt very ": 1990,
+      "blu": 1991,
+      "said, \"Let's ": 1992,
+      "store": 1993,
+      "learn ": 1994,
+      "brough": 1995,
+      ". While ": 1996,
+      "end of the ": 1997,
+      "right": 1998,
+      "think ": 1999,
+      "it. The ": 2000,
+      "rest": 2001,
+      "box and ": 2002,
+      "dream": 2003,
+      "through the ": 2004,
+      "he would ": 2005,
+      "cket": 2006,
+      "That's ": 2007,
+      "chan": 2008,
+      "fre": 2009,
+      "ny": 2010,
+      "snow": 2011,
+      ". You can ": 2012,
+      "tell": 2013,
+      "had a fun ": 2014,
+      "eat the ": 2015,
+      "wear": 2016,
+      "warm ": 2017,
+      "ma ": 2018,
+      "was so happy ": 2019,
+      ". When they ": 2020,
+      "dog named Max": 2021,
+      "stayed ": 2022,
+      ", and it ": 2023,
+      "back hom": 2024,
+      "strong ": 2025,
+      "chair": 2026,
+      "little girl": 2027,
+      "fall": 2028,
+      "small town": 2029,
+      "do you ": 2030,
+      "thought for a moment": 2031,
+      "mouth": 2032,
+      "sit ": 2033,
+      "is not ": 2034,
+      "in the garden": 2035,
+      "was so happy and ": 2036,
+      "picked up the ": 2037,
+      "spla": 2038,
+      "was scared": 2039,
+      "tting ": 2040,
+      "asked his ": 2041,
+      "pretty": 2042,
+      "key ": 2043,
+      "'s a ": 2044,
+      "oo": 2045,
+      "lion ": 2046,
+      "I don't ": 2047
+    },
+    "merges": [
+      [
+        "e",
+        " "
+      ],
+      [
+        "d",
+        " "
+      ],
+      [
+        "t",
+        "h"
+      ],
+      [
+        ".",
+        " "
+      ],
+      [
+        " ",
+        "a"
+      ],
+      [
+        "t",
+        " "
+      ],
+      [
+        "y",
+        " "
+      ],
+      [
+        "s",
+        " "
+      ],
+      [
+        "n",
+        "d "
+      ],
+      [
+        "t",
+        "o"
+      ],
+      [
+        "e",
+        "r"
+      ],
+      [
+        "e",
+        "d "
+      ],
+      [
+        "th",
+        "e "
+      ],
+      [
+        ",",
+        " "
+      ],
+      [
+        "w",
+        "a"
+      ],
+      [
+        "i",
+        "n"
+      ],
+      [
+        "h",
+        "e "
+      ],
+      [
+        "to",
+        " "
+      ],
+      [
+        "o",
+        "u"
+      ],
+      [
+        " a",
+        "nd "
+      ],
+      [
+        ". ",
+        "T"
+      ],
+      [
+        "e",
+        "n"
+      ],
+      [
+        "h",
+        "a"
+      ],
+      [
+        " a",
+        " "
+      ],
+      [
+        "o",
+        "m"
+      ],
+      [
+        "s",
+        "a"
+      ],
+      [
+        "a",
+        "r"
+      ],
+      [
+        " ",
+        "the "
+      ],
+      [
+        "h",
+        "e"
+      ],
+      [
+        "o",
+        "n"
+      ],
+      [
+        "i",
+        "m"
+      ],
+      [
+        "l",
+        "l"
+      ],
+      [
+        "g",
+        " "
+      ],
+      [
+        "a",
+        "n"
+      ],
+      [
+        "wa",
+        "s "
+      ],
+      [
+        "o",
+        "r"
+      ],
+      [
+        "a",
+        "y"
+      ],
+      [
+        "i",
+        "t"
+      ],
+      [
+        "er",
+        " "
+      ],
+      [
+        "i",
+        "d"
+      ],
+      [
+        "r",
+        "e"
+      ],
+      [
+        "i",
+        "s "
+      ],
+      [
+        "p",
+        "l"
+      ],
+      [
+        "\"",
+        " "
+      ],
+      [
+        "i",
+        "r"
+      ],
+      [
+        "ed ",
+        "to "
+      ],
+      [
+        "i",
+        "l"
+      ],
+      [
+        "th",
+        "e"
+      ],
+      [
+        ". ",
+        "S"
+      ],
+      [
+        "a",
+        "m"
+      ],
+      [
+        "w",
+        "i"
+      ],
+      [
+        "r",
+        "i"
+      ],
+      [
+        "s",
+        "t"
+      ],
+      [
+        "l",
+        "o"
+      ],
+      [
+        ". ",
+        "H"
+      ],
+      [
+        ". T",
+        "he"
+      ],
+      [
+        "a",
+        "nd "
+      ],
+      [
+        "a",
+        " "
+      ],
+      [
+        "o",
+        " "
+      ],
+      [
+        ". H",
+        "e "
+      ],
+      [
+        ". T",
+        "he "
+      ],
+      [
+        ". The",
+        "y "
+      ],
+      [
+        "n",
+        "o"
+      ],
+      [
+        " ",
+        "h"
+      ],
+      [
+        "a",
+        "t "
+      ],
+      [
+        "er",
+        "e "
+      ],
+      [
+        "wi",
+        "th"
+      ],
+      [
+        "u",
+        "n"
+      ],
+      [
+        "in",
+        "g "
+      ],
+      [
+        "O",
+        "n"
+      ],
+      [
+        "p",
+        "p"
+      ],
+      [
+        "v",
+        "er"
+      ],
+      [
+        "c",
+        "k"
+      ],
+      [
+        "l",
+        "i"
+      ],
+      [
+        ", ",
+        "\""
+      ],
+      [
+        "ll",
+        " "
+      ],
+      [
+        "b",
+        "i"
+      ],
+      [
+        "l",
+        "e"
+      ],
+      [
+        ". S",
+        "he "
+      ],
+      [
+        "b",
+        "e"
+      ],
+      [
+        "d",
+        "ay"
+      ],
+      [
+        "u",
+        "t "
+      ],
+      [
+        "i",
+        "t "
+      ],
+      [
+        "y",
+        "ou"
+      ],
+      [
+        "w",
+        " "
+      ],
+      [
+        "o",
+        "k"
+      ],
+      [
+        "om",
+        " "
+      ],
+      [
+        "sa",
+        "id"
+      ],
+      [
+        "in",
+        "g"
+      ],
+      [
+        "m",
+        "a"
+      ],
+      [
+        "s",
+        "e"
+      ],
+      [
+        "l",
+        "d "
+      ],
+      [
+        "l",
+        "e "
+      ],
+      [
+        "b",
+        "o"
+      ],
+      [
+        "ha",
+        "pp"
+      ],
+      [
+        "en",
+        "d"
+      ],
+      [
+        "d",
+        "o"
+      ],
+      [
+        "f",
+        "ri"
+      ],
+      [
+        "b",
+        "a"
+      ],
+      [
+        "g",
+        "h"
+      ],
+      [
+        "im",
+        " "
+      ],
+      [
+        "o",
+        "f"
+      ],
+      [
+        "u",
+        "p"
+      ],
+      [
+        "e",
+        "d"
+      ],
+      [
+        "c",
+        "h"
+      ],
+      [
+        "an",
+        " "
+      ],
+      [
+        "a",
+        "y "
+      ],
+      [
+        "s",
+        "h"
+      ],
+      [
+        "n",
+        "e"
+      ],
+      [
+        "f",
+        "or"
+      ],
+      [
+        "ver",
+        "y "
+      ],
+      [
+        "wa",
+        "s"
+      ],
+      [
+        "wa",
+        "n"
+      ],
+      [
+        "ha",
+        "d "
+      ],
+      [
+        "l",
+        " "
+      ],
+      [
+        "c",
+        "e "
+      ],
+      [
+        "en",
+        " "
+      ],
+      [
+        "said",
+        ", \""
+      ],
+      [
+        "fri",
+        "end"
+      ],
+      [
+        "bi",
+        "g "
+      ],
+      [
+        "it",
+        "t"
+      ],
+      [
+        "L",
+        "il"
+      ],
+      [
+        "the",
+        "y "
+      ],
+      [
+        "v",
+        "e "
+      ],
+      [
+        "e",
+        ", "
+      ],
+      [
+        ". ",
+        "I"
+      ],
+      [
+        "r",
+        "o"
+      ],
+      [
+        "t",
+        "ed to "
+      ],
+      [
+        "pl",
+        "ay"
+      ],
+      [
+        "no",
+        "t "
+      ],
+      [
+        "On",
+        "e "
+      ],
+      [
+        "k",
+        "e "
+      ],
+      [
+        "g",
+        "e"
+      ],
+      [
+        "'",
+        "s "
+      ],
+      [
+        "was",
+        " a "
+      ],
+      [
+        "l",
+        "itt"
+      ],
+      [
+        "t",
+        "im"
+      ],
+      [
+        "litt",
+        "le "
+      ],
+      [
+        "e",
+        "s"
+      ],
+      [
+        "h",
+        "is "
+      ],
+      [
+        "th",
+        "at "
+      ],
+      [
+        "a",
+        "t"
+      ],
+      [
+        "c",
+        "ar"
+      ],
+      [
+        ".",
+        "\" "
+      ],
+      [
+        "One ",
+        "day"
+      ],
+      [
+        "n",
+        "am"
+      ],
+      [
+        "ou",
+        "ld "
+      ],
+      [
+        "i",
+        "d "
+      ],
+      [
+        "in",
+        " the "
+      ],
+      [
+        "s",
+        "he "
+      ],
+      [
+        "nam",
+        "ed "
+      ],
+      [
+        ". ",
+        "\""
+      ],
+      [
+        "w",
+        "ere "
+      ],
+      [
+        "r",
+        "a"
+      ],
+      [
+        "y",
+        " and "
+      ],
+      [
+        "to ",
+        "the "
+      ],
+      [
+        "h",
+        "er "
+      ],
+      [
+        "th",
+        "er"
+      ],
+      [
+        "th",
+        "ere "
+      ],
+      [
+        "s",
+        "o "
+      ],
+      [
+        "ed ",
+        "and "
+      ],
+      [
+        "g",
+        "o"
+      ],
+      [
+        "en",
+        "t "
+      ],
+      [
+        "pl",
+        "ay "
+      ],
+      [
+        "!",
+        "\" "
+      ],
+      [
+        "f",
+        "e"
+      ],
+      [
+        "b",
+        "ir"
+      ],
+      [
+        "w",
+        "h"
+      ],
+      [
+        "on",
+        " a "
+      ],
+      [
+        "sa",
+        "w"
+      ],
+      [
+        ",",
+        " and "
+      ],
+      [
+        "you",
+        " "
+      ],
+      [
+        "!",
+        " "
+      ],
+      [
+        "r",
+        "e "
+      ],
+      [
+        "s",
+        "e "
+      ],
+      [
+        "wan",
+        "ted to "
+      ],
+      [
+        "he",
+        "l"
+      ],
+      [
+        "b",
+        "ut "
+      ],
+      [
+        "On",
+        "ce "
+      ],
+      [
+        "ed ",
+        "the "
+      ],
+      [
+        "y",
+        " a"
+      ],
+      [
+        "I",
+        " "
+      ],
+      [
+        "w",
+        "ent "
+      ],
+      [
+        ". ",
+        "A"
+      ],
+      [
+        "hel",
+        "p"
+      ],
+      [
+        "with",
+        " "
+      ],
+      [
+        "lo",
+        "ok"
+      ],
+      [
+        "f",
+        "i"
+      ],
+      [
+        "ou",
+        "nd "
+      ],
+      [
+        "up",
+        "on a "
+      ],
+      [
+        "Once ",
+        "upon a "
+      ],
+      [
+        "Once upon a ",
+        "tim"
+      ],
+      [
+        " h",
+        "is "
+      ],
+      [
+        ". ",
+        "B"
+      ],
+      [
+        "l",
+        "a"
+      ],
+      [
+        ". I",
+        "t "
+      ],
+      [
+        ". ",
+        "One day"
+      ],
+      [
+        "t",
+        "a"
+      ],
+      [
+        "there ",
+        "was a "
+      ],
+      [
+        "s",
+        "k"
+      ],
+      [
+        "f",
+        "un"
+      ],
+      [
+        "c",
+        "a"
+      ],
+      [
+        "p",
+        "o"
+      ],
+      [
+        "u",
+        "r"
+      ],
+      [
+        "s",
+        " and "
+      ],
+      [
+        "s",
+        "om"
+      ],
+      [
+        "e",
+        "a"
+      ],
+      [
+        "Once upon a tim",
+        "e, "
+      ],
+      [
+        "b",
+        "e "
+      ],
+      [
+        ", ",
+        "but "
+      ],
+      [
+        "Lil",
+        "y "
+      ],
+      [
+        "of",
+        " "
+      ],
+      [
+        "to",
+        "ge"
+      ],
+      [
+        "t",
+        "re"
+      ],
+      [
+        ". One day",
+        ", "
+      ],
+      [
+        "k",
+        " "
+      ],
+      [
+        "s",
+        "t "
+      ],
+      [
+        "T",
+        "im"
+      ],
+      [
+        "ck",
+        " "
+      ],
+      [
+        "am",
+        "e "
+      ],
+      [
+        "e",
+        "t"
+      ],
+      [
+        "p",
+        "ar"
+      ],
+      [
+        "m",
+        " "
+      ],
+      [
+        "ir",
+        " "
+      ],
+      [
+        "T",
+        "im "
+      ],
+      [
+        "m",
+        "y "
+      ],
+      [
+        ",",
+        " a "
+      ],
+      [
+        " h",
+        "er "
+      ],
+      [
+        "bir",
+        "d "
+      ],
+      [
+        "was ",
+        "very "
+      ],
+      [
+        ". T",
+        "im "
+      ],
+      [
+        "s",
+        "m"
+      ],
+      [
+        "c",
+        "ame "
+      ],
+      [
+        "c",
+        "o"
+      ],
+      [
+        "e",
+        "c"
+      ],
+      [
+        "w",
+        "n"
+      ],
+      [
+        "f",
+        "u"
+      ],
+      [
+        "g",
+        "ir"
+      ],
+      [
+        "m",
+        "om "
+      ],
+      [
+        "m",
+        "om"
+      ],
+      [
+        "saw",
+        " a "
+      ],
+      [
+        "e ",
+        "and "
+      ],
+      [
+        "the",
+        "ir "
+      ],
+      [
+        "'",
+        "t "
+      ],
+      [
+        "?",
+        "\" "
+      ],
+      [
+        "g",
+        "a"
+      ],
+      [
+        "ne",
+        "w "
+      ],
+      [
+        "M",
+        "a"
+      ],
+      [
+        "t ",
+        "the "
+      ],
+      [
+        "t",
+        "er"
+      ],
+      [
+        "lo",
+        "v"
+      ],
+      [
+        "Ma",
+        "x"
+      ],
+      [
+        "on",
+        " the "
+      ],
+      [
+        "ch",
+        " "
+      ],
+      [
+        "i",
+        "c"
+      ],
+      [
+        "y",
+        ", "
+      ],
+      [
+        "i",
+        "s"
+      ],
+      [
+        "friend",
+        "s"
+      ],
+      [
+        "d",
+        "id "
+      ],
+      [
+        "c",
+        "ould "
+      ],
+      [
+        "T",
+        "he "
+      ],
+      [
+        "ha",
+        "ve "
+      ],
+      [
+        "for",
+        " "
+      ],
+      [
+        "play",
+        "ed "
+      ],
+      [
+        "toge",
+        "ther"
+      ],
+      [
+        "u",
+        "m"
+      ],
+      [
+        "t ",
+        "to "
+      ],
+      [
+        "e",
+        "s "
+      ],
+      [
+        "had ",
+        "a "
+      ],
+      [
+        "ou",
+        "gh"
+      ],
+      [
+        "f",
+        "a"
+      ],
+      [
+        "st",
+        "ar"
+      ],
+      [
+        "sm",
+        "il"
+      ],
+      [
+        "c",
+        "an "
+      ],
+      [
+        "gir",
+        "l "
+      ],
+      [
+        "u",
+        "e "
+      ],
+      [
+        "happ",
+        "y"
+      ],
+      [
+        "s",
+        "id"
+      ],
+      [
+        "e",
+        "x"
+      ],
+      [
+        "m",
+        "or"
+      ],
+      [
+        "b",
+        "u"
+      ],
+      [
+        "f",
+        "ound "
+      ],
+      [
+        "li",
+        "k"
+      ],
+      [
+        "wa",
+        "y"
+      ],
+      [
+        "look",
+        "ed "
+      ],
+      [
+        "o",
+        "w"
+      ],
+      [
+        "a",
+        "l"
+      ],
+      [
+        ". B",
+        "ut "
+      ],
+      [
+        "in",
+        " "
+      ],
+      [
+        "sa",
+        "id "
+      ],
+      [
+        "s",
+        "to"
+      ],
+      [
+        "did ",
+        "not "
+      ],
+      [
+        "som",
+        "e"
+      ],
+      [
+        "bo",
+        "y "
+      ],
+      [
+        "h",
+        "o"
+      ],
+      [
+        "happ",
+        "y "
+      ],
+      [
+        ". ",
+        "W"
+      ],
+      [
+        "f",
+        "r"
+      ],
+      [
+        "fe",
+        "l"
+      ],
+      [
+        "n",
+        "d"
+      ],
+      [
+        "T",
+        "om"
+      ],
+      [
+        "on",
+        " "
+      ],
+      [
+        "Y",
+        "ou"
+      ],
+      [
+        "th",
+        "ing "
+      ],
+      [
+        "re",
+        "a"
+      ],
+      [
+        "ou",
+        "t"
+      ],
+      [
+        "ha",
+        "t "
+      ],
+      [
+        "th",
+        "er "
+      ],
+      [
+        "li",
+        "ke "
+      ],
+      [
+        "w",
+        "ould "
+      ],
+      [
+        "o",
+        "d "
+      ],
+      [
+        " a",
+        "n"
+      ],
+      [
+        "w",
+        "or"
+      ],
+      [
+        "do",
+        "g "
+      ],
+      [
+        "s",
+        "p"
+      ],
+      [
+        "to",
+        "y"
+      ],
+      [
+        "p",
+        " "
+      ],
+      [
+        "d",
+        "ay "
+      ],
+      [
+        "r",
+        " "
+      ],
+      [
+        "l",
+        "k"
+      ],
+      [
+        "g",
+        "r"
+      ],
+      [
+        "ba",
+        "ll"
+      ],
+      [
+        "with",
+        " the "
+      ],
+      [
+        "k",
+        "e"
+      ],
+      [
+        "e",
+        "l"
+      ],
+      [
+        "on",
+        "e "
+      ],
+      [
+        "fel",
+        "t "
+      ],
+      [
+        "c",
+        "at "
+      ],
+      [
+        "ma",
+        "ke "
+      ],
+      [
+        "th",
+        "ing"
+      ],
+      [
+        "d",
+        "d"
+      ],
+      [
+        "T",
+        "om "
+      ],
+      [
+        "s",
+        "ma"
+      ],
+      [
+        "t",
+        "t"
+      ],
+      [
+        "s",
+        "car"
+      ],
+      [
+        "s",
+        "ha"
+      ],
+      [
+        "of",
+        " the "
+      ],
+      [
+        "d",
+        "e "
+      ],
+      [
+        "m",
+        "u"
+      ],
+      [
+        "m",
+        "e"
+      ],
+      [
+        "g",
+        "o "
+      ],
+      [
+        "v",
+        "ed "
+      ],
+      [
+        "i",
+        "gh"
+      ],
+      [
+        "o",
+        ", "
+      ],
+      [
+        "th",
+        "ough"
+      ],
+      [
+        "lov",
+        "ed to "
+      ],
+      [
+        "bi",
+        "g"
+      ],
+      [
+        "se",
+        "e "
+      ],
+      [
+        "en",
+        "t"
+      ],
+      [
+        "m",
+        "an"
+      ],
+      [
+        "S",
+        "am"
+      ],
+      [
+        "star",
+        "ted to "
+      ],
+      [
+        "M",
+        "i"
+      ],
+      [
+        "p",
+        "i"
+      ],
+      [
+        "was ",
+        "so "
+      ],
+      [
+        "in",
+        " a "
+      ],
+      [
+        "par",
+        "k"
+      ],
+      [
+        "t",
+        "r"
+      ],
+      [
+        "u",
+        "g"
+      ],
+      [
+        "Max",
+        " "
+      ],
+      [
+        "ou",
+        "t "
+      ],
+      [
+        "c",
+        "om"
+      ],
+      [
+        "ma",
+        "de "
+      ],
+      [
+        "u",
+        "gh"
+      ],
+      [
+        "sa",
+        "y"
+      ],
+      [
+        ", ",
+        "the "
+      ],
+      [
+        "ar",
+        "n"
+      ],
+      [
+        "t",
+        "ri"
+      ],
+      [
+        "lik",
+        "ed to "
+      ],
+      [
+        "little ",
+        "girl "
+      ],
+      [
+        "p",
+        "a"
+      ],
+      [
+        "the",
+        "m"
+      ],
+      [
+        "some",
+        "thing "
+      ],
+      [
+        " a",
+        "re "
+      ],
+      [
+        "to",
+        "o"
+      ],
+      [
+        "fi",
+        "nd "
+      ],
+      [
+        "wan",
+        "t to "
+      ],
+      [
+        "with",
+        " his "
+      ],
+      [
+        "do",
+        "wn"
+      ],
+      [
+        "e",
+        "ll"
+      ],
+      [
+        "bo",
+        "x"
+      ],
+      [
+        "friend",
+        "s "
+      ],
+      [
+        "it ",
+        "was "
+      ],
+      [
+        "g",
+        "re"
+      ],
+      [
+        "f",
+        "o"
+      ],
+      [
+        "c",
+        "at"
+      ],
+      [
+        "p",
+        "u"
+      ],
+      [
+        "o",
+        "b"
+      ],
+      [
+        "fun",
+        " "
+      ],
+      [
+        "le",
+        "arn"
+      ],
+      [
+        "p",
+        "ut "
+      ],
+      [
+        "to",
+        "y "
+      ],
+      [
+        "k",
+        "no"
+      ],
+      [
+        "u",
+        "c"
+      ],
+      [
+        "sa",
+        "d"
+      ],
+      [
+        "help",
+        " "
+      ],
+      [
+        "l",
+        "y "
+      ],
+      [
+        "sa",
+        "w "
+      ],
+      [
+        "o",
+        "p"
+      ],
+      [
+        "s",
+        "un"
+      ],
+      [
+        "q",
+        "u"
+      ],
+      [
+        "to",
+        "ok"
+      ],
+      [
+        "p",
+        "re"
+      ],
+      [
+        "found ",
+        "a "
+      ],
+      [
+        "ga",
+        "in"
+      ],
+      [
+        "e",
+        "ver"
+      ],
+      [
+        "wa",
+        "lk"
+      ],
+      [
+        "f",
+        " "
+      ],
+      [
+        "u",
+        "se "
+      ],
+      [
+        "go",
+        "od "
+      ],
+      [
+        "l",
+        "on"
+      ],
+      [
+        "wi",
+        "ll "
+      ],
+      [
+        "li",
+        "ved "
+      ],
+      [
+        "n",
+        "'t "
+      ],
+      [
+        "fu",
+        "l "
+      ],
+      [
+        ",",
+        "\" "
+      ],
+      [
+        " and ",
+        "the "
+      ],
+      [
+        "c",
+        "e"
+      ],
+      [
+        "boy ",
+        "named "
+      ],
+      [
+        "One day",
+        ", a "
+      ],
+      [
+        "v",
+        "er "
+      ],
+      [
+        "t",
+        "ed "
+      ],
+      [
+        "h",
+        "om"
+      ],
+      [
+        "a",
+        "ll"
+      ],
+      [
+        "som",
+        "e "
+      ],
+      [
+        "bir",
+        "d"
+      ],
+      [
+        ". The",
+        "y a"
+      ],
+      [
+        "o",
+        "d"
+      ],
+      [
+        "tre",
+        "e"
+      ],
+      [
+        "r",
+        "ed "
+      ],
+      [
+        "h",
+        "er"
+      ],
+      [
+        "l",
+        "d"
+      ],
+      [
+        "f",
+        "lo"
+      ],
+      [
+        "p",
+        "e"
+      ],
+      [
+        "t",
+        "s "
+      ],
+      [
+        "en",
+        ", "
+      ],
+      [
+        "ba",
+        "ck "
+      ],
+      [
+        "o",
+        "ther"
+      ],
+      [
+        "t",
+        "i"
+      ],
+      [
+        "b",
+        "r"
+      ],
+      [
+        "Lil",
+        "y"
+      ],
+      [
+        "p",
+        "r"
+      ],
+      [
+        "th",
+        " "
+      ],
+      [
+        "g",
+        "i"
+      ],
+      [
+        "L",
+        "uc"
+      ],
+      [
+        "la",
+        "ugh"
+      ],
+      [
+        "you",
+        "r "
+      ],
+      [
+        "happ",
+        "y and "
+      ],
+      [
+        "st",
+        "i"
+      ],
+      [
+        "sa",
+        "d "
+      ],
+      [
+        ". ",
+        "Lily "
+      ],
+      [
+        "wh",
+        "en "
+      ],
+      [
+        "ar",
+        " "
+      ],
+      [
+        "the",
+        "m "
+      ],
+      [
+        ". T",
+        "om "
+      ],
+      [
+        ". W",
+        "h"
+      ],
+      [
+        "ha",
+        "n"
+      ],
+      [
+        "w",
+        "e "
+      ],
+      [
+        "You",
+        " "
+      ],
+      [
+        "w",
+        "hat "
+      ],
+      [
+        "M",
+        "om"
+      ],
+      [
+        "sma",
+        "ll "
+      ],
+      [
+        ". I",
+        " "
+      ],
+      [
+        "d",
+        "ec"
+      ],
+      [
+        "play",
+        "ing "
+      ],
+      [
+        ". ",
+        "F"
+      ],
+      [
+        "t",
+        "'s "
+      ],
+      [
+        "s",
+        "s"
+      ],
+      [
+        "d",
+        "er"
+      ],
+      [
+        "a",
+        "sk"
+      ],
+      [
+        "po",
+        "t "
+      ],
+      [
+        "d",
+        "a"
+      ],
+      [
+        "s",
+        "w"
+      ],
+      [
+        ". They ",
+        "were "
+      ],
+      [
+        "h",
+        "im"
+      ],
+      [
+        " a",
+        "ll "
+      ],
+      [
+        "a",
+        "l "
+      ],
+      [
+        "smil",
+        "ed and "
+      ],
+      [
+        "o",
+        "w "
+      ],
+      [
+        "ba",
+        "ll "
+      ],
+      [
+        "c",
+        "lo"
+      ],
+      [
+        "man",
+        "y "
+      ],
+      [
+        "play ",
+        "with "
+      ],
+      [
+        "n",
+        "a"
+      ],
+      [
+        "say",
+        "s"
+      ],
+      [
+        "d",
+        "i"
+      ],
+      [
+        "i",
+        "ce "
+      ],
+      [
+        "ou",
+        "nd"
+      ],
+      [
+        "to",
+        "o "
+      ],
+      [
+        "wa",
+        "t"
+      ],
+      [
+        "wh",
+        "o "
+      ],
+      [
+        "h",
+        "ou"
+      ],
+      [
+        "n",
+        "y "
+      ],
+      [
+        "dec",
+        "id"
+      ],
+      [
+        "on",
+        "'t "
+      ],
+      [
+        "es",
+        ", "
+      ],
+      [
+        "ed ",
+        "her "
+      ],
+      [
+        ". T",
+        "h"
+      ],
+      [
+        "c",
+        "it"
+      ],
+      [
+        "went ",
+        "to the "
+      ],
+      [
+        "ba",
+        "ck"
+      ],
+      [
+        "do",
+        "g"
+      ],
+      [
+        "be",
+        "came "
+      ],
+      [
+        "B",
+        "en "
+      ],
+      [
+        "though",
+        "t "
+      ],
+      [
+        "m",
+        "o"
+      ],
+      [
+        "T",
+        "he"
+      ],
+      [
+        "ca",
+        "use "
+      ],
+      [
+        " a ",
+        "big "
+      ],
+      [
+        "um",
+        "p"
+      ],
+      [
+        "saw a ",
+        "big "
+      ],
+      [
+        "ex",
+        "cit"
+      ],
+      [
+        "r",
+        "y "
+      ],
+      [
+        "r",
+        "y"
+      ],
+      [
+        "out",
+        "sid"
+      ],
+      [
+        "little girl ",
+        "named "
+      ],
+      [
+        "be",
+        "cause "
+      ],
+      [
+        "way",
+        "s "
+      ],
+      [
+        "c",
+        "l"
+      ],
+      [
+        "r",
+        "an"
+      ],
+      [
+        "s",
+        "ur"
+      ],
+      [
+        " and ",
+        "said, \""
+      ],
+      [
+        "f",
+        "f"
+      ],
+      [
+        " a",
+        "r"
+      ],
+      [
+        "ed ",
+        "that "
+      ],
+      [
+        "d",
+        "o "
+      ],
+      [
+        "with",
+        " her "
+      ],
+      [
+        "go",
+        "t "
+      ],
+      [
+        "p",
+        "ri"
+      ],
+      [
+        "ed ",
+        "his "
+      ],
+      [
+        "r",
+        "un"
+      ],
+      [
+        "e",
+        "nd "
+      ],
+      [
+        "S",
+        "ue "
+      ],
+      [
+        "m",
+        "an "
+      ],
+      [
+        "sh",
+        " "
+      ],
+      [
+        "he",
+        "ar"
+      ],
+      [
+        "big",
+        ", "
+      ],
+      [
+        "b",
+        "le"
+      ],
+      [
+        "s",
+        "i"
+      ],
+      [
+        "k",
+        "new "
+      ],
+      [
+        "be",
+        "st "
+      ],
+      [
+        "Mi",
+        "a "
+      ],
+      [
+        "r",
+        "an "
+      ],
+      [
+        "s",
+        "or"
+      ],
+      [
+        "on",
+        ", "
+      ],
+      [
+        "L",
+        "et"
+      ],
+      [
+        "fr",
+        "om"
+      ],
+      [
+        "e ",
+        "the "
+      ],
+      [
+        "on",
+        "e"
+      ],
+      [
+        "w",
+        "er"
+      ],
+      [
+        "ou",
+        "d "
+      ],
+      [
+        "decid",
+        "ed to "
+      ],
+      [
+        "ro",
+        "om"
+      ],
+      [
+        "ar",
+        "d"
+      ],
+      [
+        "tri",
+        "ed to "
+      ],
+      [
+        "bo",
+        "th "
+      ],
+      [
+        "Let",
+        "'s "
+      ],
+      [
+        "l",
+        "u"
+      ],
+      [
+        "day",
+        ", "
+      ],
+      [
+        "c",
+        "ou"
+      ],
+      [
+        "sur",
+        "pri"
+      ],
+      [
+        "ea",
+        "ch "
+      ],
+      [
+        "le",
+        "a"
+      ],
+      [
+        "The",
+        "y "
+      ],
+      [
+        " a",
+        "sk"
+      ],
+      [
+        "Lil",
+        "y and "
+      ],
+      [
+        "mor",
+        "e "
+      ],
+      [
+        "for",
+        " a "
+      ],
+      [
+        "j",
+        "u"
+      ],
+      [
+        " a",
+        "b"
+      ],
+      [
+        "S",
+        "u"
+      ],
+      [
+        "in",
+        "sid"
+      ],
+      [
+        "car",
+        "e"
+      ],
+      [
+        "c",
+        "le"
+      ],
+      [
+        "to",
+        "ld "
+      ],
+      [
+        "pre",
+        "tt"
+      ],
+      [
+        "e ",
+        "to "
+      ],
+      [
+        ". The ",
+        "bird "
+      ],
+      [
+        ". A",
+        "nd "
+      ],
+      [
+        "ga",
+        "ve "
+      ],
+      [
+        ". T",
+        "im"
+      ],
+      [
+        "i",
+        "nd "
+      ],
+      [
+        "t",
+        " and "
+      ],
+      [
+        "pl",
+        "a"
+      ],
+      [
+        "c",
+        "re"
+      ],
+      [
+        "op",
+        "en"
+      ],
+      [
+        "d",
+        "e"
+      ],
+      [
+        "th",
+        "an"
+      ],
+      [
+        "saw",
+        " the "
+      ],
+      [
+        "happ",
+        "en"
+      ],
+      [
+        "c",
+        "an"
+      ],
+      [
+        "v",
+        "e"
+      ],
+      [
+        "d",
+        "id"
+      ],
+      [
+        "h",
+        "ug"
+      ],
+      [
+        "sh",
+        "in"
+      ],
+      [
+        "s",
+        "o"
+      ],
+      [
+        " a",
+        "way"
+      ],
+      [
+        "looked ",
+        "at "
+      ],
+      [
+        "B",
+        "en"
+      ],
+      [
+        "t",
+        "ter"
+      ],
+      [
+        "l",
+        "y"
+      ],
+      [
+        "u",
+        "dd"
+      ],
+      [
+        "fu",
+        "l"
+      ],
+      [
+        ".\" ",
+        "The "
+      ],
+      [
+        "Sam",
+        " "
+      ],
+      [
+        "j",
+        "ump"
+      ],
+      [
+        "fa",
+        "st"
+      ],
+      [
+        "up",
+        " "
+      ],
+      [
+        "b",
+        "y "
+      ],
+      [
+        "s",
+        ". They "
+      ],
+      [
+        "ta",
+        "ke "
+      ],
+      [
+        "t",
+        "ur"
+      ],
+      [
+        "c",
+        "he"
+      ],
+      [
+        ". ",
+        "M"
+      ],
+      [
+        "no",
+        "t"
+      ],
+      [
+        "the",
+        "y a"
+      ],
+      [
+        ". ",
+        "E"
+      ],
+      [
+        "j",
+        "o"
+      ],
+      [
+        "th",
+        "is "
+      ],
+      [
+        "ever",
+        "y"
+      ],
+      [
+        "wa",
+        "y "
+      ],
+      [
+        "toge",
+        "ther "
+      ],
+      [
+        "Y",
+        "es, "
+      ],
+      [
+        "i",
+        "ll"
+      ],
+      [
+        " a",
+        "l"
+      ],
+      [
+        "ha",
+        "r"
+      ],
+      [
+        "s",
+        ", "
+      ],
+      [
+        "happy ",
+        "to "
+      ],
+      [
+        "e",
+        "very "
+      ],
+      [
+        "mor",
+        "e"
+      ],
+      [
+        "o",
+        "ther "
+      ],
+      [
+        "im",
+        "al"
+      ],
+      [
+        "there was a ",
+        "little "
+      ],
+      [
+        "han",
+        "k "
+      ],
+      [
+        "ra",
+        "b"
+      ],
+      [
+        "it",
+        "s "
+      ],
+      [
+        "Luc",
+        "y "
+      ],
+      [
+        "e",
+        "p"
+      ],
+      [
+        "ing",
+        " and "
+      ],
+      [
+        ". It ",
+        "was "
+      ],
+      [
+        "scar",
+        "ed"
+      ],
+      [
+        "A",
+        "n"
+      ],
+      [
+        "C",
+        "an "
+      ],
+      [
+        "om ",
+        "that "
+      ],
+      [
+        "sh",
+        "ow"
+      ],
+      [
+        ". A",
+        "s "
+      ],
+      [
+        "m",
+        "ou"
+      ],
+      [
+        "o",
+        "ld "
+      ],
+      [
+        "they ",
+        "were "
+      ],
+      [
+        "st",
+        "r"
+      ],
+      [
+        " a",
+        "gain"
+      ],
+      [
+        "f",
+        "le"
+      ],
+      [
+        ", but ",
+        "he "
+      ],
+      [
+        "did",
+        "n't "
+      ],
+      [
+        "ge",
+        "t "
+      ],
+      [
+        "kno",
+        "w "
+      ],
+      [
+        "for",
+        " the "
+      ],
+      [
+        "could ",
+        "not "
+      ],
+      [
+        "e",
+        "v"
+      ],
+      [
+        " a",
+        "ll"
+      ],
+      [
+        "un",
+        "der"
+      ],
+      [
+        "thing",
+        "s "
+      ],
+      [
+        "be",
+        "a"
+      ],
+      [
+        "you",
+        ", "
+      ],
+      [
+        "om that ",
+        "day "
+      ],
+      [
+        "c",
+        "u"
+      ],
+      [
+        "wa",
+        "ter"
+      ],
+      [
+        "pp",
+        "ed "
+      ],
+      [
+        "with",
+        " a "
+      ],
+      [
+        "tre",
+        "e "
+      ],
+      [
+        ". ",
+        "J"
+      ],
+      [
+        "li",
+        "st"
+      ],
+      [
+        ". S",
+        "ue "
+      ],
+      [
+        "went ",
+        "to "
+      ],
+      [
+        "sp",
+        "ec"
+      ],
+      [
+        "e",
+        "t "
+      ],
+      [
+        "was ",
+        "not "
+      ],
+      [
+        "m",
+        "e "
+      ],
+      [
+        "t",
+        "u"
+      ],
+      [
+        "on",
+        "g"
+      ],
+      [
+        "said, \"",
+        "I "
+      ],
+      [
+        "n",
+        " "
+      ],
+      [
+        "d",
+        "y "
+      ],
+      [
+        "h",
+        "im "
+      ],
+      [
+        "pi",
+        "ck"
+      ],
+      [
+        "m",
+        "y"
+      ],
+      [
+        "wa",
+        "r"
+      ],
+      [
+        ". Wh",
+        "en "
+      ],
+      [
+        "T",
+        "hank "
+      ],
+      [
+        "or",
+        " "
+      ],
+      [
+        "s",
+        "u"
+      ],
+      [
+        "bo",
+        "ok"
+      ],
+      [
+        ". ",
+        "You "
+      ],
+      [
+        "happen",
+        "ed"
+      ],
+      [
+        "b",
+        "l"
+      ],
+      [
+        "it",
+        "e "
+      ],
+      [
+        " h",
+        "im"
+      ],
+      [
+        "ing",
+        " the "
+      ],
+      [
+        ". ",
+        "Max "
+      ],
+      [
+        "il",
+        "y "
+      ],
+      [
+        "hear",
+        "d "
+      ],
+      [
+        "B",
+        "ob"
+      ],
+      [
+        "es",
+        " and "
+      ],
+      [
+        "ex",
+        "p"
+      ],
+      [
+        "each ",
+        "other"
+      ],
+      [
+        " a",
+        "t the "
+      ],
+      [
+        "hou",
+        "se"
+      ],
+      [
+        ", ",
+        "he "
+      ],
+      [
+        "ed",
+        ", \""
+      ],
+      [
+        "pl",
+        "e "
+      ],
+      [
+        "ri",
+        "gh"
+      ],
+      [
+        "id",
+        "ea"
+      ],
+      [
+        ". He ",
+        "wanted to "
+      ],
+      [
+        "flo",
+        "wer"
+      ],
+      [
+        "ts ",
+        "of "
+      ],
+      [
+        "k",
+        "ed "
+      ],
+      [
+        "co",
+        "l"
+      ],
+      [
+        "ne",
+        "ar"
+      ],
+      [
+        "e",
+        "ar"
+      ],
+      [
+        "d",
+        "an"
+      ],
+      [
+        "b",
+        "le "
+      ],
+      [
+        "u",
+        "ck"
+      ],
+      [
+        "f",
+        "ter"
+      ],
+      [
+        "spec",
+        "i"
+      ],
+      [
+        "e",
+        "at "
+      ],
+      [
+        "from",
+        " the "
+      ],
+      [
+        "learn",
+        "ed that "
+      ],
+      [
+        "car",
+        " "
+      ],
+      [
+        "lo",
+        "ts of "
+      ],
+      [
+        "i",
+        "f "
+      ],
+      [
+        "fri",
+        "end "
+      ],
+      [
+        "par",
+        "k "
+      ],
+      [
+        "sma",
+        "ll"
+      ],
+      [
+        "ne",
+        "ver "
+      ],
+      [
+        ". I",
+        "n"
+      ],
+      [
+        "d",
+        "on't "
+      ],
+      [
+        "ro",
+        "ck"
+      ],
+      [
+        "lon",
+        "g"
+      ],
+      [
+        "ed ",
+        "it "
+      ],
+      [
+        "cl",
+        "im"
+      ],
+      [
+        ". H",
+        "is "
+      ],
+      [
+        "Mi",
+        "a"
+      ],
+      [
+        "il",
+        "e "
+      ],
+      [
+        ". \"",
+        "W"
+      ],
+      [
+        "You",
+        " are "
+      ],
+      [
+        "d",
+        "re"
+      ],
+      [
+        "boy named ",
+        "Tim"
+      ],
+      [
+        ". F",
+        "r"
+      ],
+      [
+        "e",
+        "l "
+      ],
+      [
+        " ar",
+        "ound "
+      ],
+      [
+        "t",
+        ", "
+      ],
+      [
+        "n",
+        "ice "
+      ],
+      [
+        "tur",
+        "n"
+      ],
+      [
+        ". W",
+        "e "
+      ],
+      [
+        "y",
+        "more"
+      ],
+      [
+        "clim",
+        "b"
+      ],
+      [
+        "am",
+        " "
+      ],
+      [
+        "'s ",
+        "mom "
+      ],
+      [
+        "e",
+        ". The "
+      ],
+      [
+        "every ",
+        "day"
+      ],
+      [
+        "w",
+        "in"
+      ],
+      [
+        "exp",
+        "ec"
+      ],
+      [
+        "s",
+        ". He "
+      ],
+      [
+        "g",
+        "e "
+      ],
+      [
+        "ju",
+        "st "
+      ],
+      [
+        "ha",
+        "nd"
+      ],
+      [
+        "an",
+        "d"
+      ],
+      [
+        "laugh",
+        "ed and "
+      ],
+      [
+        " a",
+        "s "
+      ],
+      [
+        ", and ",
+        "the "
+      ],
+      [
+        "p",
+        "er"
+      ],
+      [
+        "om that day ",
+        "on, "
+      ],
+      [
+        "e",
+        "st"
+      ],
+      [
+        "s",
+        "qu"
+      ],
+      [
+        "Once upon a time, ",
+        "in a "
+      ],
+      [
+        "smiled and ",
+        "said, \""
+      ],
+      [
+        "pe",
+        "o"
+      ],
+      [
+        ". They ",
+        "played "
+      ],
+      [
+        "sad ",
+        "and "
+      ],
+      [
+        "il",
+        " "
+      ],
+      [
+        "in the ",
+        "park"
+      ],
+      [
+        "D",
+        "a"
+      ],
+      [
+        "in",
+        "to the "
+      ],
+      [
+        "to ",
+        "play "
+      ],
+      [
+        "ll",
+        "ed "
+      ],
+      [
+        "S",
+        "ar"
+      ],
+      [
+        "u",
+        "s"
+      ],
+      [
+        "un",
+        "expec"
+      ],
+      [
+        "s",
+        ". She "
+      ],
+      [
+        ". It ",
+        "was a "
+      ],
+      [
+        "wat",
+        "ch"
+      ],
+      [
+        "to ",
+        "be "
+      ],
+      [
+        "gi",
+        "ve "
+      ],
+      [
+        "th",
+        "en "
+      ],
+      [
+        "a",
+        "ll "
+      ],
+      [
+        "up",
+        " and "
+      ],
+      [
+        "loved to ",
+        "play "
+      ],
+      [
+        "h",
+        "ur"
+      ],
+      [
+        "udd",
+        "en"
+      ],
+      [
+        "h",
+        "igh"
+      ],
+      [
+        "he",
+        "a"
+      ],
+      [
+        "Tim",
+        " and "
+      ],
+      [
+        "prett",
+        "y "
+      ],
+      [
+        "f",
+        "ro"
+      ],
+      [
+        "f",
+        "am"
+      ],
+      [
+        "f",
+        "t"
+      ],
+      [
+        "S",
+        "po"
+      ],
+      [
+        ". They a",
+        "ll "
+      ],
+      [
+        "have ",
+        "a "
+      ],
+      [
+        "! ",
+        "The "
+      ],
+      [
+        "surpri",
+        "se"
+      ],
+      [
+        "ha",
+        "t"
+      ],
+      [
+        "f",
+        "ar"
+      ],
+      [
+        "e",
+        "p "
+      ],
+      [
+        "sha",
+        "re "
+      ],
+      [
+        "unexpec",
+        "ted "
+      ],
+      [
+        "e",
+        ". He "
+      ],
+      [
+        "k",
+        "ind "
+      ],
+      [
+        ". S",
+        "o, "
+      ],
+      [
+        " h",
+        "er"
+      ],
+      [
+        "da",
+        "d "
+      ],
+      [
+        "se",
+        "l"
+      ],
+      [
+        "'",
+        "m "
+      ],
+      [
+        "took",
+        " "
+      ],
+      [
+        "wh",
+        "ere "
+      ],
+      [
+        "pl",
+        "an"
+      ],
+      [
+        "f",
+        "in"
+      ],
+      [
+        "box",
+        " "
+      ],
+      [
+        "u",
+        "ck "
+      ],
+      [
+        "o",
+        "ok"
+      ],
+      [
+        ". ",
+        "One "
+      ],
+      [
+        "ed ",
+        "a "
+      ],
+      [
+        "ll",
+        "y "
+      ],
+      [
+        "g",
+        "ard"
+      ],
+      [
+        "fr",
+        "om "
+      ],
+      [
+        "ev",
+        "en "
+      ],
+      [
+        ". Th",
+        "en, "
+      ],
+      [
+        "v",
+        "ing "
+      ],
+      [
+        ". The ",
+        "cat "
+      ],
+      [
+        "in",
+        "k"
+      ],
+      [
+        "sun",
+        " "
+      ],
+      [
+        ", ",
+        "they "
+      ],
+      [
+        "t",
+        "ra"
+      ],
+      [
+        "r",
+        "y, "
+      ],
+      [
+        "com",
+        "e "
+      ],
+      [
+        "no",
+        "w"
+      ],
+      [
+        "l",
+        "id"
+      ],
+      [
+        "mu",
+        "ch "
+      ],
+      [
+        "something ",
+        "unexpected "
+      ],
+      [
+        "ic",
+        " "
+      ],
+      [
+        "b",
+        "er"
+      ],
+      [
+        "he ",
+        "was "
+      ],
+      [
+        "made ",
+        "a "
+      ],
+      [
+        "g",
+        "g"
+      ],
+      [
+        "dog ",
+        "named "
+      ],
+      [
+        "c",
+        "ha"
+      ],
+      [
+        "!\" ",
+        "The "
+      ],
+      [
+        "cou",
+        "ld"
+      ],
+      [
+        " a",
+        "t "
+      ],
+      [
+        "p",
+        "ic"
+      ],
+      [
+        "t",
+        " a "
+      ],
+      [
+        "S",
+        "pot "
+      ],
+      [
+        ", and ",
+        "they "
+      ],
+      [
+        "b",
+        "y"
+      ],
+      [
+        "s",
+        "s "
+      ],
+      [
+        "un",
+        "t"
+      ],
+      [
+        "Tom",
+        " and "
+      ],
+      [
+        "col",
+        "or"
+      ],
+      [
+        "I",
+        " a"
+      ],
+      [
+        "wn",
+        " "
+      ],
+      [
+        "bea",
+        "u"
+      ],
+      [
+        "?\" ",
+        "The "
+      ],
+      [
+        ". S",
+        "pot "
+      ],
+      [
+        "Thank ",
+        "you, "
+      ],
+      [
+        "b",
+        "ra"
+      ],
+      [
+        "no",
+        "i"
+      ],
+      [
+        "ma",
+        "k"
+      ],
+      [
+        "K",
+        "itt"
+      ],
+      [
+        "f",
+        "ir"
+      ],
+      [
+        ", ",
+        "so "
+      ],
+      [
+        "hom",
+        "e"
+      ],
+      [
+        "to ",
+        "his "
+      ],
+      [
+        ". But ",
+        "th"
+      ],
+      [
+        "sti",
+        "ll "
+      ],
+      [
+        "lo",
+        "ve "
+      ],
+      [
+        "sh",
+        "ould "
+      ],
+      [
+        "Su",
+        "e"
+      ],
+      [
+        "said",
+        ". \""
+      ],
+      [
+        "s",
+        " a "
+      ],
+      [
+        "be",
+        "tter"
+      ],
+      [
+        "beau",
+        "ti"
+      ],
+      [
+        ". A",
+        " "
+      ],
+      [
+        " al",
+        "ways "
+      ],
+      [
+        "ou",
+        "t the "
+      ],
+      [
+        "toy",
+        "s"
+      ],
+      [
+        "mom",
+        " and "
+      ],
+      [
+        "s",
+        "lid"
+      ],
+      [
+        "go",
+        "od"
+      ],
+      [
+        "o",
+        "l"
+      ],
+      [
+        "ne",
+        "x"
+      ],
+      [
+        "boy named ",
+        "Tim "
+      ],
+      [
+        "all",
+        "y "
+      ],
+      [
+        "kno",
+        "w"
+      ],
+      [
+        "ma",
+        "g"
+      ],
+      [
+        "fi",
+        "sh "
+      ],
+      [
+        "fe",
+        "el "
+      ],
+      [
+        "had ",
+        "an "
+      ],
+      [
+        ". He ",
+        "was "
+      ],
+      [
+        "er",
+        " and "
+      ],
+      [
+        "ar",
+        "ound "
+      ],
+      [
+        "k",
+        "id"
+      ],
+      [
+        "gr",
+        "ound"
+      ],
+      [
+        "t ",
+        "of "
+      ],
+      [
+        ". S",
+        "udden"
+      ],
+      [
+        "ed ",
+        "a"
+      ],
+      [
+        ". One day, ",
+        "the "
+      ],
+      [
+        "t",
+        "e"
+      ],
+      [
+        "ta",
+        "lk"
+      ],
+      [
+        "b",
+        "lo"
+      ],
+      [
+        "hug",
+        "g"
+      ],
+      [
+        "list",
+        "en"
+      ],
+      [
+        "g",
+        "u"
+      ],
+      [
+        "smil",
+        "ed"
+      ],
+      [
+        ". The ",
+        "dog "
+      ],
+      [
+        "fe",
+        "el"
+      ],
+      [
+        "l",
+        "y, "
+      ],
+      [
+        "W",
+        "h"
+      ],
+      [
+        "sha",
+        "r"
+      ],
+      [
+        "put ",
+        "the "
+      ],
+      [
+        " ab",
+        "out "
+      ],
+      [
+        "do",
+        "or"
+      ],
+      [
+        "t",
+        "w"
+      ],
+      [
+        "friend",
+        "s and "
+      ],
+      [
+        "speci",
+        "al "
+      ],
+      [
+        "in",
+        " his "
+      ],
+      [
+        "friend",
+        ", "
+      ],
+      [
+        "lon",
+        "g "
+      ],
+      [
+        "D",
+        "o "
+      ],
+      [
+        "to",
+        " a "
+      ],
+      [
+        "pr",
+        "oud "
+      ],
+      [
+        "pic",
+        "tu"
+      ],
+      [
+        "n",
+        "a "
+      ],
+      [
+        "lu",
+        "ff"
+      ],
+      [
+        "they a",
+        "ll "
+      ],
+      [
+        "ow",
+        ", "
+      ],
+      [
+        "that ",
+        "he "
+      ],
+      [
+        ". H",
+        "er "
+      ],
+      [
+        "ic",
+        "e"
+      ],
+      [
+        "th",
+        "at"
+      ],
+      [
+        "sk",
+        "y"
+      ],
+      [
+        "gre",
+        "at "
+      ],
+      [
+        "s",
+        "of"
+      ],
+      [
+        ".\" ",
+        "They "
+      ],
+      [
+        "be",
+        "ar "
+      ],
+      [
+        "thing",
+        "s"
+      ],
+      [
+        "N",
+        "o, "
+      ],
+      [
+        "r",
+        "u"
+      ],
+      [
+        "ar",
+        "k"
+      ],
+      [
+        "d ",
+        "and "
+      ],
+      [
+        "see ",
+        "the "
+      ],
+      [
+        ". They a",
+        "re "
+      ],
+      [
+        "was very ",
+        "happy"
+      ],
+      [
+        ". ",
+        "N"
+      ],
+      [
+        "s",
+        "le"
+      ],
+      [
+        " all ",
+        "day"
+      ],
+      [
+        "d",
+        ". They "
+      ],
+      [
+        "g",
+        "am"
+      ],
+      [
+        "i",
+        "ck"
+      ],
+      [
+        "up",
+        " the "
+      ],
+      [
+        "fi",
+        "sh"
+      ],
+      [
+        "H",
+        "e "
+      ],
+      [
+        "took",
+        " the "
+      ],
+      [
+        ". Fr",
+        "om that day on, "
+      ],
+      [
+        "B",
+        "ut "
+      ],
+      [
+        "n",
+        "o "
+      ],
+      [
+        "in",
+        "k "
+      ],
+      [
+        "br",
+        "ok"
+      ],
+      [
+        "cat ",
+        "named "
+      ],
+      [
+        "to ",
+        "make "
+      ],
+      [
+        "says",
+        ", \""
+      ],
+      [
+        " h",
+        "ou"
+      ],
+      [
+        "y",
+        "um"
+      ],
+      [
+        "ar",
+        "e "
+      ],
+      [
+        "I",
+        "'m "
+      ],
+      [
+        "it",
+        " and "
+      ],
+      [
+        "look",
+        " "
+      ],
+      [
+        "lived ",
+        "in a "
+      ],
+      [
+        "z",
+        "z"
+      ],
+      [
+        "nex",
+        "t "
+      ],
+      [
+        "had an ",
+        "idea"
+      ],
+      [
+        "y",
+        ". She "
+      ],
+      [
+        "lo",
+        "t of "
+      ],
+      [
+        "liked to ",
+        "play "
+      ],
+      [
+        "peo",
+        "ple "
+      ],
+      [
+        "imal",
+        "s "
+      ],
+      [
+        "e",
+        "at"
+      ],
+      [
+        "ne",
+        "w"
+      ],
+      [
+        "boy named Tim",
+        ". Tim "
+      ],
+      [
+        "d",
+        "ra"
+      ],
+      [
+        "in",
+        " her "
+      ],
+      [
+        "ho",
+        "w "
+      ],
+      [
+        "I",
+        "t "
+      ],
+      [
+        "w",
+        "ha"
+      ],
+      [
+        "im",
+        "p"
+      ],
+      [
+        "at",
+        "i"
+      ],
+      [
+        "L",
+        "ook"
+      ],
+      [
+        "Do ",
+        "you "
+      ],
+      [
+        "e",
+        "y"
+      ],
+      [
+        "l",
+        "oud "
+      ],
+      [
+        "ou",
+        "r "
+      ],
+      [
+        "friends",
+        "."
+      ],
+      [
+        " h",
+        "om"
+      ],
+      [
+        "happ",
+        "ily "
+      ],
+      [
+        "Sar",
+        "a"
+      ],
+      [
+        "ing ",
+        "to "
+      ],
+      [
+        "g",
+        "ra"
+      ],
+      [
+        "ou",
+        "s "
+      ],
+      [
+        "though",
+        "t"
+      ],
+      [
+        "walk",
+        "ed "
+      ],
+      [
+        ". ",
+        "Mia "
+      ],
+      [
+        "fle",
+        "w "
+      ],
+      [
+        "it",
+        "ch"
+      ],
+      [
+        "for",
+        "est"
+      ],
+      [
+        "an ",
+        "to "
+      ],
+      [
+        "toy",
+        "s "
+      ],
+      [
+        "hou",
+        "se "
+      ],
+      [
+        "ft",
+        "er "
+      ],
+      [
+        "was ",
+        "sad"
+      ],
+      [
+        "be",
+        "ing "
+      ],
+      [
+        "wanted to ",
+        "help"
+      ],
+      [
+        "st",
+        "a"
+      ],
+      [
+        "sh",
+        "ed "
+      ],
+      [
+        "e",
+        ". They "
+      ],
+      [
+        "ing",
+        " a "
+      ],
+      [
+        "th",
+        "re"
+      ],
+      [
+        "ir",
+        "re"
+      ],
+      [
+        "said, \"",
+        "Yes, "
+      ],
+      [
+        "gir",
+        "l"
+      ],
+      [
+        "ing",
+        ", "
+      ],
+      [
+        "shin",
+        "y "
+      ],
+      [
+        "m",
+        "et"
+      ],
+      [
+        "looked at ",
+        "the "
+      ],
+      [
+        "be",
+        "for"
+      ],
+      [
+        "c",
+        "la"
+      ],
+      [
+        "al",
+        "ways "
+      ],
+      [
+        "b",
+        "rea"
+      ],
+      [
+        "d",
+        ". He "
+      ],
+      [
+        "clo",
+        "s"
+      ],
+      [
+        "near",
+        " the "
+      ],
+      [
+        "care",
+        "ful"
+      ],
+      [
+        "no",
+        "dd"
+      ],
+      [
+        "s",
+        ". The "
+      ],
+      [
+        "played ",
+        "with the "
+      ],
+      [
+        "could",
+        "n't "
+      ],
+      [
+        "y",
+        ". He "
+      ],
+      [
+        "S",
+        "he "
+      ],
+      [
+        "lov",
+        "ed "
+      ],
+      [
+        "excit",
+        "ed"
+      ],
+      [
+        "an",
+        "t "
+      ],
+      [
+        "s",
+        "he"
+      ],
+      [
+        "p",
+        "t "
+      ],
+      [
+        "had ",
+        "to "
+      ],
+      [
+        "co",
+        "ok"
+      ],
+      [
+        "c",
+        "ri"
+      ],
+      [
+        "squ",
+        "irre"
+      ],
+      [
+        "?",
+        " "
+      ],
+      [
+        "H",
+        "i"
+      ],
+      [
+        "is",
+        " a "
+      ],
+      [
+        "girl ",
+        "named "
+      ],
+      [
+        "or",
+        "t"
+      ],
+      [
+        "ne",
+        "ed"
+      ],
+      [
+        "sti",
+        "ck"
+      ],
+      [
+        "w",
+        "e"
+      ],
+      [
+        "rea",
+        "ch"
+      ],
+      [
+        " an",
+        " "
+      ],
+      [
+        "than",
+        "k"
+      ],
+      [
+        "igh",
+        "t"
+      ],
+      [
+        ".\" ",
+        "Tim "
+      ],
+      [
+        ". One day",
+        ", a "
+      ],
+      [
+        "sh",
+        "o"
+      ],
+      [
+        "her ",
+        "mom "
+      ],
+      [
+        "cle",
+        "an"
+      ],
+      [
+        "jump",
+        "ed "
+      ],
+      [
+        "I a",
+        "m "
+      ],
+      [
+        "little ",
+        "bird "
+      ],
+      [
+        "tim",
+        "e "
+      ],
+      [
+        "mag",
+        "ic "
+      ],
+      [
+        ". She ",
+        "was "
+      ],
+      [
+        "ro",
+        "w"
+      ],
+      [
+        "An",
+        "na"
+      ],
+      [
+        "m",
+        "on"
+      ],
+      [
+        "Can ",
+        "I "
+      ],
+      [
+        ". In",
+        " the "
+      ],
+      [
+        "she ",
+        "was "
+      ],
+      [
+        "b",
+        "un"
+      ],
+      [
+        ". T",
+        "om"
+      ],
+      [
+        "par",
+        "t"
+      ],
+      [
+        "ay",
+        "be "
+      ],
+      [
+        "tr",
+        "y "
+      ],
+      [
+        "had a ",
+        "big "
+      ],
+      [
+        "d",
+        "r"
+      ],
+      [
+        "wor",
+        "k"
+      ],
+      [
+        "b",
+        "ro"
+      ],
+      [
+        " a",
+        "fter"
+      ],
+      [
+        ". S",
+        "am "
+      ],
+      [
+        "c",
+        "ry"
+      ],
+      [
+        "were ",
+        "very "
+      ],
+      [
+        ". Tim",
+        " and "
+      ],
+      [
+        "tre",
+        "e and "
+      ],
+      [
+        "back ",
+        "to "
+      ],
+      [
+        "beauti",
+        "ful "
+      ],
+      [
+        ". B",
+        "ob"
+      ],
+      [
+        "t",
+        "in"
+      ],
+      [
+        "bi",
+        "t "
+      ],
+      [
+        "bu",
+        "g "
+      ],
+      [
+        "play ",
+        "with the "
+      ],
+      [
+        "l",
+        "k "
+      ],
+      [
+        ". It ",
+        "is "
+      ],
+      [
+        "en",
+        " the "
+      ],
+      [
+        "a ",
+        "big "
+      ],
+      [
+        "in",
+        "t"
+      ],
+      [
+        "every",
+        "one "
+      ],
+      [
+        "had ",
+        "lots of "
+      ],
+      [
+        "at",
+        "e "
+      ],
+      [
+        "D",
+        "on't "
+      ],
+      [
+        "sto",
+        "ry "
+      ],
+      [
+        "Spo",
+        "t"
+      ],
+      [
+        "bl",
+        "ue "
+      ],
+      [
+        ". She ",
+        "said, \""
+      ],
+      [
+        "the ",
+        "best "
+      ],
+      [
+        "be",
+        "ar"
+      ],
+      [
+        "down",
+        " "
+      ],
+      [
+        "y",
+        "ell"
+      ],
+      [
+        "! ",
+        "I "
+      ],
+      [
+        "his ",
+        "mom "
+      ],
+      [
+        "scar",
+        "ed "
+      ],
+      [
+        "fo",
+        "od"
+      ],
+      [
+        "s ",
+        "to "
+      ],
+      [
+        "tt",
+        "er "
+      ],
+      [
+        "gard",
+        "en"
+      ],
+      [
+        "fo",
+        "od "
+      ],
+      [
+        "to",
+        "u"
+      ],
+      [
+        "o",
+        "ver"
+      ],
+      [
+        "J",
+        "a"
+      ],
+      [
+        "wi",
+        "nd "
+      ],
+      [
+        "me",
+        "m"
+      ],
+      [
+        "sun",
+        "ny "
+      ],
+      [
+        "v",
+        "o"
+      ],
+      [
+        "to",
+        "wn"
+      ],
+      [
+        "played ",
+        "together"
+      ],
+      [
+        "ba",
+        "d "
+      ],
+      [
+        "d",
+        ", "
+      ],
+      [
+        " a",
+        "d"
+      ],
+      [
+        "on",
+        " his "
+      ],
+      [
+        "le",
+        "t's "
+      ],
+      [
+        "y a",
+        "n"
+      ],
+      [
+        "of",
+        "f"
+      ],
+      [
+        ". Sudden",
+        "ly, "
+      ],
+      [
+        "h",
+        "id"
+      ],
+      [
+        ". But th",
+        "en, "
+      ],
+      [
+        "sa",
+        "t "
+      ],
+      [
+        "unt",
+        "il "
+      ],
+      [
+        "g",
+        "la"
+      ],
+      [
+        "v",
+        "ent"
+      ],
+      [
+        "day ",
+        "long"
+      ],
+      [
+        "ll",
+        "ow"
+      ],
+      [
+        "tim",
+        "e"
+      ],
+      [
+        "es",
+        "s"
+      ],
+      [
+        " all",
+        " the "
+      ],
+      [
+        "wat",
+        "er "
+      ],
+      [
+        "ca",
+        "ke "
+      ],
+      [
+        "c",
+        "on"
+      ],
+      [
+        "did not ",
+        "want to "
+      ],
+      [
+        "heard ",
+        "a "
+      ],
+      [
+        "e",
+        "m"
+      ],
+      [
+        "mou",
+        "se "
+      ],
+      [
+        "f",
+        "ly"
+      ],
+      [
+        "tw",
+        "o "
+      ],
+      [
+        "J",
+        "o"
+      ],
+      [
+        "f",
+        "ly "
+      ],
+      [
+        "open",
+        "ed the "
+      ],
+      [
+        ". E",
+        "very "
+      ],
+      [
+        "ca",
+        "lled "
+      ],
+      [
+        "m",
+        "i"
+      ],
+      [
+        "s",
+        "po"
+      ],
+      [
+        "ke",
+        "pt "
+      ],
+      [
+        "gh",
+        "t"
+      ],
+      [
+        "m",
+        "in"
+      ],
+      [
+        "ou",
+        "r"
+      ],
+      [
+        "en",
+        "jo"
+      ],
+      [
+        "mu",
+        "ch"
+      ],
+      [
+        "you ",
+        "can "
+      ],
+      [
+        "out ",
+        "of the "
+      ],
+      [
+        "cu",
+        "ri"
+      ],
+      [
+        "do",
+        "ll"
+      ],
+      [
+        "!\" ",
+        "They "
+      ],
+      [
+        "that ",
+        "the "
+      ],
+      [
+        " a",
+        "way "
+      ],
+      [
+        "re",
+        "mem"
+      ],
+      [
+        "fa",
+        "v"
+      ],
+      [
+        ". ",
+        "You are "
+      ],
+      [
+        "so ",
+        "much "
+      ],
+      [
+        "blo",
+        "ck"
+      ],
+      [
+        "b",
+        "righ"
+      ],
+      [
+        "gre",
+        "en "
+      ],
+      [
+        "thought ",
+        "it "
+      ],
+      [
+        "e",
+        ". She "
+      ],
+      [
+        "lo",
+        "w"
+      ],
+      [
+        ". ",
+        "Lucy "
+      ],
+      [
+        "friends",
+        ". They "
+      ],
+      [
+        "came ",
+        "to "
+      ],
+      [
+        "lived ",
+        "a "
+      ],
+      [
+        "have ",
+        "to "
+      ],
+      [
+        "d",
+        ". The "
+      ],
+      [
+        ", but ",
+        "she "
+      ],
+      [
+        " and ",
+        "a "
+      ],
+      [
+        " h",
+        "ow "
+      ],
+      [
+        "it ",
+        "is "
+      ],
+      [
+        "on the ",
+        "ground"
+      ],
+      [
+        ", ",
+        "there "
+      ],
+      [
+        "did not ",
+        "know "
+      ],
+      [
+        "H",
+        "ell"
+      ],
+      [
+        ", ",
+        "there was a "
+      ],
+      [
+        "rab",
+        "b"
+      ],
+      [
+        "pl",
+        "ea"
+      ],
+      [
+        "be",
+        "g"
+      ],
+      [
+        "had ",
+        "many "
+      ],
+      [
+        "fi",
+        "x"
+      ],
+      [
+        "ver",
+        "y"
+      ],
+      [
+        "noi",
+        "se"
+      ],
+      [
+        "ra",
+        "in"
+      ],
+      [
+        "pick",
+        "ed "
+      ],
+      [
+        "tr",
+        "y"
+      ],
+      [
+        "found a ",
+        "big "
+      ],
+      [
+        "g",
+        "er"
+      ],
+      [
+        "sle",
+        "ep"
+      ],
+      [
+        "One day, a ",
+        "little "
+      ],
+      [
+        "imp",
+        "ort"
+      ],
+      [
+        "mor",
+        "al "
+      ],
+      [
+        ". A",
+        "t the "
+      ],
+      [
+        "lived ",
+        "happily "
+      ],
+      [
+        "k",
+        "itch"
+      ],
+      [
+        "s ",
+        "the "
+      ],
+      [
+        "fe",
+        "ll "
+      ],
+      [
+        "y",
+        "ard"
+      ],
+      [
+        "wa",
+        "it"
+      ],
+      [
+        "e, ",
+        "but "
+      ],
+      [
+        "ch",
+        "o"
+      ],
+      [
+        "bu",
+        "g"
+      ],
+      [
+        "that ",
+        "she "
+      ],
+      [
+        "w",
+        "er "
+      ],
+      [
+        "fro",
+        "g "
+      ],
+      [
+        "fr",
+        "u"
+      ],
+      [
+        "str",
+        "ong"
+      ],
+      [
+        "d",
+        "ro"
+      ],
+      [
+        "he ",
+        "could "
+      ],
+      [
+        "Kitt",
+        "y "
+      ],
+      [
+        ". They ",
+        "both "
+      ],
+      [
+        "ay",
+        ", "
+      ],
+      [
+        "An",
+        "na "
+      ],
+      [
+        "ou",
+        "s"
+      ],
+      [
+        "big",
+        " and "
+      ],
+      [
+        "it ",
+        "to "
+      ],
+      [
+        "like ",
+        "the "
+      ],
+      [
+        " an",
+        "ymore"
+      ],
+      [
+        "M",
+        "om "
+      ],
+      [
+        "fav",
+        "or"
+      ],
+      [
+        "back ",
+        "to the "
+      ],
+      [
+        " around ",
+        "the "
+      ],
+      [
+        "with ",
+        "their "
+      ],
+      [
+        "lea",
+        "v"
+      ],
+      [
+        ", but ",
+        "the "
+      ],
+      [
+        "sel",
+        "f"
+      ],
+      [
+        "became ",
+        "good "
+      ],
+      [
+        "d",
+        "ir"
+      ],
+      [
+        "together",
+        "."
+      ],
+      [
+        ". She ",
+        "wanted to "
+      ],
+      [
+        ". One day, ",
+        "he "
+      ],
+      [
+        "yum",
+        "my "
+      ],
+      [
+        "ex",
+        "pl"
+      ],
+      [
+        "under",
+        " the "
+      ],
+      [
+        "ed",
+        ", "
+      ],
+      [
+        "Once upon a tim",
+        "e "
+      ],
+      [
+        "su",
+        "re "
+      ],
+      [
+        "w",
+        "o"
+      ],
+      [
+        "w",
+        "r"
+      ],
+      [
+        "s",
+        "na"
+      ],
+      [
+        "c",
+        "or"
+      ],
+      [
+        "friend",
+        ", a "
+      ],
+      [
+        "favor",
+        "ite "
+      ],
+      [
+        "expl",
+        "or"
+      ],
+      [
+        "I ",
+        "will "
+      ],
+      [
+        "et",
+        " and "
+      ],
+      [
+        "ever",
+        " after"
+      ],
+      [
+        "st",
+        "er"
+      ],
+      [
+        "met",
+        " a "
+      ],
+      [
+        "W",
+        "e "
+      ],
+      [
+        "s",
+        ", and "
+      ],
+      [
+        "be",
+        "h"
+      ],
+      [
+        "vent",
+        "u"
+      ],
+      [
+        "F",
+        "luff"
+      ],
+      [
+        "pla",
+        "ce "
+      ],
+      [
+        "moral ",
+        "of the "
+      ],
+      [
+        "h",
+        " "
+      ],
+      [
+        ". ",
+        "L"
+      ],
+      [
+        "sa",
+        "f"
+      ],
+      [
+        "toy",
+        "s and "
+      ],
+      [
+        "his ",
+        "friends "
+      ],
+      [
+        "hugg",
+        "ed "
+      ],
+      [
+        "for ",
+        "help"
+      ],
+      [
+        "bo",
+        "w"
+      ],
+      [
+        "insid",
+        "e"
+      ],
+      [
+        "on",
+        " her "
+      ],
+      [
+        "y a",
+        "re "
+      ],
+      [
+        "go ",
+        "to the "
+      ],
+      [
+        "i",
+        "g"
+      ],
+      [
+        "it",
+        "'s "
+      ],
+      [
+        "ha",
+        "ving "
+      ],
+      [
+        "lo",
+        "st "
+      ],
+      [
+        "on ",
+        "it"
+      ],
+      [
+        "ff",
+        "er"
+      ],
+      [
+        "can",
+        "'t "
+      ],
+      [
+        "a",
+        "p"
+      ],
+      [
+        "was so ",
+        "happy"
+      ],
+      [
+        "down",
+        " and "
+      ],
+      [
+        "fam",
+        "il"
+      ],
+      [
+        ". Tim ",
+        "was "
+      ],
+      [
+        "sa",
+        "y "
+      ],
+      [
+        "kid",
+        "s "
+      ],
+      [
+        "sa",
+        "fe"
+      ],
+      [
+        "igh",
+        "t "
+      ],
+      [
+        "moral of the ",
+        "story "
+      ],
+      [
+        "in the ",
+        "sky"
+      ],
+      [
+        "played ",
+        "together "
+      ],
+      [
+        ". But ",
+        "the "
+      ],
+      [
+        "c",
+        "ro"
+      ],
+      [
+        "ou",
+        "d"
+      ],
+      [
+        "y",
+        ". The "
+      ],
+      [
+        "st",
+        "ay"
+      ],
+      [
+        "ro",
+        "om "
+      ],
+      [
+        "dan",
+        "c"
+      ],
+      [
+        "help",
+        "ed "
+      ],
+      [
+        "fo",
+        "llow"
+      ],
+      [
+        "says",
+        ". \""
+      ],
+      [
+        "H",
+        "is "
+      ],
+      [
+        ". E",
+        "very"
+      ],
+      [
+        "ever after",
+        "."
+      ],
+      [
+        "at ",
+        "the "
+      ],
+      [
+        ",\" ",
+        "said "
+      ],
+      [
+        "b",
+        "or"
+      ],
+      [
+        " h",
+        "im "
+      ],
+      [
+        "y ",
+        "was "
+      ],
+      [
+        "wor",
+        "ked "
+      ],
+      [
+        "Bob",
+        " "
+      ],
+      [
+        "flo",
+        "or"
+      ],
+      [
+        "sad ",
+        "because "
+      ],
+      [
+        "beh",
+        "ind "
+      ],
+      [
+        "care",
+        "ful "
+      ],
+      [
+        "ha",
+        "t's "
+      ],
+      [
+        "found ",
+        "the "
+      ],
+      [
+        "ed",
+        ". \""
+      ],
+      [
+        "ta",
+        "ble"
+      ],
+      [
+        "beg",
+        "an to "
+      ],
+      [
+        "pu",
+        "sh"
+      ],
+      [
+        "r",
+        "ough"
+      ],
+      [
+        "her ",
+        "mom"
+      ],
+      [
+        "h",
+        "un"
+      ],
+      [
+        " ab",
+        "out the "
+      ],
+      [
+        "S",
+        "o, "
+      ],
+      [
+        "than",
+        "ked "
+      ],
+      [
+        "Hell",
+        "o, "
+      ],
+      [
+        "ta",
+        "st"
+      ],
+      [
+        "sor",
+        "ry"
+      ],
+      [
+        ".\" ",
+        "Lily "
+      ],
+      [
+        ". One ",
+        "sunny "
+      ],
+      [
+        "e ",
+        "was "
+      ],
+      [
+        "le",
+        "ss"
+      ],
+      [
+        "di",
+        "ffer"
+      ],
+      [
+        "le",
+        "t "
+      ],
+      [
+        "Hi",
+        ", "
+      ],
+      [
+        "Mom",
+        ", "
+      ],
+      [
+        "Do you ",
+        "want to "
+      ],
+      [
+        "w",
+        "on"
+      ],
+      [
+        "went ",
+        "for a "
+      ],
+      [
+        "together",
+        " and "
+      ],
+      [
+        "ll",
+        " the "
+      ],
+      [
+        "ran ",
+        "to the "
+      ],
+      [
+        ". ",
+        "Lily and "
+      ],
+      [
+        "sh",
+        "out"
+      ],
+      [
+        ", but ",
+        "it was "
+      ],
+      [
+        "see ",
+        "what "
+      ],
+      [
+        "went to the ",
+        "park "
+      ],
+      [
+        "rea",
+        "d "
+      ],
+      [
+        "sw",
+        "e"
+      ],
+      [
+        "I",
+        "t's "
+      ],
+      [
+        "m",
+        "is"
+      ],
+      [
+        "an",
+        "t"
+      ],
+      [
+        "il",
+        "d "
+      ],
+      [
+        "ed ",
+        "it"
+      ],
+      [
+        "on",
+        "g "
+      ],
+      [
+        "happy",
+        ". They "
+      ],
+      [
+        "a",
+        "gain"
+      ],
+      [
+        "toy ",
+        "car"
+      ],
+      [
+        "wha",
+        "t to "
+      ],
+      [
+        "there was a ",
+        "big "
+      ],
+      [
+        "Look",
+        ", "
+      ],
+      [
+        "p",
+        "on"
+      ],
+      [
+        "he",
+        "d"
+      ],
+      [
+        "we ",
+        "can "
+      ],
+      [
+        "pictu",
+        "re"
+      ],
+      [
+        "fle",
+        "w"
+      ],
+      [
+        "small",
+        " hou"
+      ],
+      [
+        "es",
+        "t "
+      ],
+      [
+        "da",
+        "d"
+      ],
+      [
+        "sh",
+        "ow "
+      ],
+      [
+        "wh",
+        "ile "
+      ],
+      [
+        "Tim",
+        "'s "
+      ],
+      [
+        "had a ",
+        "great "
+      ],
+      [
+        "ro",
+        "ck "
+      ],
+      [
+        "like ",
+        "to "
+      ],
+      [
+        "kitch",
+        "en"
+      ],
+      [
+        "wan",
+        "t"
+      ],
+      [
+        "an",
+        "imals "
+      ],
+      [
+        "m",
+        "ar"
+      ],
+      [
+        "o",
+        "on"
+      ],
+      [
+        "ca",
+        "ke"
+      ],
+      [
+        "har",
+        "d "
+      ],
+      [
+        "happened",
+        ". The "
+      ],
+      [
+        "H",
+        "er "
+      ],
+      [
+        "was very ",
+        "happy and "
+      ],
+      [
+        "do",
+        "w"
+      ],
+      [
+        ":",
+        " "
+      ],
+      [
+        ", but ",
+        "they "
+      ],
+      [
+        "would ",
+        "be "
+      ],
+      [
+        "bra",
+        "ve "
+      ],
+      [
+        "with his ",
+        "friends"
+      ],
+      [
+        "had lots of ",
+        "fun"
+      ],
+      [
+        "remem",
+        "ber"
+      ],
+      [
+        "h",
+        "ill"
+      ],
+      [
+        "k",
+        "in"
+      ],
+      [
+        "pr",
+        "om"
+      ],
+      [
+        "fir",
+        "st"
+      ],
+      [
+        "y a",
+        "gain"
+      ],
+      [
+        ". One day, ",
+        "Tim "
+      ],
+      [
+        "A",
+        "my "
+      ],
+      [
+        "ne",
+        "ed to "
+      ],
+      [
+        "good",
+        "by"
+      ],
+      [
+        "sor",
+        "ry "
+      ],
+      [
+        "dir",
+        "t"
+      ],
+      [
+        "scar",
+        "ed and "
+      ],
+      [
+        "d",
+        "in"
+      ],
+      [
+        "le ",
+        "and "
+      ],
+      [
+        "ta",
+        "il"
+      ],
+      [
+        "excit",
+        "ed to "
+      ],
+      [
+        "sto",
+        "pped "
+      ],
+      [
+        " and ",
+        "Ben "
+      ],
+      [
+        ". B",
+        "en "
+      ],
+      [
+        "ke",
+        "ep "
+      ],
+      [
+        " all ",
+        "day long"
+      ],
+      [
+        "pre",
+        "t"
+      ],
+      [
+        "de",
+        "li"
+      ],
+      [
+        ". T",
+        "his "
+      ],
+      [
+        "sw",
+        "ing"
+      ],
+      [
+        "u",
+        "st "
+      ],
+      [
+        "came ",
+        "to the "
+      ],
+      [
+        "cre",
+        "am"
+      ],
+      [
+        "M",
+        "r"
+      ],
+      [
+        "ho",
+        "p"
+      ],
+      [
+        ". He ",
+        "said, \""
+      ],
+      [
+        ". One day, ",
+        "they "
+      ],
+      [
+        "put ",
+        "it "
+      ],
+      [
+        "a",
+        "g"
+      ],
+      [
+        "w",
+        "el"
+      ],
+      [
+        "tim",
+        "e to "
+      ],
+      [
+        "y",
+        ". "
+      ],
+      [
+        "u",
+        "t"
+      ],
+      [
+        "wan",
+        "ted "
+      ],
+      [
+        "o",
+        "ver "
+      ],
+      [
+        "do",
+        "es "
+      ],
+      [
+        "fun",
+        "ny "
+      ],
+      [
+        "enjo",
+        "y"
+      ],
+      [
+        "m",
+        "y and "
+      ],
+      [
+        "ch",
+        " the "
+      ],
+      [
+        "became ",
+        "best "
+      ],
+      [
+        "have ",
+        "fun"
+      ],
+      [
+        "all",
+        "y, "
+      ],
+      [
+        "!\" ",
+        "said "
+      ],
+      [
+        "ca",
+        "st"
+      ],
+      [
+        "hat ",
+        "is "
+      ],
+      [
+        "la",
+        "ug"
+      ],
+      [
+        "list",
+        "en "
+      ],
+      [
+        "sof",
+        "t "
+      ],
+      [
+        "t",
+        "ea"
+      ],
+      [
+        "hun",
+        "gr"
+      ],
+      [
+        "ge",
+        "t the "
+      ],
+      [
+        ". One day, ",
+        "she "
+      ],
+      [
+        "look",
+        "ing "
+      ],
+      [
+        "outsid",
+        "e"
+      ],
+      [
+        ", ",
+        "she "
+      ],
+      [
+        "st",
+        "ay "
+      ],
+      [
+        "of",
+        " a "
+      ],
+      [
+        "ta",
+        "k"
+      ],
+      [
+        "squirre",
+        "l "
+      ],
+      [
+        "bun",
+        "ny "
+      ],
+      [
+        "es ",
+        "to "
+      ],
+      [
+        "sa",
+        "nd"
+      ],
+      [
+        "down",
+        " the "
+      ],
+      [
+        "I ",
+        "can "
+      ],
+      [
+        "n",
+        "ice"
+      ],
+      [
+        "s",
+        "ound"
+      ],
+      [
+        "he ",
+        "had "
+      ],
+      [
+        "run",
+        "n"
+      ],
+      [
+        "ran ",
+        "to "
+      ],
+      [
+        "T",
+        "his "
+      ],
+      [
+        "thank",
+        "ed the "
+      ],
+      [
+        "ball",
+        " and "
+      ],
+      [
+        "d",
+        "ri"
+      ],
+      [
+        "outsid",
+        "e "
+      ],
+      [
+        " and ",
+        "Lily "
+      ],
+      [
+        "! ",
+        "He "
+      ],
+      [
+        "war",
+        "m"
+      ],
+      [
+        "turn",
+        "ed "
+      ],
+      [
+        "play",
+        "ing"
+      ],
+      [
+        "happy",
+        "."
+      ],
+      [
+        "c",
+        "i"
+      ],
+      [
+        "was ",
+        "happy and "
+      ],
+      [
+        "cook",
+        "i"
+      ],
+      [
+        ". His ",
+        "mom "
+      ],
+      [
+        "ll",
+        "i"
+      ],
+      [
+        ". A",
+        "n"
+      ],
+      [
+        "fam",
+        "ily "
+      ],
+      [
+        "y",
+        ". They "
+      ],
+      [
+        "s ",
+        "were "
+      ],
+      [
+        ". I ",
+        "will "
+      ],
+      [
+        "!\" ",
+        "Lily "
+      ],
+      [
+        "high",
+        " "
+      ],
+      [
+        " an",
+        "y"
+      ],
+      [
+        "came ",
+        "and "
+      ],
+      [
+        "was ",
+        "playing "
+      ],
+      [
+        "surpri",
+        "s"
+      ],
+      [
+        "hur",
+        "t "
+      ],
+      [
+        "feel",
+        "ing "
+      ],
+      [
+        "find ",
+        "a "
+      ],
+      [
+        "cle",
+        "an "
+      ],
+      [
+        "make ",
+        "a "
+      ],
+      [
+        "tr",
+        "uck"
+      ],
+      [
+        "w",
+        "ing"
+      ],
+      [
+        "en",
+        ", a "
+      ],
+      [
+        "O",
+        "k"
+      ],
+      [
+        "Tom",
+        ". Tom "
+      ],
+      [
+        "not",
+        " a "
+      ],
+      [
+        "new ",
+        "friend"
+      ],
+      [
+        "ti",
+        "re"
+      ],
+      [
+        "to",
+        "r"
+      ],
+      [
+        " an",
+        "gr"
+      ],
+      [
+        ". M",
+        "om "
+      ],
+      [
+        "far",
+        "m"
+      ],
+      [
+        "on",
+        "ly "
+      ],
+      [
+        "th",
+        "ink"
+      ],
+      [
+        "bo",
+        "at"
+      ],
+      [
+        "had a ",
+        "lot of "
+      ],
+      [
+        "it",
+        ". He "
+      ],
+      [
+        "sh",
+        "i"
+      ],
+      [
+        ". Bob",
+        " "
+      ],
+      [
+        "little ",
+        "boy "
+      ],
+      [
+        ". ",
+        "Let's "
+      ],
+      [
+        "moral of the story ",
+        "is "
+      ],
+      [
+        "s",
+        "ing"
+      ],
+      [
+        "was ",
+        "too "
+      ],
+      [
+        "sor",
+        "ry, "
+      ],
+      [
+        "f",
+        "l"
+      ],
+      [
+        "hom",
+        "e, "
+      ],
+      [
+        ". Every",
+        "one "
+      ],
+      [
+        "t",
+        "e "
+      ],
+      [
+        "y",
+        "'s "
+      ],
+      [
+        "ther",
+        "e"
+      ],
+      [
+        ". Her ",
+        "mom "
+      ],
+      [
+        " ad",
+        "ventu"
+      ],
+      [
+        "ed ",
+        "their "
+      ],
+      [
+        "lik",
+        "ed the "
+      ],
+      [
+        "rab",
+        "bit "
+      ],
+      [
+        "what to ",
+        "do"
+      ],
+      [
+        ". They ",
+        "had "
+      ],
+      [
+        "when ",
+        "he "
+      ],
+      [
+        "wo",
+        "od"
+      ],
+      [
+        "they ",
+        "could "
+      ],
+      [
+        ". A",
+        "fter "
+      ],
+      [
+        "n",
+        "er"
+      ],
+      [
+        "p",
+        "ro"
+      ],
+      [
+        "b",
+        "ar"
+      ],
+      [
+        "s",
+        "."
+      ],
+      [
+        "in",
+        "e "
+      ],
+      [
+        ", and ",
+        "he "
+      ],
+      [
+        "to ",
+        "play"
+      ],
+      [
+        "st",
+        "ea"
+      ],
+      [
+        ". One sunny ",
+        "day, "
+      ],
+      [
+        "you",
+        " are "
+      ],
+      [
+        "ma",
+        "z"
+      ],
+      [
+        "wa",
+        "lk "
+      ],
+      [
+        ", so ",
+        "he "
+      ],
+      [
+        "be",
+        "tter "
+      ],
+      [
+        "mom",
+        "ent"
+      ],
+      [
+        ", there ",
+        "lived a "
+      ],
+      [
+        "ask",
+        "ed, \""
+      ],
+      [
+        "pu",
+        "ll"
+      ],
+      [
+        "qu",
+        "i"
+      ],
+      [
+        "s",
+        "ong"
+      ],
+      [
+        "you",
+        ".\" "
+      ],
+      [
+        "qu",
+        "ick"
+      ],
+      [
+        "bu",
+        "t"
+      ],
+      [
+        "d",
+        "er "
+      ],
+      [
+        ". S",
+        "ar"
+      ],
+      [
+        ". A",
+        "fter"
+      ],
+      [
+        "se",
+        ", "
+      ],
+      [
+        "very ",
+        "much"
+      ],
+      [
+        "ce ",
+        "and "
+      ],
+      [
+        "y a",
+        "sk"
+      ],
+      [
+        "could not ",
+        "find "
+      ],
+      [
+        "pl",
+        "i"
+      ],
+      [
+        "se",
+        "e"
+      ],
+      [
+        "!\" ",
+        "Tim "
+      ],
+      [
+        "hom",
+        "e "
+      ],
+      [
+        "se ",
+        "and "
+      ],
+      [
+        "pr",
+        "in"
+      ],
+      [
+        "said, \"",
+        "Thank you, "
+      ],
+      [
+        "st",
+        "re"
+      ],
+      [
+        "to play ",
+        "with"
+      ],
+      [
+        "!\" ",
+        "Tom "
+      ],
+      [
+        "gla",
+        "d "
+      ],
+      [
+        "were ",
+        "playing "
+      ],
+      [
+        "! ",
+        "It "
+      ],
+      [
+        "bu",
+        "tter"
+      ],
+      [
+        "Can ",
+        "you "
+      ],
+      [
+        "ask",
+        "ed "
+      ],
+      [
+        "d",
+        ". She "
+      ],
+      [
+        "Lily",
+        ". She "
+      ],
+      [
+        "th",
+        "rough"
+      ],
+      [
+        "rea",
+        "dy "
+      ],
+      [
+        "'",
+        "re "
+      ],
+      [
+        "he",
+        "ld "
+      ],
+      [
+        "no",
+        "w "
+      ],
+      [
+        "fa",
+        "ir"
+      ],
+      [
+        "s",
+        ". \""
+      ],
+      [
+        "Lil",
+        "y, "
+      ],
+      [
+        ". They were ",
+        "very "
+      ],
+      [
+        ". As ",
+        "they "
+      ],
+      [
+        "fu",
+        "ll "
+      ],
+      [
+        "sto",
+        "re "
+      ],
+      [
+        "red ",
+        "ball"
+      ],
+      [
+        "y are ",
+        "you "
+      ],
+      [
+        "s",
+        "wa"
+      ],
+      [
+        "ed to ",
+        "the "
+      ],
+      [
+        "c",
+        "ra"
+      ],
+      [
+        ". F",
+        "in"
+      ],
+      [
+        "knew ",
+        "that "
+      ],
+      [
+        "Don't ",
+        "wor"
+      ],
+      [
+        " a",
+        "gre"
+      ],
+      [
+        "a",
+        "ble "
+      ],
+      [
+        "ra",
+        "c"
+      ],
+      [
+        "Da",
+        "is"
+      ],
+      [
+        "wa",
+        "ll"
+      ],
+      [
+        "I ",
+        "want to "
+      ],
+      [
+        "star",
+        "ted "
+      ],
+      [
+        "ro",
+        "w "
+      ],
+      [
+        "p",
+        "h"
+      ],
+      [
+        "flo",
+        "wer "
+      ],
+      [
+        "ou",
+        "n"
+      ],
+      [
+        ". Th",
+        "en "
+      ],
+      [
+        "so",
+        "on"
+      ],
+      [
+        "hur",
+        "t"
+      ],
+      [
+        "won",
+        "der"
+      ],
+      [
+        "some",
+        "tim"
+      ],
+      [
+        "ho",
+        "le"
+      ],
+      [
+        "d",
+        "uck"
+      ],
+      [
+        "re",
+        "pli"
+      ],
+      [
+        "wh",
+        "il"
+      ],
+      [
+        "like ",
+        "a "
+      ],
+      [
+        "g",
+        "ame "
+      ],
+      [
+        "walk",
+        "ing "
+      ],
+      [
+        "i",
+        "ll "
+      ],
+      [
+        ". A",
+        "my "
+      ],
+      [
+        "on the ",
+        "floor"
+      ],
+      [
+        "at",
+        "e"
+      ],
+      [
+        "plea",
+        "se"
+      ],
+      [
+        "them",
+        " and "
+      ],
+      [
+        "win",
+        "dow"
+      ],
+      [
+        "mak",
+        "ing "
+      ],
+      [
+        "fi",
+        "re"
+      ],
+      [
+        "yell",
+        "ow "
+      ],
+      [
+        "b",
+        "er "
+      ],
+      [
+        "it ",
+        "was"
+      ],
+      [
+        "friend",
+        "ly "
+      ],
+      [
+        "does ",
+        "not "
+      ],
+      [
+        "Tom",
+        ", "
+      ],
+      [
+        "gra",
+        "ss"
+      ],
+      [
+        "day",
+        "."
+      ],
+      [
+        "help ",
+        "you "
+      ],
+      [
+        "v",
+        "is"
+      ],
+      [
+        "S",
+        "ally "
+      ],
+      [
+        "g",
+        "rabb"
+      ],
+      [
+        ". ",
+        "P"
+      ],
+      [
+        "play with ",
+        "it"
+      ],
+      [
+        "the",
+        "ir"
+      ],
+      [
+        "tr",
+        "uck "
+      ],
+      [
+        "ba",
+        "by "
+      ],
+      [
+        "Tim",
+        ", "
+      ],
+      [
+        "r",
+        "id"
+      ],
+      [
+        "pp",
+        "ed and "
+      ],
+      [
+        "for a ",
+        "moment"
+      ],
+      [
+        "full ",
+        "of "
+      ],
+      [
+        "J",
+        "an"
+      ],
+      [
+        "b",
+        "la"
+      ],
+      [
+        " a",
+        "wa"
+      ],
+      [
+        "G",
+        "o"
+      ],
+      [
+        "looked ",
+        "around "
+      ],
+      [
+        "run",
+        " "
+      ],
+      [
+        " ask",
+        "ed "
+      ],
+      [
+        "said, \"",
+        "No, "
+      ],
+      [
+        "proud ",
+        "of"
+      ],
+      [
+        "pictu",
+        "re "
+      ],
+      [
+        "s",
+        "low"
+      ],
+      [
+        "ha",
+        "ir"
+      ],
+      [
+        "wi",
+        "shed "
+      ],
+      [
+        "ask",
+        "ed her "
+      ],
+      [
+        "cou",
+        "n"
+      ],
+      [
+        "was ",
+        "happy "
+      ],
+      [
+        "hea",
+        "v"
+      ],
+      [
+        "j",
+        "ob"
+      ],
+      [
+        "tree",
+        ". The "
+      ],
+      [
+        "th",
+        "an "
+      ],
+      [
+        "to ",
+        "help"
+      ],
+      [
+        "ed",
+        ". They "
+      ],
+      [
+        "was ",
+        "happy to "
+      ],
+      [
+        "sm",
+        "ell"
+      ],
+      [
+        "d",
+        "is"
+      ],
+      [
+        "speci",
+        "al"
+      ],
+      [
+        "took",
+        " a "
+      ],
+      [
+        "ok",
+        "e "
+      ],
+      [
+        "nodd",
+        "ed and "
+      ],
+      [
+        "cat",
+        "ch "
+      ],
+      [
+        "for",
+        " his "
+      ],
+      [
+        "say",
+        "s "
+      ],
+      [
+        "insid",
+        "e the "
+      ],
+      [
+        "ug",
+        "g"
+      ],
+      [
+        "they ",
+        "had "
+      ],
+      [
+        "she ",
+        "could "
+      ],
+      [
+        "differ",
+        "ent "
+      ],
+      [
+        "t",
+        "ed"
+      ],
+      [
+        "to",
+        "p"
+      ],
+      [
+        "with",
+        " a big "
+      ],
+      [
+        "nd ",
+        "and "
+      ],
+      [
+        "in",
+        "to "
+      ],
+      [
+        "show",
+        "ed "
+      ],
+      [
+        "g",
+        "ent"
+      ],
+      [
+        "wh",
+        "i"
+      ],
+      [
+        "c",
+        "es"
+      ],
+      [
+        "f",
+        "t "
+      ],
+      [
+        "br",
+        "an"
+      ],
+      [
+        "do ",
+        "not "
+      ],
+      [
+        "c",
+        "r"
+      ],
+      [
+        "co",
+        "ld "
+      ],
+      [
+        "in",
+        "to a "
+      ],
+      [
+        "om",
+        "e "
+      ],
+      [
+        "Don't wor",
+        "ry, "
+      ],
+      [
+        "saw a ",
+        "big, "
+      ],
+      [
+        "gave ",
+        "the "
+      ],
+      [
+        "p",
+        "ur"
+      ],
+      [
+        ". ",
+        "C"
+      ],
+      [
+        "to",
+        "p "
+      ],
+      [
+        "gr",
+        "and"
+      ],
+      [
+        "by ",
+        "the "
+      ],
+      [
+        "not",
+        "ic"
+      ],
+      [
+        "tin",
+        "y "
+      ],
+      [
+        "fa",
+        "ce"
+      ],
+      [
+        "fro",
+        "g"
+      ],
+      [
+        "wi",
+        "se "
+      ],
+      [
+        "bo",
+        "at "
+      ],
+      [
+        "wan",
+        "t "
+      ],
+      [
+        "climb",
+        "ed "
+      ],
+      [
+        "went ",
+        "outsid"
+      ],
+      [
+        "mu",
+        "st "
+      ],
+      [
+        ". In",
+        "sid"
+      ],
+      [
+        "x",
+        " "
+      ],
+      [
+        "fin",
+        "i"
+      ],
+      [
+        "c",
+        "am"
+      ],
+      [
+        "ed",
+        ". He "
+      ],
+      [
+        "Jo",
+        "h"
+      ],
+      [
+        "p",
+        "en"
+      ],
+      [
+        "ar",
+        "k "
+      ],
+      [
+        "o",
+        "wn"
+      ],
+      [
+        "li",
+        "z"
+      ],
+      [
+        "l",
+        "and"
+      ],
+      [
+        "p",
+        "e "
+      ],
+      [
+        "so much ",
+        "fun"
+      ],
+      [
+        "se",
+        "es "
+      ],
+      [
+        "when ",
+        "they "
+      ],
+      [
+        "ar",
+        "d "
+      ],
+      [
+        "pa",
+        "in"
+      ],
+      [
+        "went to the ",
+        "park"
+      ],
+      [
+        "book",
+        " "
+      ],
+      [
+        "His ",
+        "mom "
+      ],
+      [
+        "t",
+        "ir"
+      ],
+      [
+        "!",
+        "\""
+      ],
+      [
+        "tim",
+        "e, "
+      ],
+      [
+        ". So, ",
+        "he "
+      ],
+      [
+        "mom",
+        "my "
+      ],
+      [
+        "ke",
+        "ep"
+      ],
+      [
+        "Lily",
+        "'s "
+      ],
+      [
+        ". J",
+        "o"
+      ],
+      [
+        "when ",
+        "she "
+      ],
+      [
+        "be",
+        "d"
+      ],
+      [
+        "play",
+        " and "
+      ],
+      [
+        "?",
+        "\""
+      ],
+      [
+        "sha",
+        "red "
+      ],
+      [
+        "e",
+        "ver "
+      ],
+      [
+        "to",
+        "r "
+      ],
+      [
+        "in the ",
+        "water"
+      ],
+      [
+        "mu",
+        "s"
+      ],
+      [
+        "f",
+        "ur"
+      ],
+      [
+        "an",
+        "ymore"
+      ],
+      [
+        "st",
+        "ran"
+      ],
+      [
+        "si",
+        "g"
+      ],
+      [
+        "pa",
+        "per"
+      ],
+      [
+        "Sar",
+        "a "
+      ],
+      [
+        "a",
+        "b"
+      ],
+      [
+        " a",
+        "maz"
+      ],
+      [
+        ".\" ",
+        "Tom "
+      ],
+      [
+        "help ",
+        "me "
+      ],
+      [
+        "ta",
+        "ll "
+      ],
+      [
+        "sto",
+        "p"
+      ],
+      [
+        "g",
+        "one"
+      ],
+      [
+        "kind ",
+        "and "
+      ],
+      [
+        "s",
+        "y "
+      ],
+      [
+        "v",
+        "i"
+      ],
+      [
+        "was ",
+        "happy"
+      ],
+      [
+        "peo",
+        "pl"
+      ],
+      [
+        ". In the ",
+        "end"
+      ],
+      [
+        "a",
+        " and "
+      ],
+      [
+        "m",
+        "ess"
+      ],
+      [
+        "ca",
+        "ll"
+      ],
+      [
+        "with his ",
+        "mom"
+      ],
+      [
+        "o",
+        "l "
+      ],
+      [
+        "ba",
+        "g"
+      ],
+      [
+        "for",
+        " her "
+      ],
+      [
+        "me",
+        "an"
+      ],
+      [
+        "che",
+        "er"
+      ],
+      [
+        "didn't ",
+        "know "
+      ],
+      [
+        "ed to ",
+        "be "
+      ],
+      [
+        "ed",
+        ". The "
+      ],
+      [
+        " again",
+        "."
+      ],
+      [
+        "Ok",
+        "ay, "
+      ],
+      [
+        "a",
+        "d"
+      ],
+      [
+        "wanted to help",
+        " the "
+      ],
+      [
+        "st",
+        "uck "
+      ],
+      [
+        "befor",
+        "e "
+      ],
+      [
+        "be",
+        "en "
+      ],
+      [
+        "go",
+        "ing "
+      ],
+      [
+        ", but ",
+        "it "
+      ],
+      [
+        "el",
+        "y "
+      ],
+      [
+        "curi",
+        "ou"
+      ],
+      [
+        "excit",
+        "ed and "
+      ],
+      [
+        "T",
+        "hat "
+      ],
+      [
+        "said ",
+        "\""
+      ],
+      [
+        "wor",
+        "d"
+      ],
+      [
+        "e",
+        "z"
+      ],
+      [
+        "st",
+        "u"
+      ],
+      [
+        "day",
+        ", the "
+      ],
+      [
+        "ta",
+        "ble "
+      ],
+      [
+        "all",
+        " the "
+      ],
+      [
+        " how ",
+        "to "
+      ],
+      [
+        ". Fin",
+        "ally, "
+      ],
+      [
+        "i",
+        " "
+      ],
+      [
+        "ra",
+        "in "
+      ],
+      [
+        "Mom",
+        "my "
+      ],
+      [
+        "b",
+        " "
+      ],
+      [
+        "d",
+        "ark"
+      ],
+      [
+        "ea",
+        "l"
+      ],
+      [
+        "together",
+        ". They "
+      ],
+      [
+        "it was ",
+        "time to "
+      ],
+      [
+        "w",
+        " the "
+      ],
+      [
+        "wor",
+        "k "
+      ],
+      [
+        "pick",
+        "ed it "
+      ],
+      [
+        "clo",
+        "the"
+      ],
+      [
+        "on",
+        " and "
+      ],
+      [
+        " h",
+        "igh"
+      ],
+      [
+        "wanted to ",
+        "play "
+      ],
+      [
+        "h",
+        "or"
+      ],
+      [
+        "car",
+        "e "
+      ],
+      [
+        "find ",
+        "the "
+      ],
+      [
+        "Her ",
+        "mom "
+      ],
+      [
+        " adventu",
+        "re"
+      ],
+      [
+        "felt ",
+        "very "
+      ],
+      [
+        "b",
+        "lu"
+      ],
+      [
+        "said, \"",
+        "Let's "
+      ],
+      [
+        "sto",
+        "re"
+      ],
+      [
+        "learn",
+        " "
+      ],
+      [
+        "br",
+        "ough"
+      ],
+      [
+        ". Wh",
+        "ile "
+      ],
+      [
+        "end ",
+        "of the "
+      ],
+      [
+        "righ",
+        "t"
+      ],
+      [
+        "th",
+        "ink "
+      ],
+      [
+        "it",
+        ". The "
+      ],
+      [
+        "re",
+        "st"
+      ],
+      [
+        "box",
+        " and "
+      ],
+      [
+        "dre",
+        "am"
+      ],
+      [
+        "through",
+        " the "
+      ],
+      [
+        "he ",
+        "would "
+      ],
+      [
+        "ck",
+        "et"
+      ],
+      [
+        "T",
+        "hat's "
+      ],
+      [
+        "c",
+        "han"
+      ],
+      [
+        "f",
+        "re"
+      ],
+      [
+        "n",
+        "y"
+      ],
+      [
+        "s",
+        "now"
+      ],
+      [
+        ". You ",
+        "can "
+      ],
+      [
+        "t",
+        "ell"
+      ],
+      [
+        "had a ",
+        "fun "
+      ],
+      [
+        "eat ",
+        "the "
+      ],
+      [
+        "w",
+        "ear"
+      ],
+      [
+        "war",
+        "m "
+      ],
+      [
+        "m",
+        "a "
+      ],
+      [
+        "was so ",
+        "happy "
+      ],
+      [
+        ". When ",
+        "they "
+      ],
+      [
+        "dog named ",
+        "Max"
+      ],
+      [
+        "stay",
+        "ed "
+      ],
+      [
+        ", and ",
+        "it "
+      ],
+      [
+        "back",
+        " hom"
+      ],
+      [
+        "str",
+        "ong "
+      ],
+      [
+        "cha",
+        "ir"
+      ],
+      [
+        "little ",
+        "girl"
+      ],
+      [
+        "fa",
+        "ll"
+      ],
+      [
+        "small ",
+        "town"
+      ],
+      [
+        "do ",
+        "you "
+      ],
+      [
+        "thought ",
+        "for a moment"
+      ],
+      [
+        "mou",
+        "th"
+      ],
+      [
+        "s",
+        "it "
+      ],
+      [
+        "is ",
+        "not "
+      ],
+      [
+        "in the ",
+        "garden"
+      ],
+      [
+        "was so ",
+        "happy and "
+      ],
+      [
+        "picked ",
+        "up the "
+      ],
+      [
+        "s",
+        "pla"
+      ],
+      [
+        "was ",
+        "scared"
+      ],
+      [
+        "tt",
+        "ing "
+      ],
+      [
+        "ask",
+        "ed his "
+      ],
+      [
+        "prett",
+        "y"
+      ],
+      [
+        "ke",
+        "y "
+      ],
+      [
+        "'",
+        "s a "
+      ],
+      [
+        "o",
+        "o"
+      ],
+      [
+        "li",
+        "on "
+      ],
+      [
+        "I ",
+        "don't "
+      ]
+    ]
+  }
+}

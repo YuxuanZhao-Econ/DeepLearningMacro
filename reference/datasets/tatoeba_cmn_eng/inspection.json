@@ -1,0 +1,33 @@
+{
+  "source_url": "https://www.manythings.org/anki/cmn-eng.zip",
+  "source_page": "https://www.manythings.org/anki/",
+  "retrieved_local_date": "2026-10-27",
+  "archive_bytes": 1386340,
+  "archive_sha256": "d606361aa7312dcdfb15ef4fc51cb1e7ed8bc2dc608a7b192626cd36e8403106",
+  "raw_sentence_pairs": 32028,
+  "unique_pairs": 32028,
+  "unique_chinese_sources": 27963,
+  "unique_english_targets": 30193,
+  "illustrative_short_filter": {
+    "max_chinese_codepoints": 20,
+    "max_english_whitespace_words": 10,
+    "pairs": 30481,
+    "unique_pairs": 30481,
+    "unique_chinese_sources": 26557,
+    "unique_english_targets": 28679
+  },
+  "median_chinese_codepoints": 9.0,
+  "median_english_whitespace_words": 6.0,
+  "archive_column_order": [
+    "English",
+    "Mandarin Chinese",
+    "per-sentence attribution"
+  ],
+  "translation_direction_for_proposed_project": "Chinese to English; reverse first two archive columns",
+  "notes": [
+    "Counts describe this downloaded snapshot, not a training result.",
+    "Length filtering alone does not establish translation quality or remove duplicates by meaning.",
+    "Chinese writing variants have not been normalized.",
+    "Keep original per-sentence attribution; exact or near duplicate sources and translations need grouped evaluation splits."
+  ]
+}

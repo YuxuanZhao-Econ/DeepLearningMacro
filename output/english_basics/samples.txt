@@ -1,0 +1,16 @@
+PROMPT: Once upon a time, there was a little
+CONTINUATION:  girl named Amy. She had a toy that she loved very much. She loved her toy so much that she played with it every day. One day, Amy saw her toy in the kitchen. It was a big bowl of yummy food. Amy wanted to eat the food, but it was too little. She tried to reach it, but she could not. She was sad and thought, "I will not eat the food." Amy had an idea. She told her mom, "I will find the food to eat, but you must promise to
+Stopped at EOS: false
+
+PROMPT: The cat looked at the dog and said,
+CONTINUATION:  "Why are you so scared, dog?" The dog said, "I am too scared to fly. I am too small to fly and get hurt." The cat felt bad for the dog. The cat said, "I will help you. I am a magic cat. I can make your lives hurt." The dog thought for a moment. He decided to be brave. He walked and walked until he found a big tree. The magic cat touched the tree, and the dog could fly again. The dog was very happy and thanked the magic
+Stopped at EOS: false
+
+PROMPT: One day, a little girl found a
+CONTINUATION:  pretty package. She was very happy and wanted to show it to her friend, Tom. Lily went to Tom's house and said, "Look, Tom! I found a package!" Tom smiled and said, "Let's open it and see what's inside!" They opened the package and found many colorful papers inside. They were very happy and shared the papers. From that day on, they always shared their papers with each other.
+Stopped at EOS: true
+
+PROMPT: "Hello," said Tom. "How are you?
+CONTINUATION:  I am stuck in the tree. I will help you," said Lily, "I will help you!" Tom had an idea. He said, "Let's go find my toy!" They looked and looked, but they could not find it. Then, something unexpected happened. A bird flew down and picked up the toy in its beak. The bird flew away with the toy in its beak. Tom and Lily were very surprised. They laughed and played with the bird. The bird flew away, and they were happy again.
+Stopped at EOS: true
+

@@ -1,0 +1,53 @@
+{
+  "reference_conversation_id": "6ae50849-f0ec-83ea-bc99-56b26ddc7c1e",
+  "reference_exchanges": 26,
+  "reference_export_complete_active_path_text": true,
+  "reference_pages": 6,
+  "notebook": "notebooks/Intro_English_GPT.ipynb",
+  "notebook_cells": 119,
+  "executed_julia_cells": 44,
+  "embedded_figures": 23,
+  "self_checks": 16,
+  "execution_method": "Exact saved Julia code cells executed sequentially in a fresh Julia process; not an IJulia-kernel run",
+  "original_code_cells_retained_in_order": 37,
+  "added_julia_examples": 7,
+  "manual_classifier_gradient_max_error": 5.551115123125783e-17,
+  "classifier_probability_before": 0.8021838885585818,
+  "classifier_probability_after": 0.8226,
+  "classifier_loss_before": 0.22041740991845088,
+  "classifier_loss_after": 0.195285,
+  "new_checks": [
+    "Full manual classifier gradient agrees with automatic differentiation",
+    "Later recurrent loss reaches earlier input",
+    "Gate pre-activation chain rule",
+    "Attention score chain rule",
+    "Top-p candidate selection",
+    "BPE misspelling reconstruction"
+  ],
+  "gpu_retraining_during_revision": false,
+  "protected_files_unchanged_sha256": {
+    "notebooks/Intro_NLP.ipynb": "415152aade86389296d5eab38d471a13190a89f83030ea220f1f96166064257e",
+    "notebooks/Intro_DL.ipynb": "d1206f1c19a54cbf6705789e60c3ce377167e72814d11e62be30d79bf449e7a5",
+    "src/JokesGPT.jl": "bb52ff29ef0fb61ed68a73937d76ec1d7cd31f1722a75c5737fdf7c6453130b6",
+    "src/EnglishBasics.jl": "a55b3d6cdfc83f816993456abc304a2016e782a24dd802c02e242cb12a9414c3",
+    "experiments/train_english_basics.jl": "a31d314f32eefcba1d260800cf44e2e31cfe523c67b17c6506387e27c8b793fb",
+    "output/english_basics/best.jls": "b75776ae7850c7b6c7d980bb8d84d7bb0edab33153209ad0d015608074f9bd54",
+    "output/english_basics/initial.jls": "89aad3c48c49b67fe02d0685e20aa4e0f2b0281a3852829114e4cede20ac3c23",
+    "output/english_basics/metrics.csv": "a5118a41fc9add9a2245a1b4a732212cc1a851e0a72efa3dcdd9929df00c1228",
+    "output/english_basics/run_summary.txt": "4f2c9d3439bf0fc272dff5a51136490ac5a8170a7febfce339ba98aa43654935",
+    "output/english_basics/notebook_samples.txt": "f39f8b0ee6a45911189e41524f57e6f2e391df168f2f74152df56ab905550c1b",
+    "output/english_basics/samples.txt": "e6769671d366b50fc0122ccfdbde214be91d4b814611eb25601af7e04be047bc",
+    "reference/datasets/english_basics/manifest.json": "7a6ffac3af557b36cfb63a3a51dc70d95e7d2d653c52848b06e977ca07315d29",
+    "reference/datasets/english_basics/tokenizer.json": "e5f6b81d44ca6310878bbf319957cdfaf14894c3e2298afda85c4005deeae823"
+  },
+  "notebook_before_sha256": "373986b81140786be11eecc0cd3dd1582b9f2aebff4a7fb9279dbd1e164e084f",
+  "notebook_after_sha256": "f70c8f2aa586fbde78ef52f4fc6ce547d1a06b96752492789cefd82666a114b1",
+  "math_prose_control_characters_checked": true,
+  "pngs_visually_checked": [
+    15,
+    17,
+    29,
+    37,
+    75
+  ]
+}

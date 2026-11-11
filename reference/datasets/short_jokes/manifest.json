@@ -1,0 +1,31 @@
+{
+  "source_url": "https://raw.githubusercontent.com/amoudgl/short-jokes-dataset/master/shortjokes.csv",
+  "source_sha256": "e6337cc85c3a1110d1f666ff9a7bffd4e2f56014bf3168ae50b7ea480f469573",
+  "raw_rows": 231657,
+  "seed": 20261028,
+  "selection": "ASCII Q/A jokes, 35-180 characters; allowlisted ordinary subjects and heuristic exclusion words",
+  "split_method": "90/5/5 by normalized question group, before concatenation/token windows",
+  "near_duplicate_limit": "Paraphrased or semantically similar questions may remain across splits.",
+  "splits": {
+    "train": {
+      "jokes": 2675,
+      "question_groups": 2256,
+      "characters": 196778,
+      "sha256": "e4ef7b3371b3a50bd634567a63ac6199ed95b3b212189f0a8543b8b824077af1"
+    },
+    "validation": {
+      "jokes": 145,
+      "question_groups": 125,
+      "characters": 10398,
+      "sha256": "3a3272edaccaa21101997f9a254def862845829d7f6b14aac4130ae609e26408"
+    },
+    "test": {
+      "jokes": 177,
+      "question_groups": 126,
+      "characters": 12986,
+      "sha256": "57a78422da57ca53b4a89d6adcf54e8cd784413b0f6c5a26dd2bf8f1eb298669"
+    }
+  },
+  "vocabulary_size": 96,
+  "vocabulary": "newline plus 95 printable ASCII characters, fixed before training"
+}

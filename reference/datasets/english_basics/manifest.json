@@ -1,0 +1,37 @@
+{
+  "seed": 20261028,
+  "vocab_size": 2048,
+  "bpe_fit_training_characters": 16777701,
+  "special_tokens": {
+    "<unk>": 1,
+    "<eos>": 2,
+    "<bos>": 3
+  },
+  "source": "https://huggingface.co/datasets/roneneldan/TinyStories",
+  "source_description": "Public GPT-4-generated simple English stories, bounded file prefixes; no model weights downloaded",
+  "license": "CDLA-Sharing-1.0",
+  "tokenizer": "2048-token BPE with word/punctuation pre-tokenization; training text only",
+  "split": "Official train prefix for training; official valid prefix deduplicated against train, shuffled and halved into local validation/test",
+  "deduplication": "Exact normalized story hashes; semantic or paraphrased duplicates may remain",
+  "corpora": {
+    "train": {
+      "documents": 81694,
+      "characters": 65800399,
+      "tokens": 17656261,
+      "sha256": "1a9f950ae350953ab77d11e931d0923f8455c1c82a56a8afca2382242a7d6b9c"
+    },
+    "validation": {
+      "documents": 2581,
+      "characters": 2046644,
+      "tokens": 548494,
+      "sha256": "a9fb48b5e0f104c555ed28947fad096cc7144615a23e5561e75d0defc8553810"
+    },
+    "test": {
+      "documents": 2581,
+      "characters": 2064797,
+      "tokens": 554680,
+      "sha256": "5a6e15d127f20c156fe7da22096ad003b46b10b03fc6ebbcee2c4f91eb8f81d2"
+    }
+  },
+  "tokenizer_sha256": "e5f6b81d44ca6310878bbf319957cdfaf14894c3e2298afda85c4005deeae823"
+}

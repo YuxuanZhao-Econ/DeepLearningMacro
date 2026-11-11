@@ -1,0 +1,2 @@
+device,periods,updates,elapsed_seconds,seconds_per_period,theta_relative_l2,theta_max_abs,state_w_max_abs,loss_relative_l2,loss_max_abs,r2,r2_cpu,r2_difference,plm_intercept,plm_logk,plm_logz
+gpu_float64,30000,15000,418.644000053,0.013954800002,2.625785076e-14,8.648637362e-14,2.282618539e-13,2.191322710e-14,1.225148455e-16,0.991648434073,0.991648434073,-1.110223025e-16,0.023572406762,0.986406556533,0.042688289528

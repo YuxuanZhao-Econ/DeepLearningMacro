@@ -1,0 +1,5 @@
+device,precision,periods,seconds,seconds_per_period,minimum_seconds,maximum_seconds,repetitions,valid
+cpu,Float64,100,9.3865012,0.093865012,9.173461,9.7023652,3,true
+gpu,Float64,100,1.6919745,0.016919745,1.6458438,1.714528,3,true
+cpu,Float32,100,9.3804624,0.093804624,9.3708244,9.3855302,3,true
+gpu,Float32,100,1.7148196,0.017148196,1.6929723,1.7299189,3,true

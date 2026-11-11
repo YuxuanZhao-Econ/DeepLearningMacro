@@ -1,0 +1,9 @@
+PROMPT: Once upon a time, there was a little
+CONTINUATION:  girl named Mia. Mia had a toy box. She loved to play with her toys and help her mom in the kitchen. One day, Mia's mom told her to clean the kitchen. Mia was very happy and excited. Mia's mom helped her clean the kitchen. Mia used her dough to clean the plates. She put the dough on the plates and it started to clean. Mia's mom said,
+
+PROMPT: The cat looked at the dog and said,
+CONTINUATION:  "You are the best dog ever!" The cat felt happy and they played together all day.
+
+PROMPT: One day, a little girl found a
+CONTINUATION:  big box. She was very curious and wanted to see what was inside. She opened the box and saw a lot of toys. She was so happy to play with them. She said, "Look, Mom! Look at this toys! I want to play with them!" Her mom smiled and said, "Yes, let's go to the store and see what we can do!" They walked to the store to sell toys and books
+

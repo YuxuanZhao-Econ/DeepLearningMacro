@@ -1,0 +1,25 @@
+{
+  "source": "https://huggingface.co/datasets/stanfordnlp/imdb",
+  "label_mapping": {
+    "0": "negative",
+    "1": "positive"
+  },
+  "transport": "source row index, label, UTF-8 text hex; tab-separated",
+  "license": "other; see upstream dataset card; not represented as public domain",
+  "splits": {
+    "train": {
+      "url": "https://huggingface.co/datasets/stanfordnlp/imdb/resolve/main/plain_text/train-00000-of-00001.parquet",
+      "rows": 25000,
+      "parquet_sha256": "db47d16b5c297cc0dd625e519c81319c24c9149e70e8496de5475f6fa928342c",
+      "tsv_sha256": "31505608e8b43852465bd1b0719f23ac6e1c99a1068525e5214ff0cfbbcc7c91",
+      "positive": 12500
+    },
+    "test": {
+      "url": "https://huggingface.co/datasets/stanfordnlp/imdb/resolve/main/plain_text/test-00000-of-00001.parquet",
+      "rows": 25000,
+      "parquet_sha256": "b52e26e2f872d282ffac460bf9770b25ac6f102cda0e6ca7158df98c94e8b3da",
+      "tsv_sha256": "5f2e7a2ad289609d2a8df70f34dea3ea7091d2bb1c94a15ca4aa6d645507e532",
+      "positive": 12500
+    }
+  }
+}
