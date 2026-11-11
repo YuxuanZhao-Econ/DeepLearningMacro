@@ -33,23 +33,44 @@ def old(i):
 TITLE = r"""
 # Intro to NLP, Part 1: Text Classification from Scratch in Julia
 
-We learn the building blocks of Natural Language Processing (NLP) by solving one complete task:
-deciding whether an IMDb movie review is **positive or negative**.
-Along the way we define every object—tokens, vocabulary IDs, word embeddings, a neural network,
-and a loss—and follow the exact forward pass, derivatives, and parameter update
-before training on 22,411 real reviews.
+We learn the building blocks of Natural Language Processing (NLP) by solving one complete task.
 
-The model has a 20,000-word vocabulary, 64-dimensional embeddings, and 64 hidden units:
-1,284,225 trainable parameters. It is a **classifier, not yet a language model**:
-it reads a review and returns one probability.
-Its main limitation—it ignores word order—motivates Part 2, where we train a small
-language model with one attention head (queries, keys, values) and residual connections.
+**The task.** The input is a movie review, a string of text.
+The output is one number $\hat p$, the model's estimated probability that the review is positive.
+The labels come from IMDb: each review is marked 1 (positive) or 0 (negative).
 
-1. Text → tokens → vocabulary IDs.
-2. IDs → trainable word vectors → one review vector → neural network → probability.
-3. Loss → backpropagation → one parameter update, every step derived.
-4. Train on the full dataset, evaluate unseen reviews, and inspect what was learned.
-5. What averaging cannot see, and the bridge to attention.
+**The model.** Text has no natural numeric variables, so each word gets a vector of 64 numbers,
+its **embedding**. These numbers are not given; they are learned along with everything else.
+The model averages the word vectors of a review, passes the average through one hidden layer,
+and turns the result into a probability.
+
+**The parameter count, 1,284,225.** It comes straight from the model's pieces:
+
+| Piece | Shape | Count |
+|---|---|---|
+| Embedding table $E$ (one 64-vector per word) | $64\times20{,}000$ | 1,280,000 |
+| Hidden-layer weights $W$ | $64\times64$ | 4,096 |
+| Hidden-layer bias $b$ | $64$ | 64 |
+| Output weights $v$ | $64$ | 64 |
+| Output bias $c$ | $1$ | 1 |
+| **Total** | | **1,284,225** |
+
+About 99.7% of the parameters are in the embedding table.
+That is typical in NLP: most of what the model knows lives in its word vectors.
+
+**A classifier, not yet a language model.** A language model predicts the *next word*
+from the words before it. Ours predicts one label for the whole review.
+It also averages the word vectors, which throws away word order.
+That limitation motivates Part 2, where we train a small language model with
+one attention head (queries, keys, values) and residual connections.
+
+**Roadmap.** The sections follow the order of the computation:
+
+1. Text → tokens → IDs: turn a string into integers.
+2. IDs → vectors → average → hidden layer → probability: the *forward pass*.
+3. Loss → gradients → update: how the parameters learn.
+4. Train on 22,411 reviews and evaluate on reviews the model never saw.
+5. Why averaging fails, and what attention changes.
 """
 
 SETUP_MD = r"""
